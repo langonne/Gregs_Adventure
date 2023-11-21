@@ -4,7 +4,7 @@ Greg's Adventure is a reinterpretation of the tabletop game [Munchkin](https://m
 
 ## Building instructions
 
-You need to have gradle and openjdk-17 installed to build the game.
+You need to have **gradle** and **openjdk-17** installed to build the game.
 
 To run the game, type the following commands:
 
@@ -13,9 +13,13 @@ git clone https://github.com/ZenT0x/Gregs_Adventure.git
 cd Gregs_Adventure/
 ./gradlew desktop:run
 ```
-## Authors
 
-Léo Angonnet  
-Quentin Balezeau  
-Nicolas Roelandt  
-Eliott Speyser
+## Authors
+- [Léo Angonnet](https://github.com/ZenT0x)  
+- [Quentin Balezeau](https://github.com/balezeauquentin)  
+- [Nicolas Roelandt](https://github.com/Nico-Roelandt)  
+- [Eliott Speyser](https://github.com/Ettotsu)  
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
