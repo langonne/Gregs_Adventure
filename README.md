@@ -15,7 +15,7 @@ cd Gregs_Adventure/
 ```
 ## Authors
 
-Léo Angonnet
-Quentin Balezeau
-Nicolas Roelandt
+Léo Angonnet  
+Quentin Balezeau  
+Nicolas Roelandt  
 Eliott Speyser
