@@ -18,7 +18,7 @@ public class ClientObject {
         this.name = name;
     }
 
-    // Method to start the client
+    // Method to start the ClientObject
     public void run() {
         try {
             // Connect to the server
@@ -29,8 +29,8 @@ public class ClientObject {
             out = new ObjectOutputStream(echoSocket.getOutputStream());
             in = new ObjectInputStream(echoSocket.getInputStream());
 
-            // Send the client name to the server
-            out.writeObject(name);
+            // Send the ClientObject name to the server
+            out.writeObject(new Message<String>(name, name));
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
@@ -53,7 +53,7 @@ public class ClientObject {
         }
     }
 
-    // Thread for sending objects
+    // Thread for sending messages
     class SendThread implements Runnable {
         public void run() {
             try {
@@ -61,7 +61,8 @@ public class ClientObject {
                 String userInput;
                 while ((userInput = stdIn.readLine()) != null) {
                     if (!userInput.isEmpty()) {
-                        out.writeObject(userInput); // Send the object to the server
+                        Message<String> message = new Message<String>(name, userInput); // Create a message
+                        out.writeObject(message); // Send the message to the server
                     } else {
                         System.out.println("Error: message cannot be empty. Please enter a new message.");
                     }
@@ -72,13 +73,13 @@ public class ClientObject {
         }
     }
 
-    // Thread for receiving objects
+    // Thread for receiving messages
     class ReceiveThread implements Runnable {
         public void run() {
             try {
-                Object inputObject;
-                while ((inputObject = in.readObject()) != null) {
-                    System.out.println(inputObject.toString()); // Print the received object
+                Message<String> inputMessage;
+                while ((inputMessage = (Message<String>) in.readObject()) != null) {
+                    System.out.println(inputMessage.getContent()); // Print the received message
                 }
             } catch (IOException e) {
                 System.err.println("IOException: " + e.getMessage());
@@ -95,9 +96,9 @@ public class ClientObject {
             System.err.println("Need 3 arguments: server IP, server port, player name");
             System.exit(1);
         }
-        // Create the client
-        ClientObject client = new ClientObject(args[0], Integer.parseInt(args[1]), args[2]);
-        // Start the client
-        client.run();
+        // Create the ClientObject
+        ClientObject ClientObject = new ClientObject(args[0], Integer.parseInt(args[1]), args[2]);
+        // Start the ClientObject
+        ClientObject.run();
     }
 }
