@@ -11,7 +11,7 @@ To run the game, type the following commands:
 ```bash
 git clone https://github.com/ZenT0x/Gregs_Adventure.git
 cd Gregs_Adventure/
-./gradlew desktop:run
+gradle desktop:run
 ```
 
 ## Authors
