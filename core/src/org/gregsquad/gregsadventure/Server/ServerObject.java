@@ -45,6 +45,11 @@ public class ServerObject {
             }
         }
     }
+    public static void main(String[] args) {
+        // Create a new ServerObject and run it
+        ServerObject server = new ServerObject(27093); // replace 1234 with your desired port
+        server.run();
+    }
 }
 
 class ClientHandler implements Runnable {
