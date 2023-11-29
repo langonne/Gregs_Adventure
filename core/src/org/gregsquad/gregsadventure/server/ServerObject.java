@@ -1,5 +1,3 @@
-package org.gregsquad.gregsadventure.server;
-
 
 import java.io.*;
 import java.net.*;
@@ -52,7 +50,8 @@ public class ServerObject {
 class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ServerObject server;
-    private PrintWriter out;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
     private String clientName;
 
     public ClientHandler(Socket clientSocket, ServerObject server) {
@@ -62,29 +61,38 @@ class ClientHandler implements Runnable {
 
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
             System.out.println("Waiting for client name...");
-            clientName = in.readLine();
-            System.out.println(clientName + " connected.");
 
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println(clientName + " says: " + inputLine);
-                Message<String> message = new Message<>(clientName, inputLine);
-                server.broadcast(message, this);
+            // Read the first object from the stream and handle it based on its type
+            Object firstObject = in.readObject();
+            if (firstObject instanceof Message) {
+                Message<String> firstMessage = (Message<String>) firstObject;
+                clientName = firstMessage.getSender();
+                System.out.println(clientName + " connected.");
+                server.broadcast(firstMessage, this);
+            }
+
+            Message<String> inputMessage;
+            while ((inputMessage = (Message<String>) in.readObject()) != null) {
+                System.out.println(inputMessage.getSender() + " says: " + inputMessage.getContent());
+                server.broadcast(inputMessage, this);
             }
 
             out.close();
             in.close();
             clientSocket.close();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error handling client connection: " + e.getMessage());
         }
     }
 
     public void sendMessage(Message<String> message) {
-        out.println(message.getSender() + ": " + message.getContent());
+        try {
+            out.writeObject(message);
+        } catch (IOException e) {
+            System.err.println("Error sending message: " + e.getMessage());
+        }
     }
 }
