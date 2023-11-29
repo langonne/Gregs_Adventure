@@ -31,8 +31,6 @@ public class ServerObject {
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
-
-
         } catch (IOException e) {
             // Handle any exceptions that occur during server operation
             System.err.println("Server exception: " + e.getMessage());
@@ -50,7 +48,7 @@ public class ServerObject {
 
     public static void main(String[] args) {
         // Create a new Server object with the specified port number
-        Server server = new Server(27093);
+        ServerObject server = new ServerObject(27093);
 
         // Start the server
         server.run();
@@ -61,8 +59,7 @@ public class ServerObject {
 class ClientHandler implements Runnable {
     private Socket clientSocket; // The socket for communication with the client
     private ServerObject server; // The server that this handler is part of
-    private ObjectOutputStream out; // The output stream to the client
-    private ObjectInputStream in; // The input stream from the client
+    private PrintWriter out; // The output stream to the client
     private String clientName; // The name of the client
 
     // Constructor
@@ -76,19 +73,18 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             // Create input and output streams for the client socket
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
-        
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+
             // Read the client's name
-            Message<String> nameMessage = (Message<String>) in.readObject();
-            clientName = nameMessage.getSender();
+            clientName = in.readLine();
             System.out.println(clientName + " connected.");
 
             // Read messages from the client and broadcast them to all other clients
-            Message<String> inputMessage;
-            while ((inputMessage = (Message<String>) in.readObject()) != null) {
-                System.out.println(clientName + " says: " + inputMessage.getContent());
-                server.broadcast(clientName + ": " + inputMessage.getContent(), this);
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println(clientName + " says: " + inputLine);
+                server.broadcast(clientName + ": " + inputLine, this);
             }
 
             // Close the input and output streams and the client socket
@@ -98,18 +94,11 @@ class ClientHandler implements Runnable {
         } catch (IOException e) {
             // Handle any exceptions that occur during client connection handling
             System.err.println("Error handling client connection: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Error reading message: " + e.getMessage());
         }
     }
 
     public void sendMessage(String message) {
         // Send a message to the client using the output stream
-        try {
-            out.writeObject(new Message<String>("Server", message));
-        } catch (IOException e) {
-            System.err.println("Error sending message: " + e.getMessage());
-        }
+        out.println(message);
     }
 }
-
