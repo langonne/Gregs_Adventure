@@ -1,4 +1,3 @@
-package org.gregsquad.gregsadventure.server;
 
 import java.io.*;
 import java.net.*;
@@ -26,10 +25,13 @@ public class ClientObject {
             System.out.println("Connected to " + serverIp + ":" + serverPort);
 
             // Create input and output streams
+            System.out.println("Creating streams");
             out = new ObjectOutputStream(echoSocket.getOutputStream());
             in = new ObjectInputStream(echoSocket.getInputStream());
+            System.out.println("Streams created");
 
             // Send the client name to the server
+            System.out.println("Sending name: " + name);
             out.writeObject(new Message<String>(name, "has joined the chat"));
 
             // Create threads for sending and receiving messages
@@ -46,6 +48,7 @@ public class ClientObject {
             out.close();
             in.close();
             echoSocket.close();
+            
         } catch (IOException e) {
             System.err.println("IOException: " + e.getMessage());
         } catch (InterruptedException e) {
@@ -61,6 +64,7 @@ public class ClientObject {
                 String userInput;
                 while ((userInput = stdIn.readLine()) != null) {
                     if (!userInput.isEmpty()) {
+                        System.out.println("Sending message: " + userInput);
                         out.writeObject(new Message<String>(name, userInput)); // Send the message to the server
                     } else {
                         System.out.println("Error: message cannot be empty. Please enter a new message.");
@@ -78,7 +82,8 @@ public class ClientObject {
             try {
                 Message<String> inputMessage;
                 while ((inputMessage = (Message<String>) in.readObject()) != null) {
-                    System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the received message
+                    System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the
+                                                                                                     // received message
                 }
             } catch (IOException e) {
                 System.err.println("IOException: " + e.getMessage());
