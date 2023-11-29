@@ -1,4 +1,4 @@
-package org.gregsquad.gregsadventure.Server;
+package org.gregsquad.gregsadventure.server;
 
 import java.io.*;
 import java.net.*;

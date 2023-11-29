@@ -1,18 +1,18 @@
-package org.gregsquad.gregsadventure.Server;
+package org.gregsquad.gregsadventure.server;
 
 import java.io.*;
 import java.net.*;
 
-public class Client {
+public class ClientObject {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
     private String name; // Client name
     private Socket echoSocket; // Socket for communication
-    private PrintWriter out; // Output stream
-    private BufferedReader in; // Input stream
+    private ObjectOutputStream out; // Output stream
+    private ObjectInputStream in; // Input stream
 
     // Constructor
-    public Client(String serverIp, int serverPort, String name) {
+    public ClientObject(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.name = name;
@@ -26,11 +26,11 @@ public class Client {
             System.out.println("Connected to " + serverIp + ":" + serverPort);
 
             // Create input and output streams
-            out = new PrintWriter(echoSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+            out = new ObjectOutputStream(echoSocket.getOutputStream());
+            in = new ObjectInputStream(echoSocket.getInputStream());
 
             // Send the client name to the server
-            out.println(name);
+            out.writeObject(new Message<String>(name, "has joined the chat"));
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
@@ -61,7 +61,7 @@ public class Client {
                 String userInput;
                 while ((userInput = stdIn.readLine()) != null) {
                     if (!userInput.isEmpty()) {
-                        out.println(userInput); // Send the message to the server
+                        out.writeObject(new Message<String>(name, userInput)); // Send the message to the server
                     } else {
                         System.out.println("Error: message cannot be empty. Please enter a new message.");
                     }
@@ -76,12 +76,14 @@ public class Client {
     class ReceiveThread implements Runnable {
         public void run() {
             try {
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    System.out.println(inputLine); // Print the received message
+                Message<String> inputMessage;
+                while ((inputMessage = (Message<String>) in.readObject()) != null) {
+                    System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the received message
                 }
             } catch (IOException e) {
                 System.err.println("IOException: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println("ClassNotFoundException: " + e.getMessage());
             }
         }
     }
@@ -94,7 +96,7 @@ public class Client {
             System.exit(1);
         }
         // Create the client
-        Client client = new Client(args[0], Integer.parseInt(args[1]), args[2]);
+        ClientObject client = new ClientObject(args[0], Integer.parseInt(args[1]), args[2]);
         // Start the client
         client.run();
     }

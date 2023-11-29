@@ -1,9 +1,9 @@
-package org.gregsquad.gregsadventure.Server;
+package org.gregsquad.gregsadventure.server;
 
 import java.io.*;
 import java.net.*;
 
-public class ClientObject {
+public class Client {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
     private String name; // Client name
@@ -12,7 +12,7 @@ public class ClientObject {
     private BufferedReader in; // Input stream
 
     // Constructor
-    public ClientObject(String serverIp, int serverPort, String name) {
+    public Client(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.name = name;
@@ -94,7 +94,7 @@ public class ClientObject {
             System.exit(1);
         }
         // Create the client
-        ClientObject client = new ClientObject(args[0], Integer.parseInt(args[1]), args[2]);
+        Client client = new Client(args[0], Integer.parseInt(args[1]), args[2]);
         // Start the client
         client.run();
     }

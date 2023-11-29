@@ -1,9 +1,8 @@
-package org.gregsquad.gregsadventure.Server;
+package org.gregsquad.gregsadventure.server;
 
 import java.io.Serializable;
 
 public class Message<T> implements Serializable {
-    
     private String sender;
     private T content;
 
