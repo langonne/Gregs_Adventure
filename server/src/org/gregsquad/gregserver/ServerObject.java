@@ -1,3 +1,4 @@
+package org.gregsquad.gregserver;
 
 import java.io.*;
 import java.net.*;

@@ -1,4 +1,4 @@
-package org.gregsquad.gregsadventure.server;
+package org.gregsquad.gregserver;
 
 import java.io.Serializable;
 
