@@ -1,17 +1,17 @@
 package org.gregsquad.gregsadventure.card;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public abstract class CardList {
     protected int size;
-    protected ArrayList<Card> cards = new ArrayList<>();
+    protected LinkedList<Card> cards = new LinkedList<>();
 
     public CardList() {
-        this.cards = new ArrayList<Card>();
+        this.cards = new LinkedList<Card>();
         this.size = 0;
     }
 
-    public CardList(ArrayList<Card> cards) {
+    public CardList(LinkedList<Card> cards) {
         this.cards = cards;
         this.size = cards.size();
     }
@@ -20,31 +20,7 @@ public abstract class CardList {
     public int getSize() {
         return size;
     }
-    public ArrayList<Card> getCards() {
+    public LinkedList<Card> getCards() {
         return cards;
     }
-    public Card drawCard() {
-        if (size > 0) {
-            Card card = cards.get(0);
-            cards.remove(0);
-            size--;
-            return card;
-        }
-        return null;
-    }
-
-    // Setters
-    public void addCard(Card card) {
-        if (card != null) {
-            cards.add(card);
-            size++;
-        }
-    }
-    public void shuffle() {
-        for (int i = 0; i < size; i++) {
-            int randomIndex = (int) (Math.random() * size);
-            Card temp = cards.get(i);
-            cards.set(i, cards.get(randomIndex));
-            cards.set(randomIndex, temp);
-        }
-    }
+}
