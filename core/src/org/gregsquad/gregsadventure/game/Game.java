@@ -14,5 +14,5 @@ public class Game {
     private Stack treasureStack;
     private Discard donjonDiscard;
     private Discard treasureDiscard;
-    
+
 }
