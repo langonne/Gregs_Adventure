@@ -40,4 +40,11 @@ public abstract class CardList {
             size++;
         }
     }
-
+    public void shuffle() {
+        for (int i = 0; i < size; i++) {
+            int randomIndex = (int) (Math.random() * size);
+            Card temp = cards.get(i);
+            cards.set(i, cards.get(randomIndex));
+            cards.set(randomIndex, temp);
+        }
+    }
