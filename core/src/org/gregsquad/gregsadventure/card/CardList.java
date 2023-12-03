@@ -4,16 +4,16 @@ import java.util.LinkedList;
 
 public abstract class CardList {
     protected int size;
-    protected LinkedList<Card> cards = new LinkedList<>();
+    protected List<Card> cards;
 
     public CardList() {
-        this.cards = new LinkedList<Card>();
         this.size = 0;
+        this.cards = new LinkedList<Card>();
     }
 
     public CardList(LinkedList<Card> cards) {
-        this.cards = cards;
         this.size = cards.size();
+        this.cards = cards;        
     }
 
     // Getters
@@ -22,5 +22,8 @@ public abstract class CardList {
     }
     public LinkedList<Card> getCards() {
         return cards;
+    }
+    public Card getCard(int index) {
+        return cards.get(index);
     }
 }
