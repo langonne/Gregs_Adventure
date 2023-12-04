@@ -1,5 +1,7 @@
 package org.gregsquad.gregsadventure.card;
 
+import java.util.Collections;
+
 public class Stack extends CardList{
     
     public Card draw() {
