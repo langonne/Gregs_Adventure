@@ -1,7 +1,5 @@
 package org.gregsquad.gregsadventure.card;
 
-import org.gregsquad.gregsadventure.card.Card;
-
 import java.util.LinkedList;
 
 public abstract class CardList {
