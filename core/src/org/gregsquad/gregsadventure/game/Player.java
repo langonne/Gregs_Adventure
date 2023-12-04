@@ -8,8 +8,8 @@ public class Player {
     private int damage = 0;
     private int runAway = 0;
 
-    private card classe;
-    private card race;
+    private Card classe;
+    private Card race;
 
     private Deck deck;
 
