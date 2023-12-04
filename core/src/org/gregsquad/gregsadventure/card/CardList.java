@@ -1,10 +1,12 @@
 package org.gregsquad.gregsadventure.card;
 
+import org.gregsquad.gregsadventure.card.Card;
+
 import java.util.LinkedList;
 
 public abstract class CardList {
     protected int size;
-    protected List<Card> cards;
+    protected LinkedList<Card> cards;
 
     public CardList() {
         this.size = 0;
