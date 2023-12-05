@@ -20,9 +20,11 @@ public class Game {
             damagePlayer = damagePlayer + playerList.get(1).getDamage();
         }
         int damageMonster = monster.getDamage();
+        
         //Show Interface Fight
 
         //Show interface Card to all players
+
         boolean cardHasBeenPlayed = false; // return of the interface
 
         if(cardHasBeenPlayed){
