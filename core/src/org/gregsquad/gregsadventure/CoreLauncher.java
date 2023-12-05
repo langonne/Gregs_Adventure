@@ -1,8 +1,13 @@
 package org.gregsquad.gregsadventure;
 
 import java.util.ArrayList;
+import org.gregsquad.gregsadventure.CardType.*;
 
 public class CoreLauncher {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
+
     private ArrayList<Player> playerList;
     private Deck donjonDeck;
     private Deck TreasureDeck;

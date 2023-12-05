@@ -12,23 +12,35 @@ public class Deck {
     }
 
     public void shuffle() {
-        // TODO implement here
+        for(int i = 0; i < cardsInDeck.size(); i++){
+            int randomIndex = (int) (Math.random() * cardsInDeck.size());
+            Card temp = cardsInDeck.get(i);
+            cardsInDeck.set(i, cardsInDeck.get(randomIndex));
+            cardsInDeck.set(randomIndex, temp);
+        }
     }
 
-    public void drawCards(int numberOfCards) {
-        // TODO implement here
+    public ArrayList<Card> drawCards(int numberOfCards) {
+        ArrayList<Card> cardsDraw = new ArrayList<Card>();
+        for(int i = 0; i < numberOfCards; i++){
+            cardsDraw.add(cardsInDeck.get(0));
+            cardsInDeck.remove(0);
+        }
+        return cardsInDeck;
     }
 
     public void addCardInDiscard(Card card){
-        // TODO implement here
-
+        cardsInDiscard.add(card);
     }
     public void creationDeck() {
         // TODO implement here
     }
 
     public void discardRecovery() {
-        // TODO implement here
+        for(int i = 0; i < cardsInDiscard.size(); i++){
+            cardsInDeck.add(cardsInDiscard.get(i));
+        }
+        shuffle();
     }
 
 }
