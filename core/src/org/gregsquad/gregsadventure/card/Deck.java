@@ -38,4 +38,8 @@ public class Deck{
         this.cards.remove(card);
         this.size--;
     }
+
+    
+
+    
 }

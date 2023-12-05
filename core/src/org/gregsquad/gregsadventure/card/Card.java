@@ -4,13 +4,13 @@ public abstract class Card {
     
     protected int id;
     protected String name;
-    protected String  type;
+    //protected String type;
     protected String description;
 
-    public Card(int id, String name, String type, String description) {
+    public Card(int id, String name, String description) {
         this.id = id;
         this.name = name;
-        this.type = type;
+        //this.type = type;
         this.description = description;
     }
 
@@ -21,9 +21,10 @@ public abstract class Card {
     public String getName() {
         return name;
     }
+    /*
     public String getType() {
         return type;
-    }
+    }*/
     public String getDescription() {
         return description;
     }
@@ -37,11 +38,11 @@ public abstract class Card {
             this.name = name;
         }
     }
-    public void setType(String type) {
+    /*public void setType(String type) {
         if (type != null && !type.isEmpty()) {
             this.type = type;
         }
-    }
+    }*/
     public void setDescription(String description) {
         if (description != null && !description.isEmpty()) {
             this.description = description;
