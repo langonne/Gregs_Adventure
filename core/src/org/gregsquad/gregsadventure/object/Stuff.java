@@ -1,16 +1,17 @@
+import java.util.LinkedList;
 
 import org.gregsquad.gregsadventure.object;
 
-public class Objects {
+public class Stuff {
     protected int size;
     protected LinkedList<Object> ObjectList;
 
-    public Objects() {
+    public Stuff() {
         this.size = 0;
         this.ObjectList = new LinkedList<Object>();
     }
 
-    public Objects(LinkedList<Object> ObjectList) {
+    public Stuff(LinkedList<Object> ObjectList) {
         this.size = ObjectList.size();
         this.ObjectList = ObjectList;        
     }
