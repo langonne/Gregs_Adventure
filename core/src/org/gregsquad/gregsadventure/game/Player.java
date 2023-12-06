@@ -21,14 +21,14 @@ public class Player {
     private Objects lightObjects;
 
     private int diceModifier;
-    private int TreasuresForFight;
+    private int treasuresForFight;
 
-    public int getTreasuresForFight(){
-        return this.TreasuresForFight;
+    public int gettreasuresForFight(){
+        return this.treasuresForFight;
     }
 
-    public void setTreasuresForFight(int TreasuresForFight){
-        this.TreasuresForFight = TreasuresForFight;
+    public void settreasuresForFight(int treasuresForFight){
+        this.treasuresForFight = treasuresForFight;
     }
 
     public int getLevel(){
