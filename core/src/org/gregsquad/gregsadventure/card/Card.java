@@ -1,6 +1,8 @@
 package org.gregsquad.gregsadventure.card;
 
-public abstract class Card {
+import java.io.Serializable;
+
+public abstract class Card implements Serializable{
     
     protected int id;
     protected String name;
