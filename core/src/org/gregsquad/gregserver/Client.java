@@ -1,9 +1,11 @@
 package org.gregsquad.gregserver;
 
+import org.gregsquad.gregsadventure.card.*;
+
 import java.io.*;
 import java.net.*;
 
-public class ClientObject {
+public class Client {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
     private String name; // Client name
@@ -12,7 +14,7 @@ public class ClientObject {
     private ObjectInputStream in; // Input stream
 
     // Constructor
-    public ClientObject(String serverIp, int serverPort, String name) {
+    public Client(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.name = name;
@@ -23,17 +25,17 @@ public class ClientObject {
         try {
             // Connect to the server
             echoSocket = new Socket(serverIp, serverPort);
-            System.out.println("Connected to " + serverIp + ":" + serverPort);
+            System.out.println("[INFO] Connected to " + serverIp + ":" + serverPort);
 
             // Create input and output streams
-            System.out.println("Creating streams");
+            System.out.println("[INFO] Creating streams");
             out = new ObjectOutputStream(echoSocket.getOutputStream());
             in = new ObjectInputStream(echoSocket.getInputStream());
-            System.out.println("Streams created");
+            System.out.println("[INFO] Streams created");
 
             // Send the client name to the server
-            System.out.println("Sending name: " + name);
-            out.writeObject(new Message<String>(name, "has joined the chat"));
+            System.out.println("[INFO] Sending name: " + name);
+            out.writeObject(new Message<String>(name, "CONNEXION", "","has joined the chat"));
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
@@ -66,7 +68,7 @@ public class ClientObject {
                 while ((userInput = stdIn.readLine()) != null) {
                     if (!userInput.isEmpty()) {
                         System.out.println("Sending message: " + userInput);
-                        out.writeObject(new Message<String>(name, userInput)); // Send the message to the server
+                        out.writeObject(new Message<String>(name, "CHAT", "",userInput)); // Send the message to the server
                     } else {
                         System.out.println("Error: message cannot be empty. Please enter a new message.");
                     }
@@ -81,10 +83,14 @@ public class ClientObject {
     class ReceiveThread implements Runnable {
         public void run() {
             try {
-                Message<String> inputMessage;
-                while ((inputMessage = (Message<String>) in.readObject()) != null) {
-                    System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the
-                                                                                                     // received message
+                Object inputObject;
+                while ((inputObject = in.readObject()) != null) {
+                    if (inputObject instanceof Message) {
+                        Message<String> inputMessage = (Message<String>) inputObject;
+                        System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the received message
+                    } else {
+                        // handle the case where inputObject is not a Message
+                    }
                 }
             } catch (IOException e) {
                 System.err.println("IOException: " + e.getMessage());
@@ -94,6 +100,44 @@ public class ClientObject {
         }
     }
 
+    // REQUESTS SECTION
+
+    // Generic method to send a request
+    public <T extends Serializable> void sendRequest(Message<T> request) {
+        try {
+            out.writeObject(request);
+        } catch (IOException e) {
+            System.err.println("Error sending message: " + e.getMessage());
+        }
+    }
+    // Generic method to receive an answer
+    public <T extends Serializable> Message<T> receiveAnswer(String type, String purpose) {
+        try {
+                Object inputObject;
+                while ((inputObject = in.readObject()) != null) {
+                    if (inputObject instanceof Message) {
+                        Message<T> inputMessage = (Message<T>) inputObject;
+                        if (inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
+                            return inputMessage;
+                        }
+                    }
+                }
+        } catch (IOException e) {
+            System.err.println("IOException: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("ClassNotFoundException: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public Card drawDonjonCard() {
+        Message<String> request = new Message<String>(name, "REQUEST", "DRAW_DONJON_CARD","");
+        sendRequest(request);
+        Message<Card> answer = receiveAnswer("ANSWER", "DRAW_DONJON_CARD");
+        return answer.getContent();
+    }
+
+
     // Main method
     public static void main(String[] args) {
         // Check the arguments
@@ -102,7 +146,7 @@ public class ClientObject {
             System.exit(1);
         }
         // Create the client
-        ClientObject client = new ClientObject(args[0], Integer.parseInt(args[1]), args[2]);
+        Client client = new Client(args[0], Integer.parseInt(args[1]), args[2]);
         // Start the client
         client.run();
     }

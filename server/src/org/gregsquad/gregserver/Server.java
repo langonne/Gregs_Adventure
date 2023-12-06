@@ -5,11 +5,11 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerObject {
+public class Server {
     private int port;
     private List<ClientHandler> clients;
 
-    public ServerObject(int port) {
+    public Server(int port) {
         this.port = port;
         this.clients = new ArrayList<>();
     }
@@ -43,19 +43,19 @@ public class ServerObject {
     }
 
     public static void main(String[] args) {
-        ServerObject server = new ServerObject(27093);
+        Server server = new Server(27093);
         server.run();
     }
 }
 
 class ClientHandler implements Runnable {
     private Socket clientSocket;
-    private ServerObject server;
+    private Server server;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private String clientName;
 
-    public ClientHandler(Socket clientSocket, ServerObject server) {
+    public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.server = server;
     }
