@@ -2,87 +2,90 @@ package org.gregsquad.gregsadventure.game;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-
+import java.util.Random;
 import org.gregsquad.gregsadventure.card.*;
 
 
 public class Game {
+    static final int DICE_NEED_TO_RUN = 5;
     private ArrayList<Player> playerList;
     private Stack donjonStack;
     private Stack treasureStack;
     private Discard donjonDiscard;
     private Discard treasureDiscard;
+    private Player currentPlayer;
+    private Monster monster;
+    Player playerHelp;
+    // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
 
+    public void fight(Monster monster) { //button fight  
 
-    public void fight(LinkedList<Player> playerList, Monster monster) {
-        int damagePlayer = playerList.get(0).getDamage();
-        if(playerList.size() > 1){
-            damagePlayer = damagePlayer + playerList.get(1).getDamage();
-        }
-        int damageMonster = monster.getDamage();
-        
-        //Show Interface Fight
-
-        //Show interface Card to all players
-
-        boolean cardHasBeenPlayed = false; // return of the interface
-
-        if(cardHasBeenPlayed){
-            fight(playerList, monster);
-            return;
+        if(currentPlayer.getDamage() >= monster.getDamage()){
+            
         } else {
-
-            //Show interface Action
-            String action = "Help"; // return of the interface
-
-            switch (action) {
-                case "Help":
-                    if(playerList.size() == 1){
-                        System.out.println("D2 : Help");
-                        //Show interface Select Player
-
-                        //Show proposal interface to players selected
-
-                        //Show proposal choice interface to player
-
-                        Player helpPlayer = new Player(); // return of the interface proposal choice
-                        
-                        if(helpPlayer == null){
-                            
-                        } else {
-                            LinkedList allPlayerList = new LinkedList<Player>();
-                            allPlayerList.add(playerList.get(0));
-                            allPlayerList.add(helpPlayer);
-                            fight(allPlayerList, monster);
-                            return;
-                        }
-                    } else {
-                        System.out.println("You cannot ask help is you are already 2");
-                    }
-                    break;
-                case "Run":
-                    System.out.println("D2 : Run");
-
-
-                    break;
-                case "Fight":
-                    System.out.println("D2 : Fight");
-
-                    break;
-
-
-                default:
-                    System.out.println("D2 : Error");
-                    break;
-            }
-
-
+            run(monster);
         }
 
 
-    
 
     }
+
+
+    public boolean run(Monster monster) { //button run, true = success 
+        Random rand = new Random();
+        if(rand.nextInt(6) + 1 + currentPlayer.getRunAway() >= DICE_NEED_TO_RUN){
+            return true;
+        } else {
+            incident(currentPlayer);
+            incident(playerHelp);
+            return false;
+        }
+
+    }
+
+    protected void incident(Player player){
+        switch (monster.getTypeIncident()) {
+            case "death":
+                //Remove stuff 
+                break;
+        
+            case "loseObject":
+                //Remove 1 object
+                break;
+
+            case "loseLevel":
+                player.addLevel(-1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Interface proposition d'aide (return treasure number + playerList)
+    public boolean Help(LinkedList<Player> playersList, int numberOfTreasure){ // true == helped
+
+        
+
+        //Interface to other players (return playerList)
+
+        LinkedList<Player> playerListWantTohelp = new LinkedList<Player>();
+
+        //Interface choix joueur (return player sur playerHelp)
+
+        if(playerHelp == null){
+
+            return false;
+        } else {
+            currentPlayer.setDamage(currentPlayer.getDamage() + playerHelp.getDamage());
+
+            playerHelp.setTreasuresForFight(numberOfTreasure);
+            currentPlayer.setTreasuresForFight(monster.getTreasure() - numberOfTreasure);
+
+
+            return true;
+        }
+    }
+
 
 
     public void charity(){
