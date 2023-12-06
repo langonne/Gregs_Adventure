@@ -137,7 +137,6 @@ public class Client {
         return answer.getContent();
     }
 
-
     // Main method
     public static void main(String[] args) {
         // Check the arguments
