@@ -10,18 +10,24 @@ public class Player {
     private String name;
     private int level = 0;
     private int damage = 0;
-    private int runAway = 0;
 
     private Card classe; // Mettre en place les classes comme héritage de Card
     private Card race; // Pareil
 
     private Deck hand;
 
-    private Objects heavyObjects;
-    private Objects lightObjects;
+    private Stuff heavyObjects;
 
     private int diceModifier;
     private int treasuresForFight;
+
+    public Player(String name){
+        this.name = name;
+        this.level = 1;
+        this.damage = 1;
+        this.hand = new Deck();
+        this.heavyObjects = new Stuff();
+    }
 
     public int gettreasuresForFight(){
         return this.treasuresForFight;

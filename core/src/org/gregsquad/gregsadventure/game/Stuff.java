@@ -1,6 +1,7 @@
+package org.gregsquad.gregsadventure.game;
 import java.util.LinkedList;
 
-import org.gregsquad.gregsadventure.object;
+import org.gregsquad.gregsadventure.card.Object;
 
 public class Stuff {
     protected int size;

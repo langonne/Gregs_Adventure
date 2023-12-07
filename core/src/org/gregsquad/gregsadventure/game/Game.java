@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Random;
 import org.gregsquad.gregsadventure.card.*;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
+
 
 public class Game {
     static final int DICE_NEED_TO_RUN = 5;
@@ -15,8 +17,34 @@ public class Game {
     private Discard treasureDiscard;
     private Player currentPlayer;
     private Monster monster;
-    Player playerHelp;
+    private Player playerHelp;
     // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
+
+    /*DEBUG*/
+    public static void main(String[] args) { // Equivalent à l'inverface de départ
+        Game game = new Game();
+        
+        System.out.println("Start");
+        for(int i = 0; i < 10; i++){
+            game.playerList.add(new Player("Player" + i));
+            System.out.println("Creation player " + i);
+        }
+        game.donjonStack = new Stack();
+        game.treasureStack = new Stack();
+        game.donjonDiscard = new Discard();
+        game.treasureDiscard = new Discard();
+        game.currentPlayer = game.playerList.get(0);
+
+        //Draw
+        game.draw(1);
+
+
+    }
+
+
+    /*FIN DEBUG*/
+
+
 
     public void fight(Monster monster) { //button fight  
 
@@ -25,9 +53,6 @@ public class Game {
         } else {
             run(monster);
         }
-
-
-
     }
 
 

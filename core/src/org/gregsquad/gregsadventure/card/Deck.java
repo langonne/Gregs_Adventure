@@ -7,12 +7,12 @@ public class Deck{
     protected int size;
     protected ArrayList<Card> cards;
     
-    Deck(){
+    public Deck(){
         this.size = 0;
         this.cards = new ArrayList<Card>();
     }
 
-    Deck(ArrayList<Card> cards){
+    public Deck(ArrayList<Card> cards){
         this.size = cards.size();
         this.cards = cards;
     }
