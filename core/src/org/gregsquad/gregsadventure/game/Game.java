@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import org.gregsquad.gregsadventure.card.*;
-
+import org.gregsquad.gregsadventure.game.Player;
 import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
 
@@ -41,7 +41,7 @@ public class Game {
             game.monster = (Monster) cardOnTable;
             game.fight(game.monster);
         } else if( cardOnTable instanceof Curse){
-            cardOnTable.curse(game.currentPlayer);
+            ((Curse) cardOnTable).curse(game.currentPlayer);
         } else { // Class Treasure/Race/Class
             game.currentPlayer.getDeck().addCard(cardOnTable);
         }
@@ -106,14 +106,12 @@ public class Game {
         //Interface choix joueur (return player sur playerHelp)
 
         if(playerHelp == null){
-
             return false;
         } else {
             currentPlayer.setDamage(currentPlayer.getDamage() + playerHelp.getDamage());
 
             playerHelp.setTreasuresForFight(numberOfTreasure);
             currentPlayer.setTreasuresForFight(monster.getTreasure() - numberOfTreasure);
-
 
             return true;
         }
