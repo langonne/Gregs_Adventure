@@ -14,9 +14,9 @@ public class Player {
     private Card classe; // Mettre en place les classes comme héritage de Card
     private Card race; // Pareil
 
-    private Deck hand;
+    private Deck deck;
 
-    private Stuff heavyObjects;
+    private Stuff stuff;
 
     private int diceModifier;
     private int treasuresForFight;
@@ -25,8 +25,8 @@ public class Player {
         this.name = name;
         this.level = 1;
         this.damage = 1;
-        this.hand = new Deck();
-        this.heavyObjects = new Stuff();
+        this.deck = new Deck();
+        this.stuff = new Stuff();
     }
 
     public int gettreasuresForFight(){
@@ -53,6 +53,10 @@ public class Player {
         this.damage = damage;
     }
 
+    public void addDamage(int damage){
+        this.damage += damage;
+    }
+
     public int getRunAway(){ // PAS SUR de si c'est utile
         return this.runAway;
     } 
@@ -63,6 +67,14 @@ public class Player {
 
     public Card getRace(){
         return this.race;
+    }
+
+    public Deck getDeck(){
+        return this.deck;
+    }
+
+    public Stuff getStuff(){
+        return this.stuff;
     }
 
 

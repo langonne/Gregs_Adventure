@@ -24,7 +24,11 @@ public class Stuff {
     public void addObject(Object object) {
         ObjectList.add(object);
     }
-    public void removeObject(Object object) {
-        ObjectList.remove(object);
+    public void removeObject(int number) { // Can be adapt to a type of object
+        ObjectList.remove(number);
+    }
+
+    public int getSize() {
+        return size;
     }
 }

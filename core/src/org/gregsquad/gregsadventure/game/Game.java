@@ -20,7 +20,6 @@ public class Game {
     private Player playerHelp;
     // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
 
-    /*DEBUG*/
     public static void main(String[] args) { // Equivalent à l'inverface de départ
         Game game = new Game();
         
@@ -36,15 +35,24 @@ public class Game {
         game.currentPlayer = game.playerList.get(0);
 
         //Draw
-        game.draw(1);
-
+        Card cardOnTable = game.donjonStack.draw();
+        // if Card is Monster
+        if(cardOnTable instanceof Monster){
+            game.monster = (Monster) cardOnTable;
+            game.fight(game.monster);
+        } else if( cardOnTable instanceof Curse){
+            cardOnTable.curse(game.currentPlayer);
+        } else { // Class Treasure/Race/Class
+            game.currentPlayer.getDeck().addCard(cardOnTable);
+        }
 
     }
 
 
-    /*FIN DEBUG*/
 
-
+    public Stack getDonjonStack() {
+        return donjonStack;
+    }
 
     public void fight(Monster monster) { //button fight  
 
