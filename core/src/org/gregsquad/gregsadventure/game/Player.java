@@ -56,10 +56,12 @@ public class Player {
     public void addDamage(int damage){
         this.damage += damage;
     }
-
-    public int getRunAway(){ // PAS SUR de si c'est utile
+/*
+ *  public int getRunAway(){ // PAS SUR de si c'est utile (et ne fonctionne pas)
         return this.runAway;
     } 
+ */
+
 
     public Card getClasse(){
         return this.classe;
