@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
 public class Game {
     static final int DICE_NEED_TO_RUN = 5;
-    private ArrayList<Player> playerList;
+    private ArrayList<Player> playerList = new ArrayList<Player>();
     private Stack donjonStack;
     private Stack treasureStack;
     private Discard donjonDiscard;
@@ -20,29 +20,44 @@ public class Game {
     private Player playerHelp;
     // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
 
+    //DEBUG
     public static void main(String[] args) { // Equivalent à l'inverface de départ
-        Game game = new Game();
-        
         System.out.println("Start");
-        for(int i = 0; i < 10; i++){
-            game.playerList.add(new Player("Player" + i));
-            System.out.println("Creation player " + i);
-        }
+        Game game = new Game();
         game.donjonStack = new Stack();
+        game.donjonStack.creation();
         game.treasureStack = new Stack();
+        game.treasureStack.creation();
         game.donjonDiscard = new Discard();
         game.treasureDiscard = new Discard();
+
+        for(int i = 0; i < 5; i++){ // DEBUG : interface de création de joueur
+            game.playerList.add(new Player("Player" + i));
+            System.out.println("Creation player " + i);
+            for(int j = 0; j < 2; j++){ // A DEPLACER DANS LA CREATION DE JOUEUR
+                game.playerList.get(i).getDeck().addCard(game.donjonStack.draw());
+                game.playerList.get(i).getDeck().addCard(game.treasureStack.draw());
+            }
+        }
+
         game.currentPlayer = game.playerList.get(0);
+
 
         //Draw
         Card cardOnTable = game.donjonStack.draw();
         // if Card is Monster
         if(cardOnTable instanceof Monster){
+            System.out.println("Monster on table "); // DEBUG
             game.monster = (Monster) cardOnTable;
-            game.fight(game.monster);
+            //Interface mettre carte sur la table
+            //game.fight(game.monster); // Appuie sur le bouton fight
+            game.run(game.monster); // Appuie sur le bouton run
+            //game.Help(game.playerList, 1); // Appuie sur le bouton help
         } else if( cardOnTable instanceof Curse){
+            System.out.println("Curse on table "); // DEBUG
             ((Curse) cardOnTable).curse(game.currentPlayer);
         } else { // Class Treasure/Race/Class
+            System.out.println("Other on table "); // DEBUG
             game.currentPlayer.getDeck().addCard(cardOnTable);
         }
 
@@ -55,20 +70,24 @@ public class Game {
     }
 
     public void fight(Monster monster) { //button fight  
-
         if(currentPlayer.getDamage() >= monster.getDamage()){
-            
+            System.out.println("Player win"); // DEBUG
         } else {
+            System.out.println("Player lose"); // DEBUG
             run(monster);
         }
     }
 
 
     public boolean run(Monster monster) { //button run, true = success 
+        System.out.println("Run"); // DEBUG
         Random rand = new Random();
-        if(rand.nextInt(6) + 1 + currentPlayer.getRunAway() >= DICE_NEED_TO_RUN){
+        int diceResult = rand.nextInt(6) + 1 + currentPlayer.getDiceBuff();
+        if(diceResult >= DICE_NEED_TO_RUN){
+            System.out.println("Run success with " + diceResult); // DEBUG
             return true;
         } else {
+            System.out.println("Run failled with " + diceResult); // DEBUG
             incident(currentPlayer);
             incident(playerHelp);
             return false;

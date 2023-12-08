@@ -1,6 +1,9 @@
 package org.gregsquad.gregsadventure.card;
 
+import org.gregsquad.gregsadventure.game.Player;
+
 public class App {
+    
     public static void main(String[] args) {
         // Create an instance of Equipement
         Equipement equipement = new Equipement("Equipement1", 1, "This is a test equipement", 0, 10, true);
@@ -12,4 +15,9 @@ public class App {
         System.out.println("Bonus: " + equipement.getBonus());
         System.out.println("Equipement Size: " + (equipement.getEquipementSize() ? "Large" : "Small"));
     }
+    
+
+
+    
+
 }

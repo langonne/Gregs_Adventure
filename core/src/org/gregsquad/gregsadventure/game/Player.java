@@ -16,7 +16,7 @@ public class Player {
 
     private Stuff stuff;
 
-    private int diceModifier;
+    private int diceBuff;
     private int treasuresForFight;
 
     public Player(String name){
@@ -25,13 +25,25 @@ public class Player {
         this.damage = 1;
         this.deck = new Deck();
         this.stuff = new Stuff();
+        this.diceBuff = 0;
     }
 
-    public int gettreasuresForFight(){
+    public String getName(){
+        return this.name;
+    }
+
+    public int getDiceBuff(){
+        return this.diceBuff;
+    }
+
+    public void setDiceBuff(int diceBuff){
+        this.diceBuff = diceBuff;
+    }
+    public int setTreasuresForFight(){
         return this.treasuresForFight;
     }
 
-    public void settreasuresForFight(int treasures){
+    public void setTreasuresForFight(int treasures){
         this.treasuresForFight = treasures;
     }
 
