@@ -2,7 +2,7 @@ package org.gregsquad.gregsadventure.card;
 
 public class Discard extends CardList{
         
-    public void add(Card card) {
+    public void addCard(Card card) {
         cards.addFirst(card);
     }
 }

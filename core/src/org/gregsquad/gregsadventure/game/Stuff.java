@@ -14,7 +14,7 @@ public class Stuff {
 
     public Stuff(LinkedList<Equipement> ObjectList) {
         this.size = ObjectList.size();
-        this.ObjectList = ObjectList;        
+        this.ObjectList = ObjectList;
     }
 
     public LinkedList<Equipement> getObjects() {

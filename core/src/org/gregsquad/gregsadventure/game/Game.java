@@ -21,7 +21,7 @@ public class Game {
     // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
 
     //DEBUG
-    public static void main(String[] args) { // Equivalent à l'inverface de départ
+    public static void main(String[] args) { // Equivalent à l'interface de départ
         System.out.println("Start");
         Game game = new Game();
         game.donjonStack = new Stack();
@@ -60,6 +60,9 @@ public class Game {
             System.out.println("Other on table "); // DEBUG
             game.currentPlayer.getDeck().addCard(cardOnTable);
         }
+
+        //Charity
+        game.charity();
 
     }
 
@@ -109,7 +112,6 @@ public class Game {
                 break;
         
             case "loseObject":
-                //Remove 1 object
                 System.out.println("Remove random object "); // DEBUG
                 Random rand = new Random();
                 int randNumber = rand.nextInt(player.getStuff().getSize());
@@ -151,7 +153,33 @@ public class Game {
 
 
     public void charity(){
-        // TODO implement here
+        int minLevelOtherPlayer = 11;
+        for(Player player : playerList){
+            if(player != currentPlayer){
+                if(player.getLevel() < minLevelOtherPlayer){
+                    minLevelOtherPlayer = player.getLevel();
+                    return;
+                }
+            }
+        }
+        while(currentPlayer.getDeck().getSize() > 5){
+            //Interface choix carte (return card)
+            Card card = currentPlayer.getDeck().getCard(0);
+            currentPlayer.getDeck().removeCard(card);
+            if(currentPlayer.getLevel() > minLevelOtherPlayer){
+                //Interface choix joueur (return player)
+                Player player = playerList.get(0);
+                player.getDeck().addCard(card);
+                return;
+            } else {
+                if(card instanceof Equipement){
+                    treasureDiscard.addCard(card);
+                } else {
+                    donjonDiscard.addCard(card);
+                }
+            }
+
+        }
     }
 
 
