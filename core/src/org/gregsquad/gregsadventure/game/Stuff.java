@@ -28,6 +28,10 @@ public class Stuff {
         ObjectList.remove(number);
     }
 
+    public void clearStuff() {
+        ObjectList.clear();
+    }
+
     public int getSize() {
         return size;
     }

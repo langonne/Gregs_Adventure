@@ -89,23 +89,35 @@ public class Game {
         } else {
             System.out.println("Run failled with " + diceResult); // DEBUG
             incident(currentPlayer);
-            incident(playerHelp);
+            if(playerHelp != null){
+                incident(playerHelp);
+            }
             return false;
         }
 
     }
 
     protected void incident(Player player){
+        if(player == null){
+            System.out.println("Error : No player"); // DEBUG
+            return;
+        }
         switch (monster.getTypeIncident()) {
             case "death":
-                //Remove stuff 
+                System.out.println("Death of player "); // DEBUG
+                player.getStuff().clearStuff();
                 break;
         
             case "loseObject":
                 //Remove 1 object
+                System.out.println("Remove random object "); // DEBUG
+                Random rand = new Random();
+                int randNumber = rand.nextInt(player.getStuff().getSize());
+                player.getStuff().removeObject(randNumber);
                 break;
 
             case "loseLevel":
+                System.out.println("Remove 1 level "); // DEBUG
                 player.addLevel(-1);
                 break;
             default:
