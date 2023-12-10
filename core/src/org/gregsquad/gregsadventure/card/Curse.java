@@ -2,8 +2,6 @@ package org.gregsquad.gregsadventure.card;
 
 import java.util.Random;
 import org.gregsquad.gregsadventure.game.Player;
-import org.gregsquad.gregsadventure.game.Stuff;
-import org.gregsquad.gregsadventure.card.*;
 
 public class Curse extends Card{
     private String type;
@@ -25,4 +23,9 @@ public class Curse extends Card{
             player.getStuff().removeObject(rand.nextInt(player.getStuff().getSize()));
         }
     }
+
+    public final void play() {
+        System.out.println("Playing curse " + this.name);
+    }
+
 }

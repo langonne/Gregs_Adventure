@@ -3,8 +3,9 @@ package org.gregsquad.gregsadventure.game;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Scanner;
+
 import org.gregsquad.gregsadventure.card.*;
-import org.gregsquad.gregsadventure.game.Player;
 import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
 
@@ -18,7 +19,6 @@ public class Game {
     private Player currentPlayer;
     private Monster monster;
     private Player playerHelp;
-    // Voir on met la liste des joeurs qui se battent, ici c'est bon ??
 
     //DEBUG
     public static void main(String[] args) { // Equivalent à l'interface de départ
@@ -47,12 +47,20 @@ public class Game {
         Card cardOnTable = game.donjonStack.draw();
         // if Card is Monster
         if(cardOnTable instanceof Monster){
-            System.out.println("Monster on table "); // DEBUG
             game.monster = (Monster) cardOnTable;
+            System.out.println("Monster on table : " + game.monster.getName() + " " + game.monster.getDamage()); // DEBUG
             //Interface mettre carte sur la table
+            game.cardSelect();
+            //Apparition des boutons
             //game.fight(game.monster); // Appuie sur le bouton fight
-            game.run(game.monster); // Appuie sur le bouton run
-            //game.Help(game.playerList, 1); // Appuie sur le bouton help
+            //game.run(game.monster); // Appuie sur le bouton run
+            if(game.Help(1)){ // Appuie sur le bouton help
+                System.out.println("Help"); // DEBUG
+                game.fight(game.monster);
+            } else {
+                System.out.println("No help"); // DEBUG
+                game.fight(game.monster);
+            }
         } else if( cardOnTable instanceof Curse){
             System.out.println("Curse on table "); // DEBUG
             ((Curse) cardOnTable).curse(game.currentPlayer);
@@ -66,14 +74,59 @@ public class Game {
 
     }
 
+    public void cardSelect(){ // function of DEBUG (remplace interface of select card)
+        System.out.println("Card in your hand : "); // DEBUG
+        for(Card card : currentPlayer.getDeck().getCards()){
+            System.out.println(card.getName() + " " + card.getDescription()); // DEBUG
+        }
+        System.out.println("Select card : "); // DEBUG
+        Scanner sc = new Scanner(System.in);
+        int cardNumber = sc.nextInt();
+        Card cardPlayed = currentPlayer.getDeck().getCard(cardNumber);
 
+        if(cardPlayed instanceof Curse){
+            System.out.println("Select player : "); // DEBUG
+            int playerNumber = sc.nextInt();
+            Player playerSelected = playerList.get(playerNumber);
+            ((Curse) cardPlayed).play(playerSelected);
+        } else if (cardPlayed instanceof Monster) {
+            if(true && monster == null){ // Check si le joueur est celui dont c'est le tour
+                monster = (Monster) cardPlayed;
+                //Affichage des 3 bouttons de jeu
+            }
+        } else if (cardPlayed instanceof Equipement){
+            Equipement equipementPlayed = (Equipement) cardPlayed;
+            //Check if position is free
+            for(Equipement equipement : currentPlayer.getStuff().getEquipements()){
+                if(equipement.getPosition() == ((Equipement) cardPlayed).getPosition()){
+                    //Ask remove or not
+                    System.out.println("Remove equipement " + equipement.getName() + " ?"); // DEBUG
+                    Scanner sc2 = new Scanner(System.in);
+                    String answer = sc2.nextLine();
+                    if(answer == "yes"){
+                        currentPlayer.getStuff().removeEquipement(equipement);
+                        treasureDiscard.addCard(equipement);
+                        currentPlayer.getStuff().addEquipement(equipementPlayed);
+                    } else {
+                        return;
+                    }
+                }
+            }
+            
+        }else {
+            cardPlayed.play();
+        }
+        
+    }
 
     public Stack getDonjonStack() {
         return donjonStack;
     }
 
-    public void fight(Monster monster) { //button fight  
-        if(currentPlayer.getDamage() >= monster.getDamage()){
+    public void fight(Monster monster) { //button fight  // GARDER PARAMETRE UTILE ?
+        System.out.println("Fight between player (" + currentPlayer.getDamage() + ") and " + monster.getName() + " (" + monster.getDamage() + ")"); // DEBUG
+        if(currentPlayer.getDamage() > monster.getDamage()){
+
             System.out.println("Player win"); // DEBUG
         } else {
             System.out.println("Player lose"); // DEBUG
@@ -119,16 +172,19 @@ public class Game {
                 break;
 
             case "loseLevel":
-                System.out.println("Remove 1 level "); // DEBUG
-                player.addLevel(-1);
-                break;
+                if(player.getLevel() != 1){
+                    System.out.println("Remove 1 level "); // DEBUG
+                    player.addLevel(-1);
+                    break;
+                }
             default:
+                System.out.println("Error : incident not found ");
                 break;
         }
     }
 
     //Interface proposition d'aide (return treasure number + playerList)
-    public boolean Help(LinkedList<Player> playersList, int numberOfTreasure){ // true == helped
+    public boolean Help(int numberOfTreasure){ // true == helped
 
         
 

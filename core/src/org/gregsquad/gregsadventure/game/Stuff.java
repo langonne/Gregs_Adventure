@@ -5,31 +5,35 @@ import org.gregsquad.gregsadventure.card.Equipement;
 
 public class Stuff {
     protected int size;
-    protected LinkedList<Equipement> ObjectList;
+    protected LinkedList<Equipement> Equipements;
 
     public Stuff() {
         this.size = 0;
-        this.ObjectList = new LinkedList<Equipement>();
+        this.Equipements = new LinkedList<Equipement>();
     }
 
-    public Stuff(LinkedList<Equipement> ObjectList) {
-        this.size = ObjectList.size();
-        this.ObjectList = ObjectList;
+    public Stuff(LinkedList<Equipement> Equipements) {
+        this.size = Equipements.size();
+        this.Equipements = Equipements;
     }
 
-    public LinkedList<Equipement> getObjects() {
-        return ObjectList;
+    public LinkedList<Equipement> getEquipements() {
+        return Equipements;
     }
 
-    public void addObject(Equipement object) {
-        ObjectList.add(object);
+    public void addEquipement(Equipement equipement) {
+        Equipements.add(equipement);
     }
-    public void removeObject(int number) { // Can be adapt to a type of object
-        ObjectList.remove(number);
+    public void removeEquipement(int number) { // Can be adapt to a type of equipement
+        Equipements.remove(number);
+    }
+
+    public void removeEquipement(Equipement equipement) {
+        Equipements.remove(equipement);
     }
 
     public void clearStuff() {
-        ObjectList.clear();
+        Equipements.clear();
     }
 
     public int getSize() {

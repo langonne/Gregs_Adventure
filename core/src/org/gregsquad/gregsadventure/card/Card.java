@@ -2,6 +2,8 @@ package org.gregsquad.gregsadventure.card;
 
 import java.io.Serializable;
 
+import org.gregsquad.gregsadventure.game.Player;
+
 public abstract class Card implements Serializable{
     
     protected int id;
@@ -38,6 +40,10 @@ public abstract class Card implements Serializable{
         if (description != null && !description.isEmpty()) {
             this.description = description;
         }
+    }
+
+    public void play() {
+        System.out.println("Error card without type");
     }
     
 }

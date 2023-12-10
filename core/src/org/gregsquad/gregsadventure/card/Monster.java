@@ -14,8 +14,14 @@ public class Monster extends Card{
         this.typeIncident = typeIncident;
     }
 
+
+
     public String getTypeIncident(){
         return typeIncident;
+    }
+
+    public String getName(){
+        return name;
     }
 
     public int getTreasure(){
