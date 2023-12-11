@@ -4,6 +4,7 @@ import org.gregsquad.gregsadventure.card.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class Client {
     private String serverIp; // Server IP address
@@ -104,6 +105,14 @@ public class Client {
 
     // Generic method to send a request
     public <T extends Serializable> void sendRequest(Message<T> request) {
+        List<String> validTypes = Arrays.asList("REQUEST", "CHAT", "ANSWER");
+        List<String> validPurposes = Arrays.asList("DRAW_DONJON_CARD");
+
+        if (!validTypes.contains(request.getType()) || !validPurposes.contains(request.getPurpose())) {
+            System.err.println("Invalid type or purpose");
+            return;
+        }
+
         try {
             out.writeObject(request);
         } catch (IOException e) {
