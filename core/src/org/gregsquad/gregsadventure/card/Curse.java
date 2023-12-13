@@ -20,7 +20,7 @@ public class Curse extends Card{
         }
         if(type == "object"){
             Random rand = new Random();
-            player.getStuff().removeObject(rand.nextInt(player.getStuff().getSize()));
+            player.getStuff().removeEquipement(rand.nextInt(player.getStuff().getSize()));
         }
     }
 

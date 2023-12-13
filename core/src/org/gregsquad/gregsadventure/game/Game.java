@@ -88,7 +88,7 @@ public class Game {
             System.out.println("Select player : "); // DEBUG
             int playerNumber = sc.nextInt();
             Player playerSelected = playerList.get(playerNumber);
-            ((Curse) cardPlayed).play(playerSelected);
+            ((Curse) cardPlayed).play();
         } else if (cardPlayed instanceof Monster) {
             if(true && monster == null){ // Check si le joueur est celui dont c'est le tour
                 monster = (Monster) cardPlayed;
@@ -168,7 +168,7 @@ public class Game {
                 System.out.println("Remove random object "); // DEBUG
                 Random rand = new Random();
                 int randNumber = rand.nextInt(player.getStuff().getSize());
-                player.getStuff().removeObject(randNumber);
+                player.getStuff().removeEquipement(randNumber);
                 break;
 
             case "loseLevel":
