@@ -5,13 +5,13 @@ import java.util.Random;
 
 public class Stack extends CardList{
     
-    public void creation() { //TODO
-
+    public Stack() { //TODO
         for (int i = 0; i < 10; i++) { // CREATION TEMPORAIRE DE LA PILE
             cards.add(new Monster(i, "DebugCard " + i, "Monster " + i, 1, 1, 1, "death"));
             cards.add(new Curse(i, "DebugCard " + i, "Curse " + i));
         }
         System.out.println("Stack created"); // DEBUG
+
     }
 
 

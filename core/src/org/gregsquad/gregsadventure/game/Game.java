@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
 public class Game {
     static final int DICE_NEED_TO_RUN = 5;
-    private ArrayList<Player> playerList = new ArrayList<Player>();
+    private ArrayList<Player> playerList;
     private Stack donjonStack;
     private Stack treasureStack;
     private Discard donjonDiscard;
@@ -20,16 +20,19 @@ public class Game {
     private Monster monster;
     private Player playerHelp;
 
+    public Game() {
+        playerList = new ArrayList<Player>();
+        donjonStack = new Stack();
+        treasureStack = new Stack();
+        donjonDiscard = new Discard();
+        treasureDiscard = new Discard();
+
+    }
+
     //DEBUG
     public static void main(String[] args) { // Equivalent à l'interface de départ
         System.out.println("Start");
         Game game = new Game();
-        game.donjonStack = new Stack();
-        game.donjonStack.creation();
-        game.treasureStack = new Stack();
-        game.treasureStack.creation();
-        game.donjonDiscard = new Discard();
-        game.treasureDiscard = new Discard();
 
         for(int i = 0; i < 5; i++){ // DEBUG : interface de création de joueur
             game.playerList.add(new Player("Player" + i));
