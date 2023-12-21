@@ -57,7 +57,7 @@ public class Game {
             //Apparition des boutons
             //game.fight(game.monster); // Appuie sur le bouton fight
             //game.run(game.monster); // Appuie sur le bouton run
-            if(game.Help(1)){ // Appuie sur le bouton help
+            if(game.help(1)){ // Appuie sur le bouton help
                 System.out.println("Help"); // DEBUG
                 game.fight(game.monster);
             } else {
@@ -122,9 +122,7 @@ public class Game {
         
     }
 
-    public Stack getDonjonStack() {
-        return donjonStack;
-    }
+
 
     public void fight(Monster monster) { //button fight  // GARDER PARAMETRE UTILE ?
         System.out.println("Fight between player (" + currentPlayer.getDamage() + ") and " + monster.getName() + " (" + monster.getDamage() + ")"); // DEBUG
@@ -187,7 +185,7 @@ public class Game {
     }
 
     //Interface proposition d'aide (return treasure number + playerList)
-    public boolean Help(int numberOfTreasure){ // true == helped
+    public boolean help(int numberOfTreasure){ // true == helped
 
         
 
@@ -239,6 +237,10 @@ public class Game {
             }
 
         }
+    }
+
+    public Stack getDonjonStack() {
+        return donjonStack;
     }
 
 

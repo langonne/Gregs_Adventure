@@ -1,9 +1,9 @@
 package org.gregsquad.gregsadventure.card;
 
 public class Equipement extends Card{
-    protected int position; //Ex : 0 = head, 1 = body, 2 = legs, 3 = feet, 4 = left hand, 5 = right hand.
-    protected int bonus;
-    protected boolean equipementSize; // 0 = small, 1 = big. (small = 1 hand, big = 2 hands)
+    private int position; //Ex : 0 = head, 1 = body, 2 = legs, 3 = feet, 4 = left hand, 5 = right hand.
+    private int bonus;
+    private boolean equipementSize; // 0 = small, 1 = big. (small = 1 hand, big = 2 hands)
     
     public Equipement(String name, int id, String description, int position, int bonus, boolean equipementSize){
         super(id,name,description);

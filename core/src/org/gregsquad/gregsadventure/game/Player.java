@@ -1,5 +1,6 @@
 package org.gregsquad.gregsadventure.game;
 
+import java.util.Random;
 
 import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.Deck;
@@ -9,9 +10,8 @@ public class Player {
     private int level = 0;
     private int damage = 0;
 
-    private Card classe; // Mettre en place les classes comme héritage de Card
-    private Card race; // Pareil
-    private int runAway = 0;
+    private Card classe;
+    private Card race; 
     private Deck deck;
 
     private Stuff stuff;
@@ -39,7 +39,7 @@ public class Player {
     public void setDiceBuff(int diceBuff){
         this.diceBuff = diceBuff;
     }
-    public int setTreasuresForFight(){
+    public int getTreasuresForFight(){
         return this.treasuresForFight;
     }
 
@@ -67,9 +67,6 @@ public class Player {
         this.damage += damage;
     }
 
-    public int getRunAway(){ // PAS SUR de si c'est utile (et ne fonctionne pas)
-        return this.runAway;
-    } 
  
 
 
@@ -88,5 +85,4 @@ public class Player {
     public Stuff getStuff(){
         return this.stuff;
     }
-
 }

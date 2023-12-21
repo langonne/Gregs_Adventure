@@ -19,11 +19,6 @@ public class Monster extends Card{
     public String getTypeIncident(){
         return typeIncident;
     }
-
-    public String getName(){
-        return name;
-    }
-
     public int getTreasure(){
         return treasure;
     }
