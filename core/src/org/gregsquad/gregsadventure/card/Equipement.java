@@ -32,11 +32,6 @@ public class Equipement extends Card{
         this.bonus = bonus;
     }
 
-    public void removeEquipement(){
-        this.position = -1;
-        this.bonus = 0;
-        this.equipementSize = false;
-    }
 
     public void setEquipementSize(boolean equipementSize){
         this.equipementSize = equipementSize;

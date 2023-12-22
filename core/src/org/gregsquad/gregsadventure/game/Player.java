@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.CardList;
+import org.gregsquad.gregsadventure.card.Deck;
 
 public class Player {
     private String name;
@@ -12,7 +13,7 @@ public class Player {
 
     private Card classe;
     private Card race; 
-    private CardList deck;
+    private Deck deck;
 
     private Stuff stuff;
 
@@ -23,7 +24,7 @@ public class Player {
         this.name = name;
         this.level = 1;
         this.damage = 1;
-        this.deck = new CardList();
+        this.deck = new Deck();
         this.stuff = new Stuff();
         this.diceBuff = 0;
     }
@@ -78,7 +79,7 @@ public class Player {
         return this.race;
     }
 
-    public CardList getDeck(){
+    public Deck getDeck(){
         return this.deck;
     }
 
