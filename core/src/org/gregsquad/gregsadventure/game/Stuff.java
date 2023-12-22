@@ -28,6 +28,9 @@ public class Stuff {
     public void removeEquipement(Equipement equipement) {
         equipements.remove(equipement);
     }
+    public void removeEquipement(int index) { // Pour la perte d'un equipement random
+        equipements.remove(index);
+    }
 
     public void clearStuff() {
         equipements.clear();

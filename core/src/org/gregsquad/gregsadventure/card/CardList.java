@@ -26,4 +26,12 @@ public abstract class CardList {
     public Card getCard(int index) {
         return cards.get(index);
     }
+    public void addCard(Card card) {
+        cards.add(card);
+        size++;
+    }
+    public void removeCard(Card card) {
+        cards.remove(card);
+        size--;
+    }
 }
