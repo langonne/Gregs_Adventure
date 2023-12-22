@@ -3,6 +3,7 @@ package org.gregsquad.gregsadventure.game;
 import java.util.Random;
 
 import org.gregsquad.gregsadventure.card.Card;
+import org.gregsquad.gregsadventure.card.CardList;
 import org.gregsquad.gregsadventure.card.Deck;
 
 public class Player {
@@ -12,7 +13,7 @@ public class Player {
 
     private Card classe;
     private Card race; 
-    private Deck deck;
+    private CardList deck;
 
     private Stuff stuff;
 
