@@ -8,7 +8,7 @@ import java.util.UUID;
 public class Message<T> implements Serializable {
 
     private static final List<String> VALID_TYPES = Arrays.asList("CONNEXION", "CHAT", "ANSWER","GAME");
-    private static final List<String> VALID_PURPOSES = Arrays.asList("DRAW_DONJON_CARD");
+    private static final List<String> VALID_PURPOSES = Arrays.asList("","NAME","DRAW_DONJON_CARD");
 
     private UUID id;
     private String sender;
