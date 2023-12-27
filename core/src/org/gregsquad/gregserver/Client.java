@@ -128,9 +128,6 @@ public class Client {
         }
     }
     
-
-
-
     // REQUESTS SECTION
 
     // Generic method to send a request
