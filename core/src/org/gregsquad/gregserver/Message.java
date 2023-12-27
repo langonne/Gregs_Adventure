@@ -11,6 +11,7 @@ public class Message<T> implements Serializable {
     public Message(String sender, String type, String purpose,T content) {
         this.sender = sender;
         this.type = type;
+        this.purpose = purpose;
         this.content = content;
     }
 
