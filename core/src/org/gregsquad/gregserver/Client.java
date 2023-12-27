@@ -41,12 +41,22 @@ public class Client {
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
             Thread receiveThread = new Thread(new ReceiveThread());
+
+            //Debug
+            Thread debugSendThread = new Thread(new DebugSendThread());
+
             sendThread.start();
             receiveThread.start();
+
+            //Debug
+            debugSendThread.start();
 
             // Wait for the send and receive threads to finish
             sendThread.join();
             receiveThread.join();
+
+            //Debug
+            debugSendThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -101,32 +111,45 @@ public class Client {
         }
     }
 
+    // Debug thread for sending requests every 5 seconds
+    class DebugSendThread implements Runnable {
+        public void run() {
+            try {
+                while (true) {
+                    Thread.sleep(5000);
+                    System.out.println("[DebugSendThread] Sending request");
+                    drawDonjonCard();
+                    System.out.println("[DebugSendThread] Request sent");
+                }
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+    }
+    
+
+
+
     // REQUESTS SECTION
 
     // Generic method to send a request
     public <T extends Serializable> void sendRequest(Message<T> request) {
-        List<String> validTypes = Arrays.asList("REQUEST", "CHAT", "ANSWER");
-        List<String> validPurposes = Arrays.asList("DRAW_DONJON_CARD");
-
-        if (!validTypes.contains(request.getType()) || !validPurposes.contains(request.getPurpose())) {
-            System.err.println("Invalid type or purpose");
-            return;
-        }
-
         try {
+            System.out.println("[sendRequest] Sending request: " + request.getType() + " " + request.getPurpose());
             out.writeObject(request);
         } catch (IOException e) {
-            System.err.println("Error sending message: " + e.getMessage());
+            System.err.println("[sendRequest] Error sending message: " + e.getMessage());
         }
     }
     // Generic method to receive an answer
-    public <T extends Serializable> Message<T> receiveAnswer(String type, String purpose) {
+    public <T extends Serializable> Message<T> receiveAnswer(UUID id, String type, String purpose) {
         try {
                 Object inputObject;
                 while ((inputObject = in.readObject()) != null) {
                     if (inputObject instanceof Message) {
                         Message<T> inputMessage = (Message<T>) inputObject;
-                        if (inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
+                        if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
+                            System.out.println("[receiveAnswer] Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
                             return inputMessage;
                         }
                     }
@@ -140,9 +163,11 @@ public class Client {
     }
 
     public Card drawDonjonCard() {
-        Message<String> request = new Message<String>(name, "REQUEST", "DRAW_DONJON_CARD","");
+        Message<String> request = new Message<String>(name, "GAME", "DRAW_DONJON_CARD","");
+        System.out.println("[drawDonjonCard] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
         sendRequest(request);
-        Message<Card> answer = receiveAnswer("ANSWER", "DRAW_DONJON_CARD");
+        Message<Card> answer = receiveAnswer(request.getId(), "GAME", "DRAW_DONJON_CARD");
+        System.out.println("[drawDonjonCard] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer.getContent();
     }
 
