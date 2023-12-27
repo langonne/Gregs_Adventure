@@ -36,7 +36,8 @@ public class Client {
 
             // Send the client name to the server
             System.out.println("[INFO] Sending name: " + name);
-            out.writeObject(new Message<String>(name, "CONNEXION", "","has joined the chat"));
+            //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
+            sendInformation("CONNEXION", "NAME", "has joined the chat");
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
@@ -143,7 +144,8 @@ public class Client {
     }
     // Generic method to receive an answer
     public <T extends Serializable> Message<T> receiveAnswer(UUID id, String type, String purpose) {
-        try {
+        try {   
+                echoSocket.setSoTimeout(5000);
                 Object inputObject;
                 while ((inputObject = in.readObject()) != null) {
                     if (inputObject instanceof Message) {
@@ -162,12 +164,25 @@ public class Client {
         return null;
     }
 
-    public Card drawDonjonCard() {
-        Message<String> request = new Message<String>(name, "GAME", "DRAW_DONJON_CARD","");
-        System.out.println("[drawDonjonCard] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
+    // Generic method to send a request and receive an answer
+    public <T extends Serializable> Message<T> request(String type, String purpose) {
+        Message<String> request = new Message<String>(name, type, purpose,"");
+        System.out.println("[request] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
         sendRequest(request);
-        Message<Card> answer = receiveAnswer(request.getId(), "GAME", "DRAW_DONJON_CARD");
-        System.out.println("[drawDonjonCard] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
+        Message<T> answer = receiveAnswer(request.getId(), type, purpose);
+        System.out.println("[request] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
+        return answer;
+    } 
+    // Generic method to send information
+    public <T extends Serializable> void sendInformation(String type, String purpose, T content) {
+        Message<T> information = new Message<T>(name, type, purpose, content);
+        System.out.println("[sendInformation] Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
+        sendRequest(information);
+    }
+
+    // Specific methods to send requests and receive answers
+    public Card drawDonjonCard() {
+        Message<Card> answer = request("GAME", "DRAW_DONJON_CARD");
         return answer.getContent();
     }
 
