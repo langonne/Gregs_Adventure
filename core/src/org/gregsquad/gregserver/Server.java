@@ -2,8 +2,7 @@ package org.gregsquad.gregserver;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Server {
     private int port;
@@ -43,8 +42,8 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        Server server = new Server(27093);
-        server.run();
+        //Server server = new Server(27093);
+        //server.run();
     }
 }
 
@@ -75,6 +74,7 @@ class ClientHandler implements Runnable {
                 server.broadcast(firstMessage, this);
             }
 
+            // FAIRE LA DETECTION DES MESSAGES ICI
             Message<String> inputMessage;
             while ((inputMessage = (Message<String>) in.readObject()) != null) {
                 System.out.println(inputMessage.getSender() + " says: " + inputMessage.getContent());
