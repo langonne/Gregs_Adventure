@@ -26,7 +26,8 @@ public class GregsAdventure extends ApplicationAdapter {
 		
 		// Debugging code
 		new Thread(() -> {
-			Server server = new Server(27093);
+			Server server = Server.getInstance();
+			server.init(27093);
 			server.run();
 		}).start();
 		new Thread(() -> {
