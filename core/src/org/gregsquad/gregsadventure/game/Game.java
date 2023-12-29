@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
 
 public class Game {
+    private static Game instance;
     static final int DICE_NEED_TO_RUN = 5;
     private ArrayList<Player> playerList;
     private Stack donjonStack;
@@ -20,13 +21,19 @@ public class Game {
     private Monster monster;
     private Player playerHelp;
 
-    public Game() {
+    private Game() {
         playerList = new ArrayList<Player>();
         donjonStack = new Stack();
         treasureStack = new Stack();
         donjonDiscard = new Discard();
         treasureDiscard = new Discard();
+    }
 
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
     }
 
     //DEBUG
