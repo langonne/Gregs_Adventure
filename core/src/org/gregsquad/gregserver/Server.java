@@ -4,14 +4,31 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class Server {
-    private int port;
-    private List<ClientHandler> clients;
+import org.gregsquad.gregsadventure.game.*;
+import org.gregsquad.gregsadventure.card.*;
 
-    public Server(int port) {
-        this.port = port;
+public class Server {
+    private static Server instance;
+    private int port;
+    protected List<ClientHandler> clients;
+    protected Game game;
+
+    private Server() {
         this.clients = new ArrayList<>();
     }
+
+    public static Server getInstance() {
+        if (instance == null) {
+            instance = new Server();
+        }
+        return instance;
+    }
+
+    public void init(int port) {
+        this.port = port;
+        this.game = Game.getInstance();
+    }
+
 
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -59,6 +76,10 @@ class ClientHandler implements Runnable {
         this.server = server;
     }
 
+    public String getClientName() {
+        return clientName;
+    }
+
     public void run() {
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -66,6 +87,8 @@ class ClientHandler implements Runnable {
             System.out.println("[CLIENT] Waiting for client name...");
 
             // Read the first object from the stream and handle it based on its type
+
+            /* 
             Object firstObject = in.readObject();
             if (firstObject instanceof Message) {
                 Message<String> firstMessage = (Message<String>) firstObject;
@@ -74,11 +97,50 @@ class ClientHandler implements Runnable {
                 server.broadcast(firstMessage, this);
             }
 
+            // Create a new player linked to the client .
+            */
+
             // FAIRE LA DETECTION DES MESSAGES ICI
-            Message<String> inputMessage;
-            while ((inputMessage = (Message<String>) in.readObject()) != null) {
-                System.out.println(inputMessage.getSender() + " says: " + inputMessage.getContent());
-                server.broadcast(inputMessage, this);
+            Message<?> inputMessage;
+            while ((inputMessage = (Message<?>) in.readObject()) != null) {
+
+                if (inputMessage instanceof Message<String>) {
+                    Message<String> stringMessage = (Message<String>) inputMessage;
+                    // Traitez le message de type String ici
+
+                    //Si le message est de type CONNEXION et le propose est de type NAME
+                    if(stringMessage.getType().equals("CONNEXION")) {
+
+                        if(stringMessage.getPurpose().equals("NAME")) {
+                            
+                            String clientName = stringMessage.getSender();
+                            System.out.println("[CLIENT] " + clientName + " connected.");
+
+                            // Vérifier si le nom est déjà pris
+                            boolean nameTaken = Game.getInstance().getPlayerList().stream()
+                                .anyMatch(player -> player.getName().equals(clientName));
+
+                            if (nameTaken) {
+                                System.out.println("[SERVER] Name " + clientName + " is already taken.");
+                                sendToClient("CONNEXION", "NAME", "TAKEN");
+                            } else {
+                                System.out.println("[SERVER] Creating player " + this.getClientName());
+                                sendToClient("CONNEXION", "NAME", "OK");
+                                Player player = new Player(this.getClientName());
+                                Game.getInstance().addPlayer(player);
+                            }
+
+                        }
+                    }
+
+
+
+
+                } else if (inputMessage instanceof Message<Card>) {
+                    Message<Card> cardMessage = (Message<Card>) inputMessage;
+                    // Traitez le message de type Card ici
+                    
+                }
             }
 
             out.close();
@@ -89,11 +151,17 @@ class ClientHandler implements Runnable {
         }
     }
 
-    public void sendMessage(Message<String> message) {
+    // Send a Message to the client
+    public <T extends Serializable> void sendMessage(Message<T> message) {
         try {
             out.writeObject(message);
         } catch (IOException e) {
             System.err.println("Error sending message: " + e.getMessage());
         }
+    }
+
+    public <T extends Serializable> void sendToClient(String type, String purpose, T content) {
+        Message<T> message = new Message<T>("SERVER", type, purpose, content);
+        sendMessage(message);
     }
 }
