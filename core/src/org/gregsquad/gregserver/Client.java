@@ -37,7 +37,15 @@ public class Client {
             // Send the client name to the server
             System.out.println("[INFO] Sending name: " + name);
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
-            sendInformation("CONNEXION", "NAME", "has joined the chat");
+            //sendInformation("CONNEXION", "NAME", "has joined the chat");
+            
+            while(true){
+                Message<String> answer = request("CONNEXION", "NAME");
+                if(answer.getContent().equals("OK")){
+                    break;
+                }
+                System.out.println("[INFO] Name already taken. Please enter a new name.");
+            }
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
