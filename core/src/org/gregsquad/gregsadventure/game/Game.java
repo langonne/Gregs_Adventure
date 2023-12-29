@@ -243,5 +243,15 @@ public class Game {
         return donjonStack;
     }
 
+    public void addPlayer(Player player) {
+        playerList.add(player);
+    }
 
+    public void removePlayer(Player player) {
+        playerList.remove(player);
+    }
+
+    public ArrayList<Player> getPlayerList() {
+        return playerList;
+    }
 }
