@@ -15,8 +15,9 @@ public class Message<T> implements Serializable {
     private String type;
     private String purpose;
     private T content;
+    private Class<? extends Serializable> typeOfContent;
 
-    public Message(String sender, String type, String purpose,T content) {
+    public Message(String sender, String type, String purpose,T content, Class<? extends Serializable> typeOfContent) {
         if (!isValidType(type)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid type: " + type);
         }
@@ -28,9 +29,10 @@ public class Message<T> implements Serializable {
         this.type = type;
         this.purpose = purpose;
         this.content = content;
+        this.typeOfContent = typeOfContent;
     }
 
-    public Message(UUID id, String sender, String type, String purpose,T content) {
+    public Message(UUID id, String sender, String type, String purpose,T content, Class<? extends Serializable> typeOfContent) {
         if (!isValidType(type)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid type: " + type);
         }
@@ -42,6 +44,11 @@ public class Message<T> implements Serializable {
         this.type = type;
         this.purpose = purpose;
         this.content = content;
+        this.typeOfContent = typeOfContent;
+    }
+
+    public boolean isOfType(Class<?> typeOfContent) {
+        return this.typeOfContent.equals(typeOfContent);
     }
 
     public String getSender() {
