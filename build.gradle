@@ -39,10 +39,18 @@ allprojects {
     }
     
     tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        options.compilerArgs.addAll(["--enable-preview"])
         javaCompiler = javaToolchains.compilerFor {
             languageVersion = JavaLanguageVersion.of(17)
             }
         }
+
+    tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    jvmArgs '--enable-preview'
+    }
 }
 
 project(":core") {
