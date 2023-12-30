@@ -104,17 +104,17 @@ class ClientHandler implements Runnable {
             Message<?> inputMessage;
             while ((inputMessage = (Message<?>) in.readObject()) != null) {
 
-                if (inputMessage instanceof Message<String>) {
+                if (inputMessage.isOfType(String.class)) {
                     Message<String> stringMessage = (Message<String>) inputMessage;
                     // Traitez le message de type String ici
-
+                    System.out.println("[SERVER] Received message from " + stringMessage.getSender() + ": " + stringMessage.getContent());
                     //Si le message est de type CONNEXION et le propose est de type NAME
                     if(stringMessage.getType().equals("CONNEXION")) {
 
                         if(stringMessage.getPurpose().equals("NAME")) {
                             
                             String clientName = stringMessage.getSender();
-                            System.out.println("[CLIENT] " + clientName + " connected.");
+                            System.out.println("[SERVER] " + clientName + " connected.");
 
                             // Vérifier si le nom est déjà pris
                             boolean nameTaken = Game.getInstance().getPlayerList().stream()
@@ -124,8 +124,9 @@ class ClientHandler implements Runnable {
                                 System.out.println("[SERVER] Name " + clientName + " is already taken.");
                                 sendToClient("CONNEXION", "NAME", "TAKEN");
                             } else {
+                                this.clientName = clientName;
                                 System.out.println("[SERVER] Creating player " + this.getClientName());
-                                sendToClient("CONNEXION", "NAME", "OK");
+                                sendToClient(stringMessage.getId(), "CONNEXION", "NAME", "OK");
                                 Player player = new Player(this.getClientName());
                                 Game.getInstance().addPlayer(player);
                             }
@@ -133,10 +134,7 @@ class ClientHandler implements Runnable {
                         }
                     }
 
-
-
-
-                } else if (inputMessage instanceof Message<Card>) {
+                } else if (inputMessage.isOfType(Card.class)) {
                     Message<Card> cardMessage = (Message<Card>) inputMessage;
                     // Traitez le message de type Card ici
                     
@@ -161,7 +159,13 @@ class ClientHandler implements Runnable {
     }
 
     public <T extends Serializable> void sendToClient(String type, String purpose, T content) {
-        Message<T> message = new Message<T>("SERVER", type, purpose, content);
+        System.out.println("[SERVER] Sending message to " + this.getClientName() + ": " + type + " " + purpose);
+        Message<T> message = new Message<T>("SERVER", type, purpose, content, content.getClass());
+        sendMessage(message);
+    }
+    public <T extends Serializable> void sendToClient(UUID id, String type, String purpose, T content) {
+        System.out.println("[SERVER] Sending message to " + this.getClientName() + ": " + type + " " + purpose);
+        Message<T> message = new Message<T>(id, "SERVER", type, purpose, content, content.getClass());
         sendMessage(message);
     }
 }
