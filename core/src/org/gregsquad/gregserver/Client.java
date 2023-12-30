@@ -26,16 +26,16 @@ public class Client {
         try {
             // Connect to the server
             echoSocket = new Socket(serverIp, serverPort);
-            System.out.println("[INFO] Connected to " + serverIp + ":" + serverPort);
+            System.out.println("[CLIENT] Connected to " + serverIp + ":" + serverPort);
 
             // Create input and output streams
-            System.out.println("[INFO] Creating streams");
+            System.out.println("[CLIENT] Creating streams");
             out = new ObjectOutputStream(echoSocket.getOutputStream());
             in = new ObjectInputStream(echoSocket.getInputStream());
-            System.out.println("[INFO] Streams created");
+            System.out.println("[CLIENT] Streams created");
 
             // Send the client name to the server
-            System.out.println("[INFO] Sending name: " + name);
+            System.out.println("[CLIENT] Sending name: " + name);
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
             //sendInformation("CONNEXION", "NAME", "has joined the chat");
             
@@ -44,8 +44,13 @@ public class Client {
                 if(answer.getContent().equals("OK")){
                     break;
                 }
-                System.out.println("[INFO] Name already taken. Please enter a new name.");
+                System.out.println("[CLIENT] Name already taken. Please enter a new name.");
+                
             }
+            
+            System.out.println("");
+            System.out.println("[CLIENT] " + name + " is correctly connected");
+            System.out.println("");
 
             // Create threads for sending and receiving messages
             Thread sendThread = new Thread(new SendThread());
@@ -58,14 +63,14 @@ public class Client {
             receiveThread.start();
 
             //Debug
-            debugSendThread.start();
+            //debugSendThread.start();
 
             // Wait for the send and receive threads to finish
             sendThread.join();
             receiveThread.join();
 
             //Debug
-            debugSendThread.join();
+            //debugSendThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -88,7 +93,7 @@ public class Client {
                 while ((userInput = stdIn.readLine()) != null) {
                     if (!userInput.isEmpty()) {
                         System.out.println("Sending message: " + userInput);
-                        out.writeObject(new Message<String>(name, "CHAT", "",userInput)); // Send the message to the server
+                        out.writeObject(new Message<String>(name, "CHAT", "",userInput,String.class)); // Send the message to the server
                     } else {
                         System.out.println("Error: message cannot be empty. Please enter a new message.");
                     }
@@ -156,7 +161,7 @@ public class Client {
                     if (inputObject instanceof Message) {
                         Message<T> inputMessage = (Message<T>) inputObject;
                         if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
-                            System.out.println("[receiveAnswer] Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
+                            System.out.println("[CLIENT] Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
                             return inputMessage;
                         }
                     }
@@ -166,12 +171,13 @@ public class Client {
         } catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException: " + e.getMessage());
         }
+        System.out.println("[receiveAnswer] Error: no answer received");
         return null;
     }
 
     // Generic method to send a request and receive an answer
     public <T extends Serializable> Message<T> request(String type, String purpose) {
-        Message<String> request = new Message<String>(name, type, purpose,"");
+        Message<String> request = new Message<String>(name, type, purpose,"",String.class);
         System.out.println("[request] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
         sendRequest(request);
         Message<T> answer = receiveAnswer(request.getId(), type, purpose);
@@ -180,7 +186,7 @@ public class Client {
     } 
     // Generic method to send information
     public <T extends Serializable> void sendInformation(String type, String purpose, T content) {
-        Message<T> information = new Message<T>(name, type, purpose, content);
+        Message<T> information = new Message<T>(name, type, purpose, content, content.getClass());
         System.out.println("[sendInformation] Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
         sendRequest(information);
     }
