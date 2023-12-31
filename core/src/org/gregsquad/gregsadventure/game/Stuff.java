@@ -2,8 +2,9 @@ package org.gregsquad.gregsadventure.game;
 
 import java.util.LinkedList;
 import org.gregsquad.gregsadventure.card.Equipement;
+import java.io.Serializable;
 
-public class Stuff {
+public class Stuff implements Serializable {
     protected int size;
     protected LinkedList<Equipement> equipements;
 
