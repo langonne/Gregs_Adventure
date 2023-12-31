@@ -1,6 +1,7 @@
 package org.gregsquad.gregserver;
 
 import org.gregsquad.gregsadventure.card.*;
+import org.gregsquad.gregsadventure.game.*;
 
 import java.io.*;
 import java.net.*;
@@ -63,14 +64,14 @@ public class Client {
             receiveThread.start();
 
             //Debug
-            //debugSendThread.start();
+            debugSendThread.start();
 
             // Wait for the send and receive threads to finish
             sendThread.join();
             receiveThread.join();
 
             //Debug
-            //debugSendThread.join();
+            debugSendThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -132,7 +133,7 @@ public class Client {
                 while (true) {
                     Thread.sleep(5000);
                     System.out.println("[DebugSendThread] Sending request");
-                    drawDonjonCard();
+                    getPlayerList();
                     System.out.println("[DebugSendThread] Request sent");
                 }
             } catch (InterruptedException e) {
@@ -146,10 +147,10 @@ public class Client {
     // Generic method to send a request
     public <T extends Serializable> void sendRequest(Message<T> request) {
         try {
-            System.out.println("[sendRequest] Sending request: " + request.getType() + " " + request.getPurpose());
+            System.out.println("[CLIENT] Sending request: " + request.getType() + " " + request.getPurpose());
             out.writeObject(request);
         } catch (IOException e) {
-            System.err.println("[sendRequest] Error sending message: " + e.getMessage());
+            System.err.println("[CLIENT] Error sending message: " + e.getMessage());
         }
     }
     // Generic method to receive an answer
@@ -171,29 +172,40 @@ public class Client {
         } catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException: " + e.getMessage());
         }
-        System.out.println("[receiveAnswer] Error: no answer received");
+        System.out.println("[CLIENT] Error: no answer received");
         return null;
     }
 
     // Generic method to send a request and receive an answer
     public <T extends Serializable> Message<T> request(String type, String purpose) {
         Message<String> request = new Message<String>(name, type, purpose,"",String.class);
-        System.out.println("[request] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
+        System.out.println("[CLIENT] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
         sendRequest(request);
         Message<T> answer = receiveAnswer(request.getId(), type, purpose);
-        System.out.println("[request] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
+        System.out.println("[CLIENT] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer;
     } 
     // Generic method to send information
     public <T extends Serializable> void sendInformation(String type, String purpose, T content) {
         Message<T> information = new Message<T>(name, type, purpose, content, content.getClass());
-        System.out.println("[sendInformation] Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
+        System.out.println("[CLIENT] Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
         sendRequest(information);
     }
 
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
         Message<Card> answer = request("GAME", "DRAW_DONJON_CARD");
+        System.out.println("[CLIENT] " + name + " drew a donjon card: " + answer.getContent().getName());
+        return answer.getContent();
+    }
+
+    public ArrayList<Player> getPlayerList() {
+        Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
+        System.out.println("[CLIENT] " + name + " got the player list");
+        //print the player list
+        for(Player player : answer.getContent()){
+            System.out.println(player.getName());
+        }
         return answer.getContent();
     }
 
