@@ -30,6 +30,12 @@ public class GregsAdventure extends ApplicationAdapter {
 			server.init(27093);
 			server.run();
 		}).start();
+		//Wait for server to start
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		new Thread(() -> {
 			Client client = new Client("localhost", 27093, "Greg");
 			client.run();
