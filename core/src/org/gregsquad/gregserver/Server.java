@@ -27,6 +27,11 @@ public class Server {
     public void init(int port) {
         this.port = port;
         this.game = Game.getInstance();
+        // Print all the cards in the donjon stack
+        System.out.println("[SERVER] Donjon stack:");
+        for (Card card : Game.getInstance().getDonjonStack().getCards()) {
+            System.out.println("[SERVER] " + card.getId() + " " + card.getName());
+        }
     }
 
 
@@ -132,6 +137,23 @@ class ClientHandler implements Runnable {
                             }
 
                         }
+                    }
+
+                    if(stringMessage.getType().equals("GAME")) {
+                        
+                        if(stringMessage.getPurpose().equals("DRAW_DONJON_CARD")) {
+
+                            System.out.println("[SERVER] " + this.getClientName() + " is drawing a donjon card.");
+                            Card card = Game.getInstance().getDonjonStack().draw();
+                            sendToClient(stringMessage.getId(), "GAME", "DRAW_DONJON_CARD", card);
+                        }
+
+                        if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
+    
+                                System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
+                                ArrayList<Player> playerList = Game.getInstance().getPlayerList();
+                                sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
+                            }
                     }
 
                 } else if (inputMessage.isOfType(Card.class)) {
