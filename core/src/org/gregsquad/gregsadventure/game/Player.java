@@ -1,12 +1,13 @@
 package org.gregsquad.gregsadventure.game;
 
 import java.util.Random;
+import java.io.Serializable;
 
 import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.CardList;
 import org.gregsquad.gregsadventure.card.Deck;
 
-public class Player {
+public class Player implements Serializable{
     private String name;
     private int level = 0;
     private int damage = 0;
