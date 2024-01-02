@@ -3,13 +3,12 @@ package org.gregsquad.gregsadventure.card;
 import java.util.Collections;
 import java.util.Random;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
+
 public class Stack extends CardList{
     
-    public Stack() { //TODO
-        /*for (int i = 0; i < 10; i++) { // CREATION TEMPORAIRE DE LA PILE
-            cards.add(new Monster(i, "DebugCard " + i, "Monster " + i, 1, 1, 1, "death"));
-            cards.add(new Curse(i, "DebugCard " + i, "Curse " + i));
-        }*/
+    public Stack() {
+        System.out.println("Creating stack"); // DEBUG
         boolean finish = true;
         int i = 1;
         int id = 1;
@@ -25,14 +24,15 @@ public class Stack extends CardList{
                             
                             break;
                         case "Monster":
-                            cards.add(new Monster(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_level"), ConfigLoader.getInt(key + "_treasure"), ConfigLoader.getInt(key + "_damage"), ConfigLoader.getString(key + "_type")));
+                            cards.add(new Monster(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_level"), ConfigLoader.getInt(key + "_damage"), ConfigLoader.getInt(key + "_treasure"), ConfigLoader.getString(key + "_incident")));
                             
                             break;
-                        case "Object":
-                            
+                        case "Equipement":
+                            cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize")));
                             break;
                     
                         default:
+                            System.out.println("Error in config file");
                             break;
                     }
                     id++;
@@ -43,9 +43,15 @@ public class Stack extends CardList{
 
         shuffle(); // Shuffle the draw
         System.out.println("Stack created"); // DEBUG
+    }
 
-
-
+    public static void main(String[] args) { //DEBUG
+        Stack stack = new Stack();
+        System.out.println("D1");
+        for (int i = 0; i < 10; i++) {
+            System.out.println(stack.draw().getName());
+        }
+        System.out.println("D5");
     }
 
 

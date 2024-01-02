@@ -6,7 +6,7 @@ public class App {
     
     public static void main(String[] args) {
         // Create an instance of Equipement
-        Equipement equipement = new Equipement("Equipement1", 1, "This is a test equipement", 0, 10, true);
+        Equipement equipement = new Equipement(1, "Equipement1", "This is a test equipement", 0, 10, true);
         // Print out the properties of the created equipement
         System.out.println("Name: " + equipement.getName());
         System.out.println("ID: " + equipement.getId());

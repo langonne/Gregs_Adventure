@@ -23,6 +23,21 @@ public class ConfigLoader {
         }
     }
 
+    
+    /**
+     * Retrieves a boolean value from the cards.properties file.
+     * If the key is not found or the value cannot be parsed as a boolean, returns false.
+     *
+     * @param key the key to retrieve the value
+     * @return the boolean value associated with the key, or false if not found or unable to parse
+     */
+    public static boolean getBoolean(String key) {
+        try {
+            return Boolean.parseBoolean(cardsList.getString(key));
+        } catch (Exception e) {
+            return false;
+        }
+    }
     /**
      * Retrieves a string value from the cards.properties file.
      * If the key is not found, returns null.

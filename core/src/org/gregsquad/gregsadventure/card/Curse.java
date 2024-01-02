@@ -20,7 +20,7 @@ public class Curse extends Card{
         if(type == "damage"){
             player.addDamage(value);
         }
-        if(type == "object"){
+        if(type == "equipement"){
             Random rand = new Random();
             player.getStuff().removeEquipement(rand.nextInt(player.getStuff().getSize()));
         }

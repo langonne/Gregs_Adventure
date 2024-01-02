@@ -5,7 +5,7 @@ public class Equipement extends Card{
     private int bonus;
     private boolean equipementSize; // 0 = small, 1 = big. (small = 1 hand, big = 2 hands)
     
-    public Equipement(String name, int id, String description, int position, int bonus, boolean equipementSize){
+    public Equipement(int id, String name, String description, int position, int bonus, boolean equipementSize){
         super(id,name,description);
         this.position = position;
         this.bonus = bonus;
