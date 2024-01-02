@@ -6,13 +6,48 @@ import java.util.Random;
 public class Stack extends CardList{
     
     public Stack() { //TODO
-        for (int i = 0; i < 10; i++) { // CREATION TEMPORAIRE DE LA PILE
-            cards.add(new Monster(i, "DebugCardMonster " + i, "Monster " + i, 1, 1, 1, "death"));
-            cards.add(new Curse(i, "DebugCardCurse " + i, "Curse " + i));
+        /*for (int i = 0; i < 10; i++) { // CREATION TEMPORAIRE DE LA PILE
+            cards.add(new Monster(i, "DebugCard " + i, "Monster " + i, 1, 1, 1, "death"));
+            cards.add(new Curse(i, "DebugCard " + i, "Curse " + i));
+        }*/
+        boolean finish = true;
+        int i = 1;
+        int id = 1;
+        while(finish == true){ 
+            
+            cards.add(new Monster(i, "DebugCard " + i, "Monster " + i, 1, 1, 1, "death"));
+            String key = Integer.toString(i);
+            for (int j = 0; j < ConfigLoader.getInt(key + "_number"); j++) {
+                    // Use key and value to create a card
+                    switch (ConfigLoader.getString(key)) {
+                        case "Curse":
+                            cards.add(new Curse(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getString(key + "_type"), ConfigLoader.getInt(key + "_value")));
+                            
+                            break;
+                        case "Monster":
+                            cards.add(new Monster(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_level"), ConfigLoader.getInt(key + "_treasure"), ConfigLoader.getInt(key + "_damage"), ConfigLoader.getString(key + "_type")));
+                            
+                            break;
+                        case "Object":
+                            
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                    id++;
+            }
+            i++;
         }
+
+
+        shuffle(); // Shuffle the draw
         System.out.println("Stack created"); // DEBUG
 
+
+
     }
+
 
 
     public Card draw() {

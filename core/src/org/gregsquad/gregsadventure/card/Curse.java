@@ -7,8 +7,10 @@ public class Curse extends Card{
     private String type;
     private int value;
 
-    public Curse(int id, String name, String description){
+    public Curse(int id, String name, String description, String type, int value){
         super(id, name, description);
+        this.type = type;
+        this.value = value;
     }
 
     public void curse(Player player){
