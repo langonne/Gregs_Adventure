@@ -34,7 +34,7 @@ public class Server {
         }
     }
 
-
+    // Accept new clients and create a thread for each one
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("[INFO] Server is listening on port " + port);
@@ -105,15 +105,16 @@ class ClientHandler implements Runnable {
             // Create a new player linked to the client .
             */
 
-            // FAIRE LA DETECTION DES MESSAGES ICI
+            // Here is the main loop of the client handler
+            // It makes actions based on the messages received from the client
             Message<?> inputMessage;
             while ((inputMessage = (Message<?>) in.readObject()) != null) {
 
                 if (inputMessage.isOfType(String.class)) {
                     Message<String> stringMessage = (Message<String>) inputMessage;
-                    // Traitez le message de type String ici
+                    // Manage the message of type String here
                     System.out.println("[SERVER] Received message from " + stringMessage.getSender() + ": " + stringMessage.getContent());
-                    //Si le message est de type CONNEXION et le propose est de type NAME
+                    // Check if the message is a connexion message
                     if(stringMessage.getType().equals("CONNEXION")) {
 
                         if(stringMessage.getPurpose().equals("NAME")) {
@@ -121,7 +122,7 @@ class ClientHandler implements Runnable {
                             String clientName = stringMessage.getSender();
                             System.out.println("[SERVER] " + clientName + " connected.");
 
-                            // Vérifier si le nom est déjà pris
+                            // Check if the name is already taken
                             boolean nameTaken = Game.getInstance().getPlayerList().stream()
                                 .anyMatch(player -> player.getName().equals(clientName));
 
@@ -180,11 +181,14 @@ class ClientHandler implements Runnable {
         }
     }
 
+    // Send a Message to the client
     public <T extends Serializable> void sendToClient(String type, String purpose, T content) {
         System.out.println("[SERVER] Sending message to " + this.getClientName() + ": " + type + " " + purpose);
         Message<T> message = new Message<T>("SERVER", type, purpose, content, content.getClass());
         sendMessage(message);
     }
+
+    // Send a Message to the client with custom id
     public <T extends Serializable> void sendToClient(UUID id, String type, String purpose, T content) {
         System.out.println("[SERVER] Sending message to " + this.getClientName() + ": " + type + " " + purpose);
         Message<T> message = new Message<T>(id, "SERVER", type, purpose, content, content.getClass());
