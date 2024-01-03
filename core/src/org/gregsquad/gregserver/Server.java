@@ -149,6 +149,13 @@ class ClientHandler implements Runnable {
                             sendToClient(stringMessage.getId(), "GAME", "DRAW_DONJON_CARD", card);
                         }
 
+                        if(stringMessage.getPurpose().equals("DRAW_TREASURE_CARD")) {
+
+                            System.out.println("[SERVER] " + this.getClientName() + " is drawing a treasure card.");
+                            Card card = Game.getInstance().getTreasureStack().draw();
+                            sendToClient(stringMessage.getId(), "GAME", "DRAW_TREASURE_CARD", card);
+                        }
+
                         if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
     
                                 System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
