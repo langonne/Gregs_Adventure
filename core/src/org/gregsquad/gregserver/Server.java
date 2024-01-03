@@ -156,6 +156,27 @@ class ClientHandler implements Runnable {
                             sendToClient(stringMessage.getId(), "GAME", "DRAW_TREASURE_CARD", card);
                         }
 
+                        if(stringMessage.getPurpose().equals("GET_DONJON_DISCARD")) {
+
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the donjon discard.");
+                            ArrayList<Card> cards = Game.getInstance().getDonjonDiscard().getCards();
+                            sendToClient(stringMessage.getId(), "GAME", "GET_DONJON_DISCARD", cards);
+                        }
+
+                        if(stringMessage.getPurpose().equals("GET_TREASURE_DISCARD")) {
+
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the treasure discard.");
+                            ArrayList<Card> cards = Game.getInstance().getTreasureDiscard().getCards();
+                            sendToClient(stringMessage.getId(), "GAME", "GET_TREASURE_DISCARD", cards);
+                        }
+
+                        if(stringMessage.getPurpose().equals("GET_CURRENT_PLAYER")) {
+
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the current player.");
+                            Player player = Game.getInstance().getCurrentPlayer();
+                            sendToClient(stringMessage.getId(), "GAME", "GET_CURRENT_PLAYER", player);
+                        }
+
                         if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
     
                                 System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
