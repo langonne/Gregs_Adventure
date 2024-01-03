@@ -250,6 +250,26 @@ public class Game {
         return donjonStack;
     }
 
+    public Stack getTreasureStack() {
+        return treasureStack;
+    }
+
+    public Discard getDonjonDiscard() {
+        return donjonDiscard;
+    }
+
+    public Discard getTreasureDiscard() {
+        return treasureDiscard;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public Monster getMonster() {
+        return monster;
+    }
+
     public void addPlayer(Player player) {
         playerList.add(player);
     }
