@@ -133,7 +133,7 @@ public class Client {
                 while (true) {
                     Thread.sleep(5000);
                     System.out.println("[DebugSendThread] Sending request");
-                    getPlayerList();
+                    drawTreasureCard();
                     System.out.println("[DebugSendThread] Request sent");
                 }
             } catch (InterruptedException e) {
@@ -202,6 +202,24 @@ public class Client {
     public Card drawTreasureCard() {
         Message<Card> answer = request("GAME", "DRAW_TREASURE_CARD");
         System.out.println("[CLIENT] " + name + " drew a treasure card: " + answer.getContent().getName());
+        return answer.getContent();
+    }
+
+    public Card getDonjonDiscard() {
+        Message<Card> answer = request("GAME", "GET_DONJON_DISCARD");
+        System.out.println("[CLIENT] " + name + " got the donjon discard");
+        return answer.getContent();
+    }
+
+    public Card getTreasureDiscard() {
+        Message<Card> answer = request("GAME", "GET_TREASURE_DISCARD");
+        System.out.println("[CLIENT] " + name + " got the treasure discard");
+        return answer.getContent();
+    }
+
+    public Player getCurrentPlayer() {
+        Message<Player> answer = request("GAME", "GET_CURRENT_PLAYER");
+        System.out.println("[CLIENT] " + name + " got the current player");
         return answer.getContent();
     }
 
