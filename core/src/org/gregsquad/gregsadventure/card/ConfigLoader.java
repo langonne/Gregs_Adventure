@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class ConfigLoader {
 
-    public static final ResourceBundle cardsList = ResourceBundle.getBundle("../resources/config"); // Load cards.properties
+    public static final ResourceBundle cardsList = ResourceBundle.getBundle("org/gregsquad/gregsadventure/card/resources/config"); // Load cards.properties
 
     /**
      * Retrieves an integer value from the cards.properties file.

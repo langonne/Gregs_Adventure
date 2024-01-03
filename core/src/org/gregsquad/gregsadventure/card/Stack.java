@@ -9,10 +9,10 @@ public class Stack extends CardList{
     
     public Stack() {
         System.out.println("Creating stack"); // DEBUG
-        boolean finish = true;
+        //boolean finish = true;
         int i = 1;
         int id = 1;
-        while(finish == true){ 
+        while(i != 15){ 
             
             cards.add(new Monster(i, "DebugCard " + i, "Monster " + i, 1, 1, 1, "death"));
             String key = Integer.toString(i);
