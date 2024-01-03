@@ -70,7 +70,7 @@ public class TitleScreen extends Screen {
 
     @Override
     public void dispose() {
-        assets.unload("gdx-skins/default/skin/uiskin.json");
+        assets.unload("skin/uiskin.json");
         stage.dispose();
     }
 }
