@@ -205,14 +205,14 @@ public class Client {
         return answer.getContent();
     }
 
-    public Card getDonjonDiscard() {
-        Message<Card> answer = request("GAME", "GET_DONJON_DISCARD");
+    public LinkedList<Card> getDonjonDiscard() {
+        Message<LinkedList<Card>> answer = request("GAME", "GET_DONJON_DISCARD");
         System.out.println("[CLIENT] " + name + " got the donjon discard");
         return answer.getContent();
     }
 
-    public Card getTreasureDiscard() {
-        Message<Card> answer = request("GAME", "GET_TREASURE_DISCARD");
+    public LinkedList<Card> getTreasureDiscard() {
+        Message<LinkedList<Card>> answer = request("GAME", "GET_TREASURE_DISCARD");
         System.out.println("[CLIENT] " + name + " got the treasure discard");
         return answer.getContent();
     }
