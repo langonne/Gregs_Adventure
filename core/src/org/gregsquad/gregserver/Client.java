@@ -27,16 +27,16 @@ public class Client {
         try {
             // Connect to the server
             echoSocket = new Socket(serverIp, serverPort);
-            System.out.println("[CLIENT] Connected to " + serverIp + ":" + serverPort);
+            System.out.println("[+"name+"]" "Connected to " + serverIp + ":" + serverPort);
 
             // Create input and output streams
-            System.out.println("[CLIENT] Creating streams");
+            System.out.println("[+"name+"]" "Creating streams");
             out = new ObjectOutputStream(echoSocket.getOutputStream());
             in = new ObjectInputStream(echoSocket.getInputStream());
-            System.out.println("[CLIENT] Streams created");
+            System.out.println("[+"name+"]" "Streams created");
 
             // Send the client name to the server
-            System.out.println("[CLIENT] Sending name: " + name);
+            System.out.println("[+"name+"]" "Sending name: " + name);
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
             //sendInformation("CONNEXION", "NAME", "has joined the chat");
             
@@ -45,12 +45,12 @@ public class Client {
                 if(answer.getContent().equals("OK")){
                     break;
                 }
-                System.out.println("[CLIENT] Name already taken. Please enter a new name.");
+                System.out.println("[+"name+"]" "Name already taken. Please enter a new name.");
                 
             }
             
             System.out.println("");
-            System.out.println("[CLIENT] " + name + " is correctly connected");
+            System.out.println("[+"name+"]" + name + " is correctly connected");
             System.out.println("");
 
             // Create threads for sending and receiving messages
@@ -147,10 +147,10 @@ public class Client {
     // Generic method to send a request
     public <T extends Serializable> void sendRequest(Message<T> request) {
         try {
-            System.out.println("[CLIENT] Sending request: " + request.getType() + " " + request.getPurpose());
+            System.out.println("[+"name+"]" "Sending request: " + request.getType() + " " + request.getPurpose());
             out.writeObject(request);
         } catch (IOException e) {
-            System.err.println("[CLIENT] Error sending message: " + e.getMessage());
+            System.err.println("[+"name+"]" "Error sending message: " + e.getMessage());
         }
     }
     // Generic method to receive an answer
@@ -162,7 +162,7 @@ public class Client {
                     if (inputObject instanceof Message) {
                         Message<T> inputMessage = (Message<T>) inputObject;
                         if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
-                            System.out.println("[CLIENT] Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
+                            System.out.println("[+"name+"]" "Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
                             return inputMessage;
                         }
                     }
@@ -172,60 +172,60 @@ public class Client {
         } catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException: " + e.getMessage());
         }
-        System.out.println("[CLIENT] Error: no answer received");
+        System.out.println("[+"name+"]" "Error: no answer received");
         return null;
     }
 
     // Generic method to send a request and receive an answer
     public <T extends Serializable> Message<T> request(String type, String purpose) {
         Message<String> request = new Message<String>(name, type, purpose,"",String.class);
-        System.out.println("[CLIENT] Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
+        System.out.println("[+"name+"]" "Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
         sendRequest(request);
         Message<T> answer = receiveAnswer(request.getId(), type, purpose);
-        System.out.println("[CLIENT] Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
+        System.out.println("[+"name+"]" "Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer;
     } 
     // Generic method to send information
     public <T extends Serializable> void sendInformation(String type, String purpose, T content) {
         Message<T> information = new Message<T>(name, type, purpose, content, content.getClass());
-        System.out.println("[CLIENT] Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
+        System.out.println("[+"name+"]" "Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
         sendRequest(information);
     }
 
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
         Message<Card> answer = request("GAME", "DRAW_DONJON_CARD");
-        System.out.println("[CLIENT] " + name + " drew a donjon card: " + answer.getContent().getName());
+        System.out.println("[+"name+"] " + name + " drew a donjon card: " + answer.getContent().getName());
         return answer.getContent();
     }
 
     public Card drawTreasureCard() {
         Message<Card> answer = request("GAME", "DRAW_TREASURE_CARD");
-        System.out.println("[CLIENT] " + name + " drew a treasure card: " + answer.getContent().getName());
+        System.out.println("[+"name+"] " + name + " drew a treasure card: " + answer.getContent().getName());
         return answer.getContent();
     }
 
     public LinkedList<Card> getDonjonDiscard() {
         Message<LinkedList<Card>> answer = request("GAME", "GET_DONJON_DISCARD");
-        System.out.println("[CLIENT] " + name + " got the donjon discard");
+        System.out.println("[+"name+"] " + name + " got the donjon discard");
         return answer.getContent();
     }
 
     public LinkedList<Card> getTreasureDiscard() {
         Message<LinkedList<Card>> answer = request("GAME", "GET_TREASURE_DISCARD");
-        System.out.println("[CLIENT] " + name + " got the treasure discard");
+        System.out.println("[+"name+"] " + name + " got the treasure discard");
         return answer.getContent();
     }
 
     public Player getCurrentPlayer() {
         Message<Player> answer = request("GAME", "GET_CURRENT_PLAYER");
-        System.out.println("[CLIENT] " + name + " got the current player");
+        System.out.println("[+"name+"] " + name + " got the current player");
         return answer.getContent();
     }
 
     public ArrayList<Player> getPlayerList() {
         Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
-        System.out.println("[CLIENT] " + name + " got the player list");
+        System.out.println("[+"name+"] " + name + " got the player list");
         //print the player list
         for(Player player : answer.getContent()){
             System.out.println(player.getName());
