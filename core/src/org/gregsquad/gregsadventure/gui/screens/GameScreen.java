@@ -56,7 +56,7 @@ public class GameScreen extends Screen {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
-        skin = assets.get("gdx-skins/gdx-holo/skin/uiskin.json", Skin.class);
+        skin = assets.get("skin/uiskin.json", Skin.class);
 
 
         Table table = new Table(); // Create a table that fills the screen. Everything else will go inside this table.
@@ -73,17 +73,17 @@ public class GameScreen extends Screen {
         TextButton startButton = new TextButton("Start", skin);
         
 
-        Image img = new Image(new Texture(Gdx.files.internal("gechter.png")));
+        /*Image img = new Image(new Texture(Gdx.files.internal("gechter.png")));
         img.setPosition(400, 100);
         img.addListener(new TextTooltip("c Gechter mais en mieux", skin));
-        img.setSize(500, 500);
+        img.setSize(500, 500);*/
         
 
         TextTooltip txt = new TextTooltip("G une enorme bite", skin);
         startButton.addListener(txt);
         
         table.add(startButton).fillX().uniformX();
-        stage.addActor(img);
+        //stage.addActor(img);
     }
 
     @Override

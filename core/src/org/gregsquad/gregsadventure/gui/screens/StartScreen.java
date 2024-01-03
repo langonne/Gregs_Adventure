@@ -38,7 +38,7 @@ public class StartScreen extends Screen{
         table.setFillParent(true);
         stage.addActor(table);
 
-        skin = assets.get("gdx-skins/gdx-holo/skin/uiskin.json", Skin.class);
+        skin = assets.get("skin/uiskin.json", Skin.class);
         table.setSkin(skin);
 
         serverButton = new TextButton("Créer une partie", skin);

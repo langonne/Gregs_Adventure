@@ -25,7 +25,7 @@ public class TitleScreen extends Screen {
 
     @Override
     public void show() {
-        this.assets.load("gdx-skins/gdx-holo/skin/uiskin.json", Skin.class);
+        this.assets.load("skin/uiskin.json", Skin.class);
 		this.assets.finishLoading(); // Blocks until all resources are loaded into memory
 
         table = new Table(); // Create a table that fills the screen. Everything else will go inside this table.
@@ -33,7 +33,7 @@ public class TitleScreen extends Screen {
         stage.addActor(table); // Add the table to the stage.
 
 
-        skin = assets.get("gdx-skins/gdx-holo/skin/uiskin.json", Skin.class);
+        skin = assets.get("skin/uiskin.json", Skin.class);
 
         startButton = new TextButton("Jouer", skin);
         optionsButton = new TextButton("Options", skin);
