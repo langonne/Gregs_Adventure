@@ -199,6 +199,12 @@ public class Client {
         return answer.getContent();
     }
 
+    public Card drawTreasureCard() {
+        Message<Card> answer = request("GAME", "DRAW_TREASURE_CARD");
+        System.out.println("[CLIENT] " + name + " drew a treasure card: " + answer.getContent().getName());
+        return answer.getContent();
+    }
+
     public ArrayList<Player> getPlayerList() {
         Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
         System.out.println("[CLIENT] " + name + " got the player list");
