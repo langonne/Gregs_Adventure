@@ -111,7 +111,7 @@ class ClientHandler implements Runnable {
                     System.out.println("[SERVER] Received message from " + stringMessage.getSender() + ": " + stringMessage.getContent());
 
                     if(stringMessage.getType().equals("PING")) {
-                        sendToClient("PONG", "", "OK");
+                        sendToClient(stringMessage.getId(), "PING", "", "PONG");
                     }
                     // Check if the message is a connexion message
                     if(stringMessage.getType().equals("CONNEXION")) {
