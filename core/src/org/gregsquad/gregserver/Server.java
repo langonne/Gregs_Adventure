@@ -109,6 +109,10 @@ class ClientHandler implements Runnable {
                     Message<String> stringMessage = (Message<String>) inputMessage;
                     // Manage the message of type String here
                     System.out.println("[SERVER] Received message from " + stringMessage.getSender() + ": " + stringMessage.getContent());
+
+                    if(stringMessage.getType().equals("PING")) {
+                        sendToClient("PONG", "", "OK");
+                    }
                     // Check if the message is a connexion message
                     if(stringMessage.getType().equals("CONNEXION")) {
 
@@ -194,7 +198,7 @@ class ClientHandler implements Runnable {
                     
                 }
             }
-
+            System.out.println("[CLIENT] " + clientName + " disconnected.");
             out.close();
             in.close();
             clientSocket.close();
