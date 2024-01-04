@@ -1,6 +1,8 @@
 package org.gregsquad.gregsadventure.card;
 
-public class Monster extends Card{
+import java.io.Serializable;
+
+public class Monster extends Card implements Serializable{
     private int level;
     private int damage;
     private int treasure;
