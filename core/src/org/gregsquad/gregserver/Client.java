@@ -50,9 +50,9 @@ public class Client {
 
             Thread debugSendThread = new Thread(new DebugSendThread());
             debugSendThread.start();
-
-            receiveThread.start();
-            receiveThread.join();
+            debugSendThread.join();
+            //receiveThread.start();
+            //receiveThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -60,7 +60,7 @@ public class Client {
             echoSocket.close();
             
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
+            System.err.println("IOException1: " + e.getMessage());
         } catch (InterruptedException e) {
             System.err.println("InterruptedException: " + e.getMessage());
         }
@@ -93,7 +93,7 @@ public class Client {
                     }
             }
             } catch (IOException e) {
-                System.err.println("IOException: " + e.getMessage());
+                System.err.println("IOException2: " + e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println("ClassNotFoundException: " + e.getMessage());
             }
@@ -140,7 +140,7 @@ public class Client {
                     }
                 }
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
+            System.err.println("IOException3: " + e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException: " + e.getMessage());
         }
