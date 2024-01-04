@@ -233,6 +233,13 @@ public class Client {
         return answer.getContent();
     }
 
+    public boolean initGame() {
+        Message<Boolean> answer = request("GAME", "INIT_GAME");
+        System.out.println("["+name+"] " + name + " initialized the game");
+        return answer.getContent();
+    }
+    
+
     // Main method
     public static void main(String[] args) {
         // Check the arguments
