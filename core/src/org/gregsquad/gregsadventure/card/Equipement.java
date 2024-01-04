@@ -1,7 +1,7 @@
 package org.gregsquad.gregsadventure.card;
 
 public class Equipement extends Card{
-    private int position; //Ex : 0 = head, 1 = body, 2 = legs, 3 = feet, 4 = left hand, 5 = right hand.
+    private int position; //Ex : 0 = head, 1 = body, 2 = legs, 3 = feet, 4 = hand
     private int bonus;
     private boolean equipementSize; // 0 = small, 1 = big. (small = 1 hand, big = 2 hands)
     
