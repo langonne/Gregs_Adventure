@@ -72,15 +72,27 @@ public class Client {
     class ReceiveThread implements Runnable {
         public void run() {
             try {
-                Object inputObject;
-                while ((inputObject = in.readObject()) != null) {
-                    if (inputObject instanceof Message) {
-                        Message<String> inputMessage = (Message<String>) inputObject;
-                        System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the received message
-                    } else {
-                        // handle the case where inputObject is not a Message
+                Message<?> inputMessage;
+                while ((inputMessage = (Message<?>) in.readObject()) != null) {
+
+                    if (inputMessage.isOfType(String.class)) {
+                        Message<String> stringMessage = (Message<String>) inputMessage;
+                        // Manage the message of type String here
+                        System.out.println("["+name+"] " + "Received message: " + stringMessage.getType() + " " + stringMessage.getPurpose() + " " + stringMessage.getContent());
+                        // Check if the message is a connexion message
+                        if(stringMessage.getType().equals("CONNEXION")) {
+
+                            if(stringMessage.getPurpose().equals("NAME")) {
+                                
+                            }
+                        }
+
+                    } 
+                    else if (inputMessage.isOfType(Card.class)) {
+                        Message<Card> cardMessage = (Message<Card>) inputMessage;
+                        // Traitez le message de type Card ici    
                     }
-                }
+            }
             } catch (IOException e) {
                 System.err.println("IOException: " + e.getMessage());
             } catch (ClassNotFoundException e) {
