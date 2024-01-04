@@ -190,6 +190,13 @@ class ClientHandler implements Runnable {
                                 ArrayList<Player> playerList = Game.getInstance().getPlayerList();
                                 sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
+
+                        if(stringMessage.getPurpose().equals("INIT_GAME")) {
+    
+                            System.out.println("[SERVER] " + this.getClientName() + " is initializing the game.");
+                            Game.getInstance().init();
+                            sendToClient(stringMessage.getId(), "GAME", "INIT_GAME", "OK");
+                        }
                     }
 
                 } 
