@@ -83,11 +83,51 @@ public class StartScreen extends Screen{
                         else {
                             Server server = Server.getInstance();
                             server.init(Integer.parseInt(port.getText()));
-                            server.run();
+                            new Thread(() -> {
+                                server.run();
+                            }).start();
 
-                            new Client("localhost", Integer.parseInt(port.getText()), name.getText());
+                            Client client = new Client("localhost", Integer.parseInt(port.getText()), name.getText());
+                            client.run();
 
-                        }
+                            table.clear();
+
+                            TextButton confirmButton = new TextButton("Confirmer", skin);
+                            TextButton cancelButton = new TextButton("Annuler", skin);
+
+                            table.add("En attente de joueurs...");
+                            table.row();
+                            table.add(confirmButton).fillX().uniformX();
+                            table.row();
+                            table.add(cancelButton).fillX().uniformX();
+
+                            confirmButton.addListener(new ChangeListener() {
+                                @Override
+                                public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                                    gui.setScreen(new GameScreen(gui, assets, client));
+                                }
+                            });
+
+                            cancelButton.addListener(new ChangeListener() {
+                                @Override
+                                public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                                    gui.setScreen(new StartScreen(gui, assets));
+                                }
+                            });
+
+                            
+
+
+
+                            //gui.setScreen(new GameScreen(gui, assets, client));
+                        } // fin else
+                    }
+                }); // fin confirmButton.addListener
+
+                cancelButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                        gui.setScreen(new StartScreen(gui, assets));
                     }
                 });
 
@@ -101,7 +141,7 @@ public class StartScreen extends Screen{
 
                 TextField name = new TextField("", skin);
                 TextField ip = new TextField("", skin);
-                TextField port = new TextField("", skin);
+                TextField port = new TextField("27093", skin);
                 TextButton confirmButton = new TextButton("Confirmer", skin);
                 TextButton cancelButton = new TextButton("Annuler", skin);    
 

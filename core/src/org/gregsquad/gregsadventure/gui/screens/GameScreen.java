@@ -24,6 +24,8 @@ import org.gregsquad.gregserver.Client;
 
 public class GameScreen extends Screen {
 
+    private static final float TOOLTIP_DELAY = 0.1f;
+
     public static final int BUTTON_SIZE = 100;
     public static final int PADDING = 10;
 
@@ -35,6 +37,7 @@ public class GameScreen extends Screen {
     private BitmapFont font;
 
     private TextButton inventory;
+    private Table inventoryTable;
 
     public GameScreen(GregsAdventure gui, AssetManager assets, Client client) {
         super(gui, assets);
@@ -43,9 +46,9 @@ public class GameScreen extends Screen {
 
         // Settings of the tooltips
         tooltipManager = TooltipManager.getInstance();
-        tooltipManager.initialTime = 0.1f;
-        tooltipManager.resetTime = 0.1f;
-        tooltipManager.subsequentTime = 0.1f;
+        tooltipManager.initialTime = TOOLTIP_DELAY;
+        tooltipManager.resetTime = TOOLTIP_DELAY;
+        tooltipManager.subsequentTime = TOOLTIP_DELAY;
         tooltipManager.hideAll();
     }
 
@@ -60,6 +63,7 @@ public class GameScreen extends Screen {
 
 
         Table table = new Table(); // Create a table that fills the screen. Everything else will go inside this table.
+
         table.setFillParent(true);
         stage.addActor(table); // Add the table to the stage
 
@@ -67,6 +71,8 @@ public class GameScreen extends Screen {
         inventory.setSize(BUTTON_SIZE, BUTTON_SIZE);
         inventory.setPosition(DEFAULT_WIDTH - BUTTON_SIZE - PADDING, PADDING);
         inventory.addListener(new TextTooltip("Inventory", skin));
+
+
 
         stage.addActor(inventory);
 
@@ -76,14 +82,15 @@ public class GameScreen extends Screen {
         /*Image img = new Image(new Texture(Gdx.files.internal("gechter.png")));
         img.setPosition(400, 100);
         img.addListener(new TextTooltip("c Gechter mais en mieux", skin));
-        img.setSize(500, 500);*/
+        img.setSize(500, 500);
+        stage.addActor(img);*/
         
 
         TextTooltip txt = new TextTooltip("G une enorme bite", skin);
         startButton.addListener(txt);
         
         table.add(startButton).fillX().uniformX();
-        //stage.addActor(img);
+
     }
 
     @Override
