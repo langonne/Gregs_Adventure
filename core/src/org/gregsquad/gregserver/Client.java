@@ -105,8 +105,8 @@ public class Client {
         public void run() {
             try {
                 while (true) {
-                    drawDonjonCard();
-                    Thread.sleep(500);
+                    ping();
+                    Thread.sleep(5000);
                 }
             } catch (InterruptedException e) {
                 System.err.println("InterruptedException: " + e.getMessage());
