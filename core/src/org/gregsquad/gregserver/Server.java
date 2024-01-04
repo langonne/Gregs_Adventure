@@ -9,6 +9,7 @@ import org.gregsquad.gregsadventure.card.*;
 
 public class Server {
     private static Server instance;
+    private ServerSocket serverSocket;
     private int port;
     protected List<ClientHandler> clients;
     protected Game game;
@@ -36,7 +37,8 @@ public class Server {
 
     // Method to start the server and accept new clients in a new thread
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try {
+            serverSocket = new ServerSocket(port);
             System.out.println("[INFO] Server is listening on port " + port);
 
             while (Game.getInstance().isGameStarted() == false) {
@@ -54,6 +56,21 @@ public class Server {
             e.printStackTrace();
         }
     }
+
+    public void stop() {
+        try {
+            for (ClientHandler client : clients) {
+                client.stop(); // Assurez-vous que la classe ClientHandler a une méthode stop qui ferme les ressources et interrompt le thread
+            }
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+            System.out.println("Server stopped.");
+        } catch (IOException e) {
+            System.err.println("Error stopping server: " + e.getMessage());
+        }
+    }   
+        
 
     public void broadcast(Message<String> message, ClientHandler excludeClient) {
         for (ClientHandler client : clients) {
@@ -204,6 +221,17 @@ class ClientHandler implements Runnable {
             clientSocket.close();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error handling client connection: " + e.getMessage());
+        }
+    }
+
+    public void stop() {
+        try {
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
+            System.out.println("Client stopped.");
+        } catch (IOException e) {
+            System.err.println("Error stopping client: " + e.getMessage());
         }
     }
 

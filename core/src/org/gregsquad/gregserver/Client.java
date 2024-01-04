@@ -66,6 +66,17 @@ public class Client {
         }
     }
 
+    public void stop() {
+        try {
+            // Close the streams and the connection
+            out.close();
+            in.close();
+            echoSocket.close();
+        } catch (IOException e) {
+            System.err.println("IOException1: " + e.getMessage());
+        }
+    }
+
     // Thread for receiving messages
     class ReceiveThread implements Runnable {
         public void run() {
@@ -215,18 +226,5 @@ public class Client {
         Message<String> answer = request("PING", "");
         System.out.println("["+name+"] " + name + " pinged the server");
         return answer.getContent();
-    }
-
-    // Main method
-    public static void main(String[] args) {
-        // Check the arguments
-        if (args.length != 3) {
-            System.err.println("Need 3 arguments: server IP, server port, player name");
-            System.exit(1);
-        }
-        // Create the client
-        Client client = new Client(args[0], Integer.parseInt(args[1]), args[2]);
-        // Start the client
-        client.run();
     }
 }
