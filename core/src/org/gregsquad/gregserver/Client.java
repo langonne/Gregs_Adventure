@@ -46,32 +46,15 @@ public class Client {
                     break;
                 }
                 System.out.println("["+name+"] " +"Name already taken. Please enter a new name.");
-                
             }
             
             System.out.println("");
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
-            // Create threads for sending and receiving messages
-            Thread sendThread = new Thread(new SendThread());
             Thread receiveThread = new Thread(new ReceiveThread());
-
-            //Debug
-            Thread debugSendThread = new Thread(new DebugSendThread());
-
-            sendThread.start();
             receiveThread.start();
-
-            //Debug
-            debugSendThread.start();
-
-            // Wait for the send and receive threads to finish
-            sendThread.join();
             receiveThread.join();
-
-            //Debug
-            debugSendThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -82,26 +65,6 @@ public class Client {
             System.err.println("IOException: " + e.getMessage());
         } catch (InterruptedException e) {
             System.err.println("InterruptedException: " + e.getMessage());
-        }
-    }
-
-    // Thread for sending messages
-    class SendThread implements Runnable {
-        public void run() {
-            try {
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-                String userInput;
-                while ((userInput = stdIn.readLine()) != null) {
-                    if (!userInput.isEmpty()) {
-                        System.out.println("Sending message: " + userInput);
-                        out.writeObject(new Message<String>(name, "CHAT", "",userInput,String.class)); // Send the message to the server
-                    } else {
-                        System.out.println("Error: message cannot be empty. Please enter a new message.");
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("IOException: " + e.getMessage());
-            }
         }
     }
 
@@ -126,22 +89,6 @@ public class Client {
         }
     }
 
-    // Debug thread for sending requests every 5 seconds
-    class DebugSendThread implements Runnable {
-        public void run() {
-            try {
-                while (true) {
-                    Thread.sleep(5000);
-                    System.out.println("[DebugSendThread] Sending request");
-                    drawTreasureCard();
-                    System.out.println("[DebugSendThread] Request sent");
-                }
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-    }
-    
     // REQUESTS SECTION
 
     // Generic method to send a request
@@ -238,7 +185,6 @@ public class Client {
         System.out.println("["+name+"] " + name + " initialized the game");
         return answer.getContent();
     }
-    
 
     // Main method
     public static void main(String[] args) {
