@@ -32,14 +32,34 @@ public class Server {
         for (Card card : Game.getInstance().getDonjonStack().getCards()) {
             System.out.println("[SERVER] " + card.getId() + " " + card.getName());
         }
+    } 
+
+    // Method to start the server and accept new clients in a new thread
+    public void run() {
+        if (port < 0 || port > 65535) {
+            System.err.println("[ERROR] Invalid port number: " + port);
+            return;
+        }
+        Thread acceptClientThread = new Thread(new AcceptClient());
+        acceptClientThread.start();
     }
 
-    // Accept new clients and create a thread for each one
+    public void broadcast(Message<String> message, ClientHandler excludeClient) {
+        for (ClientHandler client : clients) {
+            if (client != excludeClient) {
+                client.sendMessage(message);
+            }
+        }
+    }
+}
+
+// Accept new clients and create a thread for each one
+class AcceptClient implements Runnable {
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("[INFO] Server is listening on port " + port);
 
-            while (true) {
+            while (Game.getInstance().isGameStarted() == false) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("[CLIENT] New client connected.");
 
@@ -53,19 +73,6 @@ public class Server {
             System.err.println("Server exception: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    public void broadcast(Message<String> message, ClientHandler excludeClient) {
-        for (ClientHandler client : clients) {
-            if (client != excludeClient) {
-                client.sendMessage(message);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        //Server server = new Server(27093);
-        //server.run();
     }
 }
 
@@ -183,16 +190,10 @@ class ClientHandler implements Runnable {
                                 ArrayList<Player> playerList = Game.getInstance().getPlayerList();
                                 sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
-                        
-                        if(stringMessage.getPurpose().equals("INIT_GAME")) {
-    
-                            System.out.println("[SERVER] " + this.getClientName() + " is initializing the game.");
-                            Game.getInstance().init();
-                            sendToClient(stringMessage.getId(), "GAME", "INIT_GAME", true);
-                        }
                     }
 
-                } else if (inputMessage.isOfType(Card.class)) {
+                } 
+                else if (inputMessage.isOfType(Card.class)) {
                     Message<Card> cardMessage = (Message<Card>) inputMessage;
                     // Traitez le message de type Card ici
                     
