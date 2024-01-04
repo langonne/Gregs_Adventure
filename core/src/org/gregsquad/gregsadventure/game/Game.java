@@ -36,6 +36,10 @@ public class Game {
         return instance;
     }
 
+    public void init(){
+        int numberOfPlayer = this.playerList.size();
+    }
+
     //DEBUG
     public static void main(String[] args) { // Equivalent à l'interface de départ
         System.out.println("Start");
