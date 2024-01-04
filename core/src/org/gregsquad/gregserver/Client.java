@@ -40,13 +40,9 @@ public class Client {
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
             //sendInformation("CONNEXION", "NAME", "has joined the chat");
             
-            while(true){
-                Message<String> answer = request("CONNEXION", "NAME");
-                if(answer.getContent().equals("OK")){
-                    break;
-                }
-                System.out.println("["+name+"] " +"Name already taken. Please enter a new name.");
-            }
+        
+            Message<String> answer = request("CONNEXION", "NAME");
+                
             
             System.out.println("");
             System.out.println("["+name+"] " + name + " is correctly connected");
