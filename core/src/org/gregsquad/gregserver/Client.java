@@ -39,16 +39,18 @@ public class Client {
             System.out.println("["+name+"] " + "Sending name: " + name);
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
             //sendInformation("CONNEXION", "NAME", "has joined the chat");
-            
         
             Message<String> answer = request("CONNEXION", "NAME");
                 
-            
             System.out.println("");
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
             Thread receiveThread = new Thread(new ReceiveThread());
+
+            Thread debugSendThread = new Thread(new DebugSendThread());
+            debugSendThread.start();
+
             receiveThread.start();
             receiveThread.join();
 
@@ -68,6 +70,7 @@ public class Client {
     class ReceiveThread implements Runnable {
         public void run() {
             try {
+                System.out.println("["+name+"] " + "Listening for messages");
                 Message<?> inputMessage;
                 while ((inputMessage = (Message<?>) in.readObject()) != null) {
 
@@ -93,6 +96,20 @@ public class Client {
                 System.err.println("IOException: " + e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println("ClassNotFoundException: " + e.getMessage());
+            }
+        }
+    }
+
+    // Debug thread for sending requests every 5 seconds
+    class DebugSendThread implements Runnable {
+        public void run() {
+            try {
+                while (true) {
+                    drawDonjonCard();
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
             }
         }
     }
@@ -133,10 +150,10 @@ public class Client {
 
     // Generic method to send a request and receive an answer
     public <T extends Serializable> Message<T> request(String type, String purpose) {
-        Message<String> request = new Message<String>(name, type, purpose,"",String.class);
-        System.out.println("["+name+"] " + "Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
-        sendRequest(request);
-        Message<T> answer = receiveAnswer(request.getId(), type, purpose);
+        Message<String> request_locale = new Message<String>(name, type, purpose,"",String.class);
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        sendRequest(request_locale);
+        Message<T> answer = receiveAnswer(request_locale.getId(), type, purpose);
         System.out.println("["+name+"] " + "Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer;
     } 
@@ -191,6 +208,12 @@ public class Client {
     public boolean initGame() {
         Message<Boolean> answer = request("GAME", "INIT_GAME");
         System.out.println("["+name+"] " + name + " initialized the game");
+        return answer.getContent();
+    }
+
+    public String ping() {
+        Message<String> answer = request("PING", "");
+        System.out.println("["+name+"] " + name + " pinged the server");
         return answer.getContent();
     }
 
