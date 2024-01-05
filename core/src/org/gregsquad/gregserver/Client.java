@@ -111,6 +111,54 @@ public class Client {
         }
     }
 
+    // Thread for receiving answers
+    public class AnswerReceiver<T extends Serializable> implements Runnable {
+        private final UUID id;
+        private final String type;
+        private final String purpose;
+        private final Socket echoSocket;
+        private final ObjectInputStream in;
+        private final String name;
+        private Message<T> answer;
+    
+        public AnswerReceiver(UUID id, String type, String purpose, Socket echoSocket, ObjectInputStream in, String name) {
+            this.id = id;
+            this.type = type;
+            this.purpose = purpose;
+            this.echoSocket = echoSocket;
+            this.in = in;
+            this.name = name;
+        }
+    
+        @Override
+        public void run() {
+            try {   
+                echoSocket.setSoTimeout(5000);
+                Object inputObject;
+                while ((inputObject = in.readObject()) != null) {
+                    if (inputObject instanceof Message) {
+                        Message<T> inputMessage = (Message<T>) inputObject;
+                        if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
+                            System.out.println("["+name+"] "+"Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
+                            answer = inputMessage;
+                            return;
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("IOException3: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println("ClassNotFoundException: " + e.getMessage());
+            }
+            System.out.println("["+name+"] "+"Error: no answer received");
+        }
+    
+        public Message<T> getAnswer() {
+            return answer;
+        }
+    }
+
+
     // Debug thread for sending requests every 5 seconds
     class DebugSendThread implements Runnable {
         public void run() {
@@ -163,8 +211,23 @@ public class Client {
     public <T extends Serializable> Message<T> request(String type, String purpose) {
         Message<String> request_locale = new Message<String>(name, type, purpose,"",String.class);
         System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+
+        // Create an instance of AnswerReceiver with the necessary parameters
+        AnswerReceiver<T> answerReceiver = new AnswerReceiver<>(request_locale.getId(), type, purpose, echoSocket, in, name);  
+
+        // Create a new thread with the AnswerReceiver instance
+        Thread answerReceiverThread = new Thread(answerReceiver);
+
+        answerReceiverThread.start();
         sendRequest(request_locale);
-        Message<T> answer = receiveAnswer(request_locale.getId(), type, purpose);
+
+        try {
+            answerReceiverThread.join();
+        } catch (InterruptedException e) {
+            System.err.println("InterruptedException: " + e.getMessage());
+        }
+        Message<T> answer = answerReceiver.getAnswer();
+
         System.out.println("["+name+"] " + "Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer;
     } 
@@ -213,6 +276,8 @@ public class Client {
         for(Player player : answer.getContent()){
             System.out.println(player.getName());
         }
+        // add the player list to the game
+        PlayerList.getInstance().addPlayers(new Player );
         return answer.getContent();
     }
 
