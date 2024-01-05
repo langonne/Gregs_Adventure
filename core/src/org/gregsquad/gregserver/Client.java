@@ -277,7 +277,6 @@ public class Client {
             System.out.println(player.getName());
         }
         // add the player list to the game
-        PlayerList.getInstance().addPlayers(new Player );
         return answer.getContent();
     }
 
