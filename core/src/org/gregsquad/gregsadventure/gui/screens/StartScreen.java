@@ -2,6 +2,9 @@ package org.gregsquad.gregsadventure.gui.screens;
 
 import org.gregsquad.gregsadventure.GregsAdventure;
 
+import java.util.List;
+
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -10,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import org.gregsquad.gregsadventure.game.Player;
 import org.gregsquad.gregserver.Client;
 import org.gregsquad.gregserver.Server;
 
@@ -18,6 +22,8 @@ public class StartScreen extends Screen{
 
     private static final int NAME_MAX_LENGTH = 20;
 
+    private Client client;
+
     private Table table;
 
     private TextButton clientButton;
@@ -25,6 +31,7 @@ public class StartScreen extends Screen{
     private TextButton cancelButton;
 
     private boolean wrongNameDisplayed = false; // global variable to avoid displaying the same error message multiple times
+    private boolean gameStarted = false; // global variable for the lobby loop
     
     
     public StartScreen(GregsAdventure gui, AssetManager assets) {
@@ -51,7 +58,7 @@ public class StartScreen extends Screen{
         table.row();
         table.add(cancelButton).fillX().uniformX();
 
-        serverButton.addListener(new ChangeListener() {
+        serverButton.addListener(new ChangeListener() { // Créer une partie
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                 table.clear();
@@ -87,23 +94,21 @@ public class StartScreen extends Screen{
                                 server.run();
                             }).start();
 
-                            Client client = new Client("localhost", Integer.parseInt(port.getText()), name.getText());
-                            client.run();
+                            client = new Client("localhost", Integer.parseInt(port.getText()), name.getText());
+
+                            new Thread(() -> {
+                                client.run();
+                            }).start();
 
                             table.clear();
 
                             TextButton confirmButton = new TextButton("Confirmer", skin);
                             TextButton cancelButton = new TextButton("Annuler", skin);
 
-                            table.add("En attente de joueurs...");
-                            table.row();
-                            table.add(confirmButton).fillX().uniformX();
-                            table.row();
-                            table.add(cancelButton).fillX().uniformX();
-
                             confirmButton.addListener(new ChangeListener() {
                                 @Override
                                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                                    gameStarted = true;
                                     gui.setScreen(new GameScreen(gui, assets, client));
                                 }
                             });
@@ -115,12 +120,27 @@ public class StartScreen extends Screen{
                                 }
                             });
 
+                            Table playersTable = new Table();
+                            playersTable.setFillParent(true);
+
                             
+                            new Thread(() -> {
+                                while(!gameStarted) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    
+                                    displayPlayers(client, table);
 
+                                    table.add(confirmButton).fillX().uniformX();
+                                    table.row();
+                                    table.add(cancelButton).fillX().uniformX();
 
-
-                            //gui.setScreen(new GameScreen(gui, assets, client));
-                        } // fin else
+                                }
+                            }).start();
+                        } // fin else (=nom valide)
                     }
                 }); // fin confirmButton.addListener
 
@@ -134,7 +154,7 @@ public class StartScreen extends Screen{
             }
         });
 
-        clientButton.addListener(new ChangeListener() {
+        clientButton.addListener(new ChangeListener() { // Rejoindre une partie
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                 table.clear();
@@ -170,7 +190,10 @@ public class StartScreen extends Screen{
                             }
                         }
                         else {
-                            new Client(ip.getText(), Integer.parseInt(port.getText()), name.getText());
+                            client = new Client(ip.getText(), Integer.parseInt(port.getText()), name.getText());
+                            new Thread(() -> {
+                                client.run();
+                            }).start();
                         }
                     }
                 });
@@ -202,5 +225,17 @@ public class StartScreen extends Screen{
     @Override
     public void dispose() {
         // TODO Auto-generated method stub
+    }
+
+    private void displayPlayers(Client client, Table table) {
+        table.clear();
+        List<Player> players = client.getPlayerList();
+    
+        table.add("Joueurs : " + players.size() + "/6");
+        table.row();
+        for (Player player : players) {
+            table.add("- " + player.getName());
+        }
+        table.row();
     }
 }
