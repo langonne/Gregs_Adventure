@@ -23,6 +23,14 @@ public class ConfigLoader {
     }
 
     
+    public static boolean isValid(String key) {
+        try {
+            return cardsList.containsKey(key);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Retrieves a boolean value from the cards.properties file.
      * If the key is not found or the value cannot be parsed as a boolean, returns false.

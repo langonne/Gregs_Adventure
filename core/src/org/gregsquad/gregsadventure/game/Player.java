@@ -6,14 +6,16 @@ import java.io.Serializable;
 import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.CardList;
 import org.gregsquad.gregsadventure.card.Deck;
+import org.gregsquad.gregsadventure.card.Race;
+import org.gregsquad.gregsadventure.card.Class;
 
 public class Player implements Serializable{
     private String name;
     private int level = 0;
     private int damage = 0;
 
-    private Card classe;
-    private Card race; 
+    private Class classe;
+    private Race race; 
     private Deck deck;
 
     private Stuff stuff;
@@ -35,6 +37,8 @@ public class Player implements Serializable{
     }
 
     public int getDiceBuff(){
+        //check if we have a dice buff in classes
+        //TODO
         return this.diceBuff;
     }
 
@@ -57,7 +61,13 @@ public class Player implements Serializable{
         this.level += level;
     }
 
-    public int getDamage(){
+    public int getDamage(){//We do the calcul of damage bonus here
+        damage = level;
+        //TODO
+
+
+
+
         return this.damage;
     }
 
@@ -72,11 +82,11 @@ public class Player implements Serializable{
  
 
 
-    public Card getClasse(){
+    public Class getClasse(){
         return this.classe;
     }
 
-    public Card getRace(){
+    public Race getRace(){
         return this.race;
     }
 

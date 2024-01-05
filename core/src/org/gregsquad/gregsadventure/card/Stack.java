@@ -28,9 +28,21 @@ public class Stack extends CardList{
                             
                             break;
                         case "Equipement":
-                            cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize")));
+                            if(ConfigLoader.isValid(key + "_conditionBonus") && ConfigLoader.isValid(key + "_combo")){
+                                System.out.println("combo");
+                                cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize"), ConfigLoader.getString(key + "_conditionBonus"), ConfigLoader.getInt(key + "_combo")));
+                            } else {
+                                System.out.println("pas combo");
+                                cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize")));
+                            }
+                            
                             break;
-                    
+                        case "Race":
+                            cards.add(new Race(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_bonusDamage"), ConfigLoader.getInt(key + "_bonusDice")));
+                            break;
+                        case "Clas":
+                            cards.add(new Class(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description")));
+                            break;
                         default:
                             System.out.println("Error in config file");
                             break;
