@@ -152,7 +152,6 @@ class ClientHandler implements Runnable {
                                 Player player = new Player(this.getClientName());
                                 Game.getInstance().addPlayer(player);
                             }
-
                         }
                     }
 
@@ -197,6 +196,11 @@ class ClientHandler implements Runnable {
     
                                 System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
                                 ArrayList<Player> playerList = Game.getInstance().getPlayerList();
+                                // Print all the players in the player list
+                                System.out.println("####### [SERVER] Player list:");
+                                for (Player player : playerList) {
+                                    System.out.println("######### [SERVER] " + player.getName());
+                                }
                                 sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
