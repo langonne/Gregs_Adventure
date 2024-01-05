@@ -2,10 +2,11 @@ package org.gregsquad.gregsadventure.card;
 
 import java.util.Collections;
 import java.util.Random;
+import java.io.Serializable;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
-public class Stack extends CardList{
+public class Stack extends CardList implements Serializable {
     
     public Stack() {
         System.out.println("Creating stack"); // DEBUG
