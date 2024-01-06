@@ -48,7 +48,7 @@ public class Equipement extends Card{
         this.equipementSize = equipementSize;
     }
 
-    public boolean bonusValid(String currentRace){
+    public boolean comboValid(String currentRace){
         if(conditionBonus == currentRace){
             return true;
         } else {

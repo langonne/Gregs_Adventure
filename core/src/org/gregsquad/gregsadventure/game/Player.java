@@ -6,6 +6,7 @@ import java.io.Serializable;
 import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.CardList;
 import org.gregsquad.gregsadventure.card.Deck;
+import org.gregsquad.gregsadventure.card.Equipement;
 import org.gregsquad.gregsadventure.card.Race;
 import org.gregsquad.gregsadventure.card.Class;
 
@@ -27,6 +28,8 @@ public class Player implements Serializable{
         this.name = name;
         this.level = 1;
         this.damage = 1;
+        this.classe = new Class(0, "Défaut", "Aucune classe");
+        this.race = new Race(0, "Défaut", "Aucune Race", 0, 0);
         this.deck = new Deck();
         this.stuff = new Stuff();
         this.diceBuff = 0;
@@ -37,8 +40,7 @@ public class Player implements Serializable{
     }
 
     public int getDiceBuff(){
-        //check if we have a dice buff in classes
-        //TODO
+        this.diceBuff = this.race.getBonusDice();
         return this.diceBuff;
     }
 
@@ -63,11 +65,13 @@ public class Player implements Serializable{
 
     public int getDamage(){//We do the calcul of damage bonus here
         damage = level;
-        //TODO
-
-
-
-
+        for(Equipement equipement : stuff.getEquipements()){
+            damage += equipement.getBonus();
+            if(equipement.comboValid(this.race.getName())){
+                damage += equipement.getCombo();
+            }
+        }
+        damage += this.race.getBonusDamage();
         return this.damage;
     }
 
@@ -82,14 +86,20 @@ public class Player implements Serializable{
  
 
 
-    public Class getClasse(){
+    public Class getPlayerClass(){
         return this.classe;
     }
 
     public Race getRace(){
         return this.race;
     }
+    public void setPlayerClass(Class classe){
+        this.classe = classe;
+    }
 
+    public void setRace(Race race){
+        this.race = race;
+    }
     public Deck getDeck(){
         return this.deck;
     }
