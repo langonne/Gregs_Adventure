@@ -179,7 +179,7 @@ class ClientHandler implements Runnable {
                         }
 
                         if(stringMessage.getPurpose().equals("GET_TREASURE_DISCARD")) {
-
+                            
                             System.out.println("[SERVER] " + this.getClientName() + " is getting the treasure discard.");
                             LinkedList<Card> cards = Game.getInstance().getTreasureDiscard().getCards();
                             sendToClient(stringMessage.getId(), "GAME", "GET_TREASURE_DISCARD", cards);
@@ -197,10 +197,7 @@ class ClientHandler implements Runnable {
                                 System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
                                 ArrayList<Player> playerList = Game.getInstance().getPlayerList();
                                 // Print all the players in the player list
-                                System.out.println("####### [SERVER] Player list:");
-                                for (Player player : playerList) {
-                                    System.out.println("######### [SERVER] " + player.getName());
-                                }
+                                System.out.println("####### [SERVER] Player list " + playerList.size() + " #######");
                                 sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
