@@ -194,6 +194,27 @@ public class StartScreen extends Screen{
                             new Thread(() -> {
                                 client.run();
                             }).start();
+
+                            Table playersTable = new Table();
+                            playersTable.setFillParent(true);
+
+                            
+                            new Thread(() -> {
+                                while(!gameStarted) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    
+                                    displayPlayers(client, table);
+
+                                    table.add(confirmButton).fillX().uniformX();
+                                    table.row();
+                                    table.add(cancelButton).fillX().uniformX();
+
+                                }
+                            }).start();
                         }
                     }
                 });
@@ -204,6 +225,7 @@ public class StartScreen extends Screen{
                         gui.setScreen(new StartScreen(gui, assets));
                     }
                 });
+
             }
         });
 
