@@ -252,6 +252,7 @@ class ClientHandler implements Runnable {
     
                             System.out.println("[SERVER] " + this.getClientName() + " is getting the game initialization status.");
                             boolean init = Game.getInstance().isGameStarted();
+                            System.out.println("[SERVER] Game is initialized: " + init);
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
                         }
                     }
