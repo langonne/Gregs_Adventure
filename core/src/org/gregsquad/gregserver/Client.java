@@ -126,9 +126,6 @@ public class Client {
                 Object inputObject;
                 while ((inputObject = in.readObject()) != null) {
 
-                    //Print lastInitGame
-                    System.out.println("-----------------------------------["+name+"] " + "LastInitGame: " + lastInitGame);
-
                     if (inputObject instanceof Message) {
                         Message<?> inputMessage = (Message<?>) inputObject;
                         System.out.println("["+name+"] " + "Received message: " + inputMessage.getType() + " " + inputMessage.getPurpose());
@@ -154,6 +151,11 @@ public class Client {
                                         break;
                                     case "GET_PLAYER_LIST":
                                         lastPlayerList = (Message<ArrayList<Player>>) inputMessage;
+                                        System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().size());
+                                        // Print list of players
+                                        for (int i = 0; i < lastPlayerList.getContent().size(); i++) {
+                                            System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().get(i).getName());
+                                        }
                                         break;
                                     case "INIT_GAME":
                                         lastInitGame = (Message<Boolean>) inputMessage;
@@ -171,7 +173,9 @@ public class Client {
                                 System.err.println("Unknown message type: " + inputMessage.getType());
                                 break;
                         }
+                        
                     }
+                    inputObject = null;
                 }
             } catch (IOException e) {
                 System.err.println("IOException in GlobalListener: " + e.getMessage());
@@ -289,6 +293,8 @@ public class Client {
     //getPlayerList
     public ArrayList<Player> getPlayerList() {
         Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
+
+        
         System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
         
         for (int i = 0; i < 5; i++) {
@@ -318,6 +324,8 @@ public class Client {
             Message<Boolean> lastInitGame = globalListener.getLastInitGame();
             if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
                 System.out.println("["+name+"] " + name + " initialized the game");
+                //print lastInitGame content type
+                System.out.println("--------------------------------------------------------["+name+"] " + "lastInitGame content type: " + lastInitGame.getContent().getClass());
                 return lastInitGame.getContent();
             }
         
@@ -334,6 +342,9 @@ public class Client {
     //GetInitGame
     public boolean getInitGame() {
         Message<String> request_locale = request("GAME", "GET_INIT_GAME");
+
+
+        
         System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
         
         for (int i = 0; i < 5; i++) {
