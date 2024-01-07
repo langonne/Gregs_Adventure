@@ -253,6 +253,10 @@ public class Game {
         }
     }
 
+    public void setPlayerList(ArrayList<Player> playerList) {
+        this.playerList = playerList;
+    }
+
     public Stack getDonjonStack() {
         return donjonStack;
     }
