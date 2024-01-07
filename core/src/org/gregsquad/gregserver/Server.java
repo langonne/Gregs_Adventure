@@ -233,9 +233,7 @@ class ClientHandler implements Runnable {
                             if (Game.getInstance().getPlayerList().size() != server.clients.size()) {
                                 System.out.println("[SERVER] Number of clients and players is different.");
                                 // Update the list of player with the list of clients
-                                Game.getInstance().setPlayerList(server.clients.stream()
-                                    .map(client -> new Player(client.getClientName()))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
+                                
                             }
                             ArrayList<Player> playerList = Game.getInstance().getPlayerList();
                             // Print all the players in the player list
