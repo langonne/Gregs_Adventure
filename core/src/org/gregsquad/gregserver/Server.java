@@ -1,3 +1,12 @@
+package org.gregsquad.gregserver;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+import org.gregsquad.gregsadventure.game.*;
+import org.gregsquad.gregsadventure.card.*;
+
 /**
  * The Server class is a singleton that manages the server-side logic of the game.
  * It accepts new clients, handles their requests, and manages the game state.
@@ -68,7 +77,7 @@ public class Server {
             e.printStackTrace();
         }
     }
-}
+
 
     /**
      * Stops the server and disconnects all clients.
@@ -100,6 +109,7 @@ public class Server {
             }
         }
     }
+}
 
 /**
  * The ClientHandler class implements the Runnable interface and is responsible for handling a single client connection.
