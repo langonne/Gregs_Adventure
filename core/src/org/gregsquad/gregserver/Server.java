@@ -235,9 +235,10 @@ class ClientHandler implements Runnable {
                                 // Update the list of player with the list of clients
                                 
                             }
-                            ArrayList<Player> playerList = Game.getInstance().getPlayerList();
-                            // Print all the players in the player list
-                            System.out.println("####### [SERVER] Player list " + playerList.size() + " #######");
+                            
+                            ArrayList<Player> playerList = Game.getInstance().getPlayerList(); 
+                            System.out.println("[SERVER] -------------------------------------  "+playerList.size());
+                            System.out.println("[SERVER] -------------------------------------  "+server.clients.size());                           
                             sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
@@ -297,6 +298,7 @@ class ClientHandler implements Runnable {
     public <T extends Serializable> void sendMessage(Message<T> message) {
         try {
             out.writeObject(message);
+            out.flush();
         } catch (IOException e) {
             System.err.println("Error sending message: " + e.getMessage());
         }
