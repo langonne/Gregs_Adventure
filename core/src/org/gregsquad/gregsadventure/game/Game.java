@@ -8,7 +8,10 @@ import java.util.Scanner;
 import org.gregsquad.gregsadventure.card.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 
-
+/**
+ * @class Game
+ * @brief Represents the main game logic and flow.
+ */
 public class Game {
     private static Game instance;
     static final int DICE_NEED_TO_RUN = 5;
@@ -22,6 +25,9 @@ public class Game {
     private Player playerHelp;
     private boolean isGameStarted;
 
+    /**
+     * @brief Private constructor to ensure singleton pattern.
+     */
     private Game() {
         playerList = new ArrayList<Player>();
         donjonStack = new Stack();
@@ -31,6 +37,10 @@ public class Game {
         isGameStarted = false;
     }
 
+    /**
+     * @brief Gets the singleton instance of the Game class.
+     * @return The Game instance.
+     */
     public static Game getInstance() {
         if (instance == null) {
             instance = new Game();
@@ -38,12 +48,21 @@ public class Game {
         return instance;
     }
 
+
+    /**
+     * @brief Initializes the game.
+     */
     public void init(){
         int numberOfPlayer = this.playerList.size();
         isGameStarted = true;
     }
 
-    //DEBUG
+
+    /**
+     * @brief Main method for debugging and testing.
+     * Equivalent to the initial interface.
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) { // Equivalent à l'interface de départ
         System.out.println("Start");
         Game game = new Game();
@@ -91,6 +110,10 @@ public class Game {
 
     }
 
+
+    /**
+     * @brief Selects a card for debugging purposes (replaces card selection interface).
+     */
     public void cardSelect(){ // function of DEBUG (remplace interface of select card)
         System.out.println("Card in your hand : "); // DEBUG
         for(Card card : currentPlayer.getDeck().getCards()){
@@ -136,8 +159,10 @@ public class Game {
         
     }
 
-
-
+    /**
+     * @brief Initiates a fight between the player and a monster.
+     * @param monster The monster to fight.
+     */
     public void fight(Monster monster) { //button fight  // GARDER PARAMETRE UTILE ?
         System.out.println("Fight between player (" + currentPlayer.getDamage() + ") and " + monster.getName() + " (" + monster.getDamage() + ")"); // DEBUG
         if(currentPlayer.getDamage() > monster.getDamage()){
@@ -149,7 +174,11 @@ public class Game {
         }
     }
 
-
+    /**
+     * @brief Attempts to run away from a monster.
+     * @param monster The monster to run away from.
+     * @return True if the run is successful, false otherwise.
+     */
     public boolean run(Monster monster) { //button run, true = success 
         System.out.println("Run"); // DEBUG
         Random rand = new Random();
@@ -168,6 +197,10 @@ public class Game {
 
     }
 
+    /**
+     * @brief Handles incidents that may occur during the game.
+     * @param player The player involved in the incident.
+     */
     protected void incident(Player player){
         if(player == null){
             System.out.println("Error : No player"); // DEBUG
@@ -198,7 +231,11 @@ public class Game {
         }
     }
 
-    //Interface proposition d'aide (return treasure number + playerList)
+    /**
+     * @brief Offers help to another player during a fight.
+     * @param numberOfTreasure The number of treasures offered for help.
+     * @return True if the player provided help, false otherwise.
+     */
     public boolean help(int numberOfTreasure){ // true == helped
 
         
@@ -222,7 +259,9 @@ public class Game {
     }
 
 
-
+    /**
+     * @brief Manages the charity phase of the game.
+     */
     public void charity(){
         int minLevelOtherPlayer = 11;
         for(Player player : playerList){
@@ -253,46 +292,93 @@ public class Game {
         }
     }
 
+
+    /**
+     * @brief Sets the player list for the game.
+     * @param playerList The list of players to set.
+     */
     public void setPlayerList(ArrayList<Player> playerList) {
         this.playerList = playerList;
     }
 
+    /**
+     * @brief Sets the donjon stack for the game.
+     * @param donjonStack The donjon stack to set.
+     */
     public Stack getDonjonStack() {
         return donjonStack;
     }
 
+    /**
+     * @brief Sets the treasure stack for the game.
+     * @param treasureStack The treasure stack to set.
+     */
     public Stack getTreasureStack() {
         return treasureStack;
     }
 
+
+    /**
+     * @brief Sets the donjon discard for the game.
+     * @param donjonDiscard The donjon discard to set.
+     */
     public Discard getDonjonDiscard() {
         return donjonDiscard;
     }
 
+    /**
+     * @brief Sets the treasure discard for the game.
+     * @param treasureDiscard The treasure discard to set.
+     */
     public Discard getTreasureDiscard() {
         return treasureDiscard;
     }
 
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public Monster getMonster() {
         return monster;
     }
 
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public void addPlayer(Player player) {
         playerList.add(player);
     }
+
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
 
     public void removePlayer(Player player) {
         playerList.remove(player);
     }
 
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public ArrayList<Player> getPlayerList() {
         return playerList;
     }
 
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public boolean isGameStarted() {
         return isGameStarted;
     }

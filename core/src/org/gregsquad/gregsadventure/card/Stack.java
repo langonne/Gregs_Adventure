@@ -5,9 +5,15 @@ import java.util.Random;
 import java.io.Serializable;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
-
+/**
+ * @class Stack
+ * @brief Represents a stack of cards in the game, derived from CardList.
+ */
 public class Stack extends CardList implements Serializable {
-    
+    /**
+     * @brief Default constructor for Stack class.
+     * Initializes the stack by loading cards from the configuration file and shuffling them.
+     */
     public Stack() {
         System.out.println("Creating stack"); // DEBUG
         //boolean finish = true;
@@ -57,7 +63,10 @@ public class Stack extends CardList implements Serializable {
         shuffle(); // Shuffle the draw
         System.out.println("Stack created"); // DEBUG
     }
-
+    /**
+     * @brief Main method for testing the Stack class. Draws and prints 10 cards.
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) { //DEBUG
         Stack stack = new Stack();
         System.out.println("D1");
@@ -68,7 +77,11 @@ public class Stack extends CardList implements Serializable {
     }
 
 
-
+    /**
+     * @brief Draws a card from the stack.
+     * If the stack is empty, temporarily fills it with debug Monster cards.
+     * @return The drawn card.
+     */
     public Card draw() {
         if(cards.size() == 0) { //TODO
             for (int i = 0; i < 30; i++) { // CREATION TEMPORAIRE DE LA PILE (on peut pas récup la discard avec la conception actuelle, a voir si on change)
@@ -79,7 +92,9 @@ public class Stack extends CardList implements Serializable {
         int randomNumber = rand.nextInt(cards.size());
         return cards.remove(randomNumber);
     }
-
+    /**
+     * @brief Shuffles the cards in the stack.
+     */
     public void shuffle() {
         Collections.shuffle(cards);
     }
