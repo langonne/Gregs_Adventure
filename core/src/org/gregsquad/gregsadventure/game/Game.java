@@ -20,6 +20,7 @@ public class Game {
     private Player currentPlayer;
     private Monster monster;
     private Player playerHelp;
+    private boolean isGameStarted;
 
     private Game() {
         playerList = new ArrayList<Player>();
@@ -27,6 +28,7 @@ public class Game {
         treasureStack = new Stack();
         donjonDiscard = new Discard();
         treasureDiscard = new Discard();
+        isGameStarted = false;
     }
 
     public static Game getInstance() {
@@ -34,6 +36,11 @@ public class Game {
             instance = new Game();
         }
         return instance;
+    }
+
+    public void init(){
+        int numberOfPlayer = this.playerList.size();
+        isGameStarted = true;
     }
 
     //DEBUG
@@ -280,5 +287,9 @@ public class Game {
 
     public ArrayList<Player> getPlayerList() {
         return playerList;
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
     }
 }

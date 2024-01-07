@@ -2,8 +2,9 @@ package org.gregsquad.gregsadventure.card;
 
 import java.util.Random;
 import org.gregsquad.gregsadventure.game.Player;
+import java.io.Serializable;
 
-public class Curse extends Card{
+public class Curse extends Card implements Serializable{
     private String type;
     private int value;
 

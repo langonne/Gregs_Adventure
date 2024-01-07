@@ -15,6 +15,9 @@ public class Client {
     private ObjectOutputStream out; // Output stream
     private ObjectInputStream in; // Input stream
 
+    private static final int MAX_RECONNECT_ATTEMPTS = 5; // Maximum number of reconnection attempts
+    private static final int RECONNECT_DELAY_MS = 5000; // Delay between reconnection attempts
+
     // Constructor
     public Client(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
@@ -22,56 +25,56 @@ public class Client {
         this.name = name;
     }
 
+    private void connect() throws IOException, InterruptedException {
+        int attempts = 0;
+        while (true) {
+            try {
+                // Connect to the server
+                echoSocket = new Socket(serverIp, serverPort);
+                System.out.println("["+name+"] " + "Connected to " + serverIp + ":" + serverPort);
+
+                // Create input and output streams
+                System.out.println("["+name+"] " + "Creating streams");
+                out = new ObjectOutputStream(echoSocket.getOutputStream());
+                in = new ObjectInputStream(echoSocket.getInputStream());
+                System.out.println("["+name+"] " + "Streams created");
+
+                // Connection successful, break the loop
+                break;
+            } catch (SocketTimeoutException e) {
+                attempts++;
+                if (attempts > MAX_RECONNECT_ATTEMPTS) {
+                    throw new IOException("Failed to connect after " + MAX_RECONNECT_ATTEMPTS + " attempts", e);
+                }
+                System.err.println("Connection timed out, retrying in " + RECONNECT_DELAY_MS + "ms...");
+                Thread.sleep(RECONNECT_DELAY_MS);
+            }
+        }
+    }
+
     // Method to start the client
     public void run() {
         try {
-            // Connect to the server
-            echoSocket = new Socket(serverIp, serverPort);
-            System.out.println("["+name+"] " + "Connected to " + serverIp + ":" + serverPort);
-
-            // Create input and output streams
-            System.out.println("["+name+"] " + "Creating streams");
-            out = new ObjectOutputStream(echoSocket.getOutputStream());
-            in = new ObjectInputStream(echoSocket.getInputStream());
-            System.out.println("["+name+"] " + "Streams created");
+            connect();
 
             // Send the client name to the server
             System.out.println("["+name+"] " + "Sending name: " + name);
             //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
             //sendInformation("CONNEXION", "NAME", "has joined the chat");
-            
-            while(true){
-                Message<String> answer = request("CONNEXION", "NAME");
-                if(answer.getContent().equals("OK")){
-                    break;
-                }
-                System.out.println("["+name+"] " +"Name already taken. Please enter a new name.");
+        
+            Message<String> answer = request("CONNEXION", "NAME");
                 
-            }
-            
             System.out.println("");
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
-            // Create threads for sending and receiving messages
-            Thread sendThread = new Thread(new SendThread());
             Thread receiveThread = new Thread(new ReceiveThread());
 
-            //Debug
             Thread debugSendThread = new Thread(new DebugSendThread());
-
-            sendThread.start();
-            receiveThread.start();
-
-            //Debug
             debugSendThread.start();
-
-            // Wait for the send and receive threads to finish
-            sendThread.join();
-            receiveThread.join();
-
-            //Debug
             debugSendThread.join();
+            //receiveThread.start();
+            //receiveThread.join();
 
             // Close the streams and the connection
             out.close();
@@ -79,29 +82,20 @@ public class Client {
             echoSocket.close();
             
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
+            System.err.println("IOException1: " + e.getMessage());
         } catch (InterruptedException e) {
             System.err.println("InterruptedException: " + e.getMessage());
         }
     }
 
-    // Thread for sending messages
-    class SendThread implements Runnable {
-        public void run() {
-            try {
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-                String userInput;
-                while ((userInput = stdIn.readLine()) != null) {
-                    if (!userInput.isEmpty()) {
-                        System.out.println("Sending message: " + userInput);
-                        out.writeObject(new Message<String>(name, "CHAT", "",userInput,String.class)); // Send the message to the server
-                    } else {
-                        System.out.println("Error: message cannot be empty. Please enter a new message.");
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("IOException: " + e.getMessage());
-            }
+    public void stop() {
+        try {
+            // Close the streams and the connection
+            out.close();
+            in.close();
+            echoSocket.close();
+        } catch (IOException e) {
+            System.err.println("IOException1: " + e.getMessage());
         }
     }
 
@@ -109,39 +103,101 @@ public class Client {
     class ReceiveThread implements Runnable {
         public void run() {
             try {
-                Object inputObject;
-                while ((inputObject = in.readObject()) != null) {
-                    if (inputObject instanceof Message) {
-                        Message<String> inputMessage = (Message<String>) inputObject;
-                        System.out.println(inputMessage.getSender() + ": " + inputMessage.getContent()); // Print the received message
-                    } else {
-                        // handle the case where inputObject is not a Message
+                System.out.println("["+name+"] " + "Listening for messages");
+                Message<?> inputMessage;
+                while ((inputMessage = (Message<?>) in.readObject()) != null) {
+
+                    if (inputMessage.isOfType(String.class)) {
+                        Message<String> stringMessage = (Message<String>) inputMessage;
+                        // Manage the message of type String here
+                        System.out.println("["+name+"] " + "Received message: " + stringMessage.getType() + " " + stringMessage.getPurpose() + " " + stringMessage.getContent());
+                        // Check if the message is a connexion message
+                        if(stringMessage.getType().equals("CONNEXION")) {
+
+                            if(stringMessage.getPurpose().equals("NAME")) {
+                                
+                            }
+                        }
+
+                    } 
+                    else if (inputMessage.isOfType(Card.class)) {
+                        Message<Card> cardMessage = (Message<Card>) inputMessage;
+                        // Traitez le message de type Card ici    
                     }
-                }
+            }
             } catch (IOException e) {
-                System.err.println("IOException: " + e.getMessage());
+                System.err.println("IOException2: " + e.getMessage());
             } catch (ClassNotFoundException e) {
                 System.err.println("ClassNotFoundException: " + e.getMessage());
             }
         }
     }
 
+    // Thread for receiving answers
+    public class AnswerReceiver<T extends Serializable> implements Runnable {
+        private final UUID id;
+        private final String type;
+        private final String purpose;
+        private final Socket echoSocket;
+        private final ObjectInputStream in;
+        private final String name;
+        private Message<T> answer;
+    
+        public AnswerReceiver(UUID id, String type, String purpose, Socket echoSocket, ObjectInputStream in, String name) {
+            this.id = id;
+            this.type = type;
+            this.purpose = purpose;
+            this.echoSocket = echoSocket;
+            this.in = in;
+            this.name = name;
+        }
+    
+        @Override
+        public void run() {
+            try {   
+                echoSocket.setSoTimeout(5000);
+                Object inputObject;
+                while ((inputObject = in.readObject()) != null) {
+                    if (inputObject instanceof Message) {
+                        Message<T> inputMessage = (Message<T>) inputObject;
+                        if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
+                            System.out.println("["+name+"] "+"Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
+                            answer = inputMessage;
+                            return;
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("IOException3: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println("ClassNotFoundException: " + e.getMessage());
+            }
+            System.out.println("["+name+"] "+"Error: no answer received");
+            //Send the same request again
+            System.out.println("["+name+"] =-=-=-=-=-=-=-=-=-=-=-==-=--==--==--=-=-==--==-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=----=-=-=-=-=--==-=-=-=--=-=-=");
+            sendRequest(new Message<T>(id, name, type, purpose, null, String.class));
+        }
+    
+        public Message<T> getAnswer() {
+            return answer;
+        }
+    }
+
+
     // Debug thread for sending requests every 5 seconds
     class DebugSendThread implements Runnable {
         public void run() {
             try {
                 while (true) {
+                    getPlayerList();
                     Thread.sleep(5000);
-                    System.out.println("[DebugSendThread] Sending request");
-                    drawTreasureCard();
-                    System.out.println("[DebugSendThread] Request sent");
                 }
             } catch (InterruptedException e) {
                 System.err.println("InterruptedException: " + e.getMessage());
             }
         }
     }
-    
+
     // REQUESTS SECTION
 
     // Generic method to send a request
@@ -168,7 +224,7 @@ public class Client {
                     }
                 }
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
+            System.err.println("IOException3: " + e.getMessage());
         } catch (ClassNotFoundException e) {
             System.err.println("ClassNotFoundException: " + e.getMessage());
         }
@@ -178,10 +234,25 @@ public class Client {
 
     // Generic method to send a request and receive an answer
     public <T extends Serializable> Message<T> request(String type, String purpose) {
-        Message<String> request = new Message<String>(name, type, purpose,"",String.class);
-        System.out.println("["+name+"] " + "Sending request. Name: " + request.getSender() + " Type: " + request.getType() + " Purpose: " + request.getPurpose());
-        sendRequest(request);
-        Message<T> answer = receiveAnswer(request.getId(), type, purpose);
+        Message<String> request_locale = new Message<String>(name, type, purpose,"",String.class);
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+
+        // Create an instance of AnswerReceiver with the necessary parameters
+        AnswerReceiver<T> answerReceiver = new AnswerReceiver<>(request_locale.getId(), type, purpose, echoSocket, in, name);  
+
+        // Create a new thread with the AnswerReceiver instance
+        Thread answerReceiverThread = new Thread(answerReceiver);
+
+        answerReceiverThread.start();
+        sendRequest(request_locale);
+
+        try {
+            answerReceiverThread.join();
+        } catch (InterruptedException e) {
+            System.err.println("InterruptedException: " + e.getMessage());
+        }
+        Message<T> answer = answerReceiver.getAnswer();
+
         System.out.println("["+name+"] " + "Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
         return answer;
     } 
@@ -226,23 +297,19 @@ public class Client {
     public ArrayList<Player> getPlayerList() {
         Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
         System.out.println("["+name+"] " + name + " got the player list");
-        //print the player list
-        for(Player player : answer.getContent()){
-            System.out.println(player.getName());
-        }
+        System.out.println("-------------[CLIENT] " + answer.getContent().size());
         return answer.getContent();
     }
 
-    // Main method
-    public static void main(String[] args) {
-        // Check the arguments
-        if (args.length != 3) {
-            System.err.println("Need 3 arguments: server IP, server port, player name");
-            System.exit(1);
-        }
-        // Create the client
-        Client client = new Client(args[0], Integer.parseInt(args[1]), args[2]);
-        // Start the client
-        client.run();
+    public boolean initGame() {
+        Message<Boolean> answer = request("GAME", "INIT_GAME");
+        System.out.println("["+name+"] " + name + " initialized the game");
+        return answer.getContent();
+    }
+
+    public String ping() {
+        Message<String> answer = request("PING", "");
+        System.out.println("["+name+"] " + name + " pinged the server");
+        return answer.getContent();
     }
 }

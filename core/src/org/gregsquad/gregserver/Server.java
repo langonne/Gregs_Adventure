@@ -9,6 +9,7 @@ import org.gregsquad.gregsadventure.card.*;
 
 public class Server {
     private static Server instance;
+    private ServerSocket serverSocket;
     private int port;
     protected List<ClientHandler> clients;
     protected Game game;
@@ -32,14 +33,15 @@ public class Server {
         for (Card card : Game.getInstance().getDonjonStack().getCards()) {
             System.out.println("[SERVER] " + card.getId() + " " + card.getName());
         }
-    }
+    } 
 
-    // Accept new clients and create a thread for each one
+    // Method to start the server and accept new clients in a new thread
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try {
+            serverSocket = new ServerSocket(port);
             System.out.println("[INFO] Server is listening on port " + port);
 
-            while (true) {
+            while (Game.getInstance().isGameStarted() == false) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("[CLIENT] New client connected.");
 
@@ -55,17 +57,27 @@ public class Server {
         }
     }
 
+    public void stop() {
+        try {
+            for (ClientHandler client : clients) {
+                client.stop(); // Assurez-vous que la classe ClientHandler a une méthode stop qui ferme les ressources et interrompt le thread
+            }
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+            System.out.println("Server stopped.");
+        } catch (IOException e) {
+            System.err.println("Error stopping server: " + e.getMessage());
+        }
+    }   
+        
+
     public void broadcast(Message<String> message, ClientHandler excludeClient) {
         for (ClientHandler client : clients) {
             if (client != excludeClient) {
                 client.sendMessage(message);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        //Server server = new Server(27093);
-        //server.run();
     }
 }
 
@@ -114,6 +126,10 @@ class ClientHandler implements Runnable {
                     Message<String> stringMessage = (Message<String>) inputMessage;
                     // Manage the message of type String here
                     System.out.println("[SERVER] Received message from " + stringMessage.getSender() + ": " + stringMessage.getContent());
+
+                    if(stringMessage.getType().equals("PING")) {
+                        sendToClient(stringMessage.getId(), "PING", "", "PONG");
+                    }
                     // Check if the message is a connexion message
                     if(stringMessage.getType().equals("CONNEXION")) {
 
@@ -136,7 +152,6 @@ class ClientHandler implements Runnable {
                                 Player player = new Player(this.getClientName());
                                 Game.getInstance().addPlayer(player);
                             }
-
                         }
                     }
 
@@ -164,7 +179,7 @@ class ClientHandler implements Runnable {
                         }
 
                         if(stringMessage.getPurpose().equals("GET_TREASURE_DISCARD")) {
-
+                            
                             System.out.println("[SERVER] " + this.getClientName() + " is getting the treasure discard.");
                             LinkedList<Card> cards = Game.getInstance().getTreasureDiscard().getCards();
                             sendToClient(stringMessage.getId(), "GAME", "GET_TREASURE_DISCARD", cards);
@@ -181,22 +196,43 @@ class ClientHandler implements Runnable {
     
                                 System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
                                 ArrayList<Player> playerList = Game.getInstance().getPlayerList();
+                                // Print all the players in the player list
+                                System.out.println("####### [SERVER] Player list " + playerList.size() + " #######");
                                 sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
-                            }
+                        }
+
+                        if(stringMessage.getPurpose().equals("INIT_GAME")) {
+    
+                            System.out.println("[SERVER] " + this.getClientName() + " is initializing the game.");
+                            Game.getInstance().init();
+                            sendToClient(stringMessage.getId(), "GAME", "INIT_GAME", "OK");
+                        }
                     }
 
-                } else if (inputMessage.isOfType(Card.class)) {
+                } 
+                else if (inputMessage.isOfType(Card.class)) {
                     Message<Card> cardMessage = (Message<Card>) inputMessage;
                     // Traitez le message de type Card ici
                     
                 }
             }
-
+            System.out.println("[CLIENT] " + clientName + " disconnected.");
             out.close();
             in.close();
             clientSocket.close();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error handling client connection: " + e.getMessage());
+        }
+    }
+
+    public void stop() {
+        try {
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
+            System.out.println("Client stopped.");
+        } catch (IOException e) {
+            System.err.println("Error stopping client: " + e.getMessage());
         }
     }
 

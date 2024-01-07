@@ -1,6 +1,8 @@
 package org.gregsquad.gregsadventure.card;
 
-public class Discard extends CardList{
+import java.io.Serializable;
+
+public class Discard extends CardList implements Serializable {
         
     public void addCard(Card card) {
         cards.addFirst(card);

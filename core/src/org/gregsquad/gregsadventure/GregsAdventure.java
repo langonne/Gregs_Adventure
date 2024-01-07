@@ -1,63 +1,51 @@
 package org.gregsquad.gregsadventure;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 
-// Debugging imports
-import org.gregsquad.gregserver.*;
-import org.gregsquad.gregsadventure.card.*;
-import org.gregsquad.gregsadventure.game.*;
-import java.util.logging.Logger;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class GregsAdventure extends ApplicationAdapter {
+import org.gregsquad.gregsadventure.gui.screens.TitleScreen;
 
-	// Debugging variables
-	private static final Logger LOGGER = Logger.getLogger(GregsAdventure.class.getName());
+import com.badlogic.gdx.Game;
 
-	SpriteBatch batch;
-	Texture img;
-	
+public class GregsAdventure extends Game {
+	private AssetManager assets;
+	private TitleScreen titleScreen;
+
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-		
-		// Debugging code
-		new Thread(() -> {
-			Server server = Server.getInstance();
-			server.init(27093);
-			server.run();
-		}).start();
-		//Wait for server to start
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		new Thread(() -> {
-			Client client = new Client("localhost", 27093, "Greg");
-			client.run();
-		}).start();
-		
+		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
 
-		
-		LOGGER.info("Server started");
+		assets = new AssetManager();
+
+		//batch = new SpriteBatch();
+		//img = new Texture("badlogic.jpg");
+		titleScreen = new TitleScreen(this, assets);
+		this.setScreen(titleScreen);
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-
+		super.render();
+		//ScreenUtils.clear(1, 0, 0, 1);
+		//batch.begin();
+		//batch.draw(img, 0, 0);
+		//batch.end();
 	}
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
-		img.dispose();
+		titleScreen.dispose();
+		assets.dispose(); // A faire en dernier
+	}
+		
+	private void readPreferences() {
+		Preferences prefs = Gdx.app.getPreferences("gregs-config");
+		prefs.flush();
 	}
 }
