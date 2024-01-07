@@ -15,6 +15,9 @@ public class Client {
     private ObjectOutputStream out; // Output stream
     private ObjectInputStream in; // Input stream
 
+    private static final int MAX_RECONNECT_ATTEMPTS = 5; // Maximum number of reconnection attempts
+    private static final int RECONNECT_DELAY_MS = 5000; // Delay between reconnection attempts
+
     // Constructor
     public Client(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
@@ -22,18 +25,37 @@ public class Client {
         this.name = name;
     }
 
+    private void connect() throws IOException, InterruptedException {
+        int attempts = 0;
+        while (true) {
+            try {
+                // Connect to the server
+                echoSocket = new Socket(serverIp, serverPort);
+                System.out.println("["+name+"] " + "Connected to " + serverIp + ":" + serverPort);
+
+                // Create input and output streams
+                System.out.println("["+name+"] " + "Creating streams");
+                out = new ObjectOutputStream(echoSocket.getOutputStream());
+                in = new ObjectInputStream(echoSocket.getInputStream());
+                System.out.println("["+name+"] " + "Streams created");
+
+                // Connection successful, break the loop
+                break;
+            } catch (SocketTimeoutException e) {
+                attempts++;
+                if (attempts > MAX_RECONNECT_ATTEMPTS) {
+                    throw new IOException("Failed to connect after " + MAX_RECONNECT_ATTEMPTS + " attempts", e);
+                }
+                System.err.println("Connection timed out, retrying in " + RECONNECT_DELAY_MS + "ms...");
+                Thread.sleep(RECONNECT_DELAY_MS);
+            }
+        }
+    }
+
     // Method to start the client
     public void run() {
         try {
-            // Connect to the server
-            echoSocket = new Socket(serverIp, serverPort);
-            System.out.println("["+name+"] " + "Connected to " + serverIp + ":" + serverPort);
-
-            // Create input and output streams
-            System.out.println("["+name+"] " + "Creating streams");
-            out = new ObjectOutputStream(echoSocket.getOutputStream());
-            in = new ObjectInputStream(echoSocket.getInputStream());
-            System.out.println("["+name+"] " + "Streams created");
+            connect();
 
             // Send the client name to the server
             System.out.println("["+name+"] " + "Sending name: " + name);
@@ -151,6 +173,9 @@ public class Client {
                 System.err.println("ClassNotFoundException: " + e.getMessage());
             }
             System.out.println("["+name+"] "+"Error: no answer received");
+            //Send the same request again
+            System.out.println("["+name+"] =-=-=-=-=-=-=-=-=-=-=-==-=--==--==--=-=-==--==-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=----=-=-=-=-=--==-=-=-=--=-=-=");
+            sendRequest(new Message<T>(id, name, type, purpose, null, String.class));
         }
     
         public Message<T> getAnswer() {
@@ -164,7 +189,7 @@ public class Client {
         public void run() {
             try {
                 while (true) {
-                    ping();
+                    getPlayerList();
                     Thread.sleep(5000);
                 }
             } catch (InterruptedException e) {
@@ -272,11 +297,7 @@ public class Client {
     public ArrayList<Player> getPlayerList() {
         Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
         System.out.println("["+name+"] " + name + " got the player list");
-        //print the player list
-        for(Player player : answer.getContent()){
-            System.out.println(player.getName());
-        }
-        // add the player list to the game
+        System.out.println("-------------[CLIENT] " + answer.getContent().size());
         return answer.getContent();
     }
 
