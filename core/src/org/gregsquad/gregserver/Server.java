@@ -228,11 +228,19 @@ class ClientHandler implements Runnable {
 
                         if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
     
-                                System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
-                                ArrayList<Player> playerList = Game.getInstance().getPlayerList();
-                                // Print all the players in the player list
-                                System.out.println("####### [SERVER] Player list " + playerList.size() + " #######");
-                                sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
+                            // Check if list of client is the same as the list of players
+                            if (Game.getInstance().getPlayerList().size() != server.clients.size()) {
+                                System.out.println("[SERVER] Number of clients and players is different.");
+                                // Update the list of player with the list of clients
+                                Game.getInstance().setPlayerList(server.clients.stream()
+                                    .map(client -> new Player(client.getClientName()))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                            }
+                            ArrayList<Player> playerList = Game.getInstance().getPlayerList();
+                            // Print all the players in the player list
+                            System.out.println("####### [SERVER] Player list " + playerList.size() + " #######");
+                            sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
                         if(stringMessage.getPurpose().equals("INIT_GAME")) {
@@ -240,6 +248,13 @@ class ClientHandler implements Runnable {
                             System.out.println("[SERVER] " + this.getClientName() + " is initializing the game.");
                             Game.getInstance().init();
                             sendToClient(stringMessage.getId(), "GAME", "INIT_GAME", "OK");
+                        }
+
+                        if(stringMessage.getPurpose().equals("GET_INIT_GAME")) {
+    
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the game initialization status.");
+                            boolean init = Game.getInstance().isGameStarted();
+                            sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
                         }
                     }
 
