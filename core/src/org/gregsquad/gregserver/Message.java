@@ -18,12 +18,12 @@ public class Message<T> implements Serializable {
     private Class<? extends Serializable> typeOfContent;
 
     public Message(String sender, String type, String purpose,T content, Class<? extends Serializable> typeOfContent) {
-        if (!isValidType(type)) {
+        /*if (!isValidType(type)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid type: " + type);
         }
         if (!isValidPurpose(purpose)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid purpose: " + purpose);
-        }
+        }*/
         this.id = UUID.randomUUID();
         this.sender = sender;
         this.type = type;
@@ -33,12 +33,12 @@ public class Message<T> implements Serializable {
     }
 
     public Message(UUID id, String sender, String type, String purpose,T content, Class<? extends Serializable> typeOfContent) {
-        if (!isValidType(type)) {
+        /*if (!isValidType(type)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid type: " + type);
         }
         if (!isValidPurpose(purpose)) {
             throw new IllegalArgumentException("[MESSAGE] Invalid purpose: " + purpose);
-        }
+        }*/
         this.id = id;
         this.sender = sender;
         this.type = type;
