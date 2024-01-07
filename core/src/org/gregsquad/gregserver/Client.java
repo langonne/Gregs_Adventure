@@ -1,12 +1,7 @@
-package org.gregsquad.gregserver;
-
-import org.gregsquad.gregsadventure.card.*;
-import org.gregsquad.gregsadventure.game.*;
-
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
+/**
+ * The Client class is responsible for managing the client-side logic of the game.
+ * It connects to the server, sends and receives messages, and handles reconnections.
+ */
 public class Client {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
@@ -18,13 +13,25 @@ public class Client {
     private static final int MAX_RECONNECT_ATTEMPTS = 5; // Maximum number of reconnection attempts
     private static final int RECONNECT_DELAY_MS = 5000; // Delay between reconnection attempts
 
-    // Constructor
+    /**
+     * Constructs a new Client with the given server IP, server port, and client name.
+     * @param serverIp the IP address of the server.
+     * @param serverPort the port number of the server.
+     * @param name the name of the client.
+     */
     public Client(String serverIp, int serverPort, String name) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.name = name;
     }
-
+}
+    /**
+     * Tries to connect to the server and create input and output streams.
+     * If a connection attempt times out, it retries up to a maximum number of attempts.
+     * Between each attempt, it waits for a specified delay.
+     * @throws IOException if it fails to connect after the maximum number of attempts.
+     * @throws InterruptedException if the thread is interrupted while waiting between attempts.
+     */
     private void connect() throws IOException, InterruptedException {
         int attempts = 0;
         while (true) {
@@ -52,15 +59,17 @@ public class Client {
         }
     }
 
-    // Method to start the client
+    /**
+     * The main loop of the Client.
+     * Connects to the server, sends the client's name, and starts the receive and debug send threads.
+     * After the debug send thread finishes, it closes the streams and the connection.
+     * If an error occurs during this process, it is caught and printed.
+     */
     public void run() {
         try {
             connect();
 
-            // Send the client name to the server
             System.out.println("["+name+"] " + "Sending name: " + name);
-            //out.writeObject(new Message<String>(name, "CONNEXION", "NAME","has joined the chat"));
-            //sendInformation("CONNEXION", "NAME", "has joined the chat");
         
             Message<String> answer = request("CONNEXION", "NAME");
                 
@@ -88,6 +97,10 @@ public class Client {
         }
     }
 
+    /**
+     * Stops the client connection by closing the input and output streams and the socket.
+     * If an error occurs while stopping the client, it is caught and printed.
+     */
     public void stop() {
         try {
             // Close the streams and the connection
@@ -99,7 +112,11 @@ public class Client {
         }
     }
 
-    // Thread for receiving messages
+    /**
+     * The ReceiveThread class implements the Runnable interface and is responsible for receiving messages from the server.
+     * It reads messages from the input stream and performs actions based on the type and content of the messages.
+     * It continues to read messages until an error occurs or the end of the stream is reached.
+     */
     class ReceiveThread implements Runnable {
         public void run() {
             try {
@@ -133,16 +150,31 @@ public class Client {
         }
     }
 
-    // Thread for receiving answers
+    /**
+     * The AnswerReceiver class implements the Runnable interface and is responsible for receiving answers from the server.
+     * It reads messages from the input stream and checks if they match the expected ID, type, and purpose.
+     * If a matching message is found, it is stored and the thread returns.
+     * If an error occurs while reading a message, it is caught and printed, and the request is sent again.
+     * @param <T> the type of the content of the message, which must implement Serializable.
+     */
     public class AnswerReceiver<T extends Serializable> implements Runnable {
-        private final UUID id;
-        private final String type;
-        private final String purpose;
-        private final Socket echoSocket;
-        private final ObjectInputStream in;
-        private final String name;
-        private Message<T> answer;
-    
+        private final UUID id; // The expected ID of the answer
+        private final String type; // The expected type of the answer
+        private final String purpose; // The expected purpose of the answer
+        private final Socket echoSocket; // The socket for communication
+        private final ObjectInputStream in; // The input stream
+        private final String name; // The name of the client
+        private Message<T> answer; // The received answer
+
+        /**
+         * Constructs a new AnswerReceiver with the expected ID, type, and purpose of the answer, the socket for communication, the input stream, and the name of the client.
+         * @param id the expected ID of the answer.
+         * @param type the expected type of the answer.
+         * @param purpose the expected purpose of the answer.
+         * @param echoSocket the socket for communication.
+         * @param in the input stream.
+         * @param name the name of the client.
+         */
         public AnswerReceiver(UUID id, String type, String purpose, Socket echoSocket, ObjectInputStream in, String name) {
             this.id = id;
             this.type = type;
@@ -151,7 +183,13 @@ public class Client {
             this.in = in;
             this.name = name;
         }
-    
+
+        /**
+         * The main loop of the AnswerReceiver.
+         * Reads messages from the input stream and checks if they match the expected ID, type, and purpose.
+         * If a matching message is found, it is stored and the thread returns.
+         * If an error occurs while reading a message, it is caught and printed, and the request is sent again.
+         */
         @Override
         public void run() {
             try {   
