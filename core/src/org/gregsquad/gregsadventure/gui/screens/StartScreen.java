@@ -109,6 +109,7 @@ public class StartScreen extends Screen{
                                 @Override
                                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                                     gameStarted = true;
+                                    client.initGame();
                                     gui.setScreen(new GameScreen(gui, assets, client));
                                 }
                             });
@@ -119,9 +120,6 @@ public class StartScreen extends Screen{
                                     gui.setScreen(new StartScreen(gui, assets));
                                 }
                             });
-
-                            Table playersTable = new Table();
-                            playersTable.setFillParent(true);
 
                             
                             new Thread(() -> {
@@ -137,8 +135,10 @@ public class StartScreen extends Screen{
                                     table.add(confirmButton).fillX().uniformX();
                                     table.row();
                                     table.add(cancelButton).fillX().uniformX();
-
                                 }
+
+                                gui.setScreen(new GameScreen(gui, assets, client));
+
                             }).start();
                         } // fin else (=nom valide)
                     }
@@ -160,7 +160,7 @@ public class StartScreen extends Screen{
                 table.clear();
 
                 TextField name = new TextField("", skin);
-                TextField ip = new TextField("", skin);
+                TextField ip = new TextField("localhost", skin);
                 TextField port = new TextField("27093", skin);
                 TextButton confirmButton = new TextButton("Confirmer", skin);
                 TextButton cancelButton = new TextButton("Annuler", skin);    
@@ -195,13 +195,11 @@ public class StartScreen extends Screen{
                                 client.run();
                             }).start();
 
-                            //TEMPPPP
-                            Table playersTable = new Table();
-                            playersTable.setFillParent(true);
-
                             
                             new Thread(() -> {
-                                while(!gameStarted) {
+                                System.out.println("Waiting for game to start...");
+                                System.out.println(client.getInitGame());
+                                while(!client.getInitGame()) {
                                     try {
                                         Thread.sleep(1000);
                                     } catch (InterruptedException e) {
@@ -210,9 +208,15 @@ public class StartScreen extends Screen{
                                     
                                     displayPlayers(client, table);
 
-                                    table.add(confirmButton).fillX().uniformX();
                                     table.row();
                                     table.add(cancelButton).fillX().uniformX();
+                                    cancelButton.addListener(new ChangeListener() {
+                                        @Override
+                                        public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                                            // TODO disconnect from server
+                                            gui.setScreen(new StartScreen(gui, assets));
+                                        }
+                                    });
 
                                 }
                             }).start();
@@ -258,7 +262,7 @@ public class StartScreen extends Screen{
         table.add("Joueurs : " + players.size() + "/6");
         table.row();
         for (Player player : players) {
-            table.add("- " + player.getName());
+            table.add("- " + player.getName() + '\n');
         }
         table.row();
     }
