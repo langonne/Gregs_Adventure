@@ -195,6 +195,7 @@ public class StartScreen extends Screen{
                                 client.run();
                             }).start();
 
+                            //TEMPPPP
                             Table playersTable = new Table();
                             playersTable.setFillParent(true);
 
@@ -215,6 +216,7 @@ public class StartScreen extends Screen{
 
                                 }
                             }).start();
+                            /////////
                         }
                     }
                 });
