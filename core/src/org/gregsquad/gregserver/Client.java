@@ -282,6 +282,51 @@ public class Client {
         return null;
     }
 
+    //initGame
+    public boolean initGame() {
+        Message<String> request_locale = request("GAME", "INIT_GAME");
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        
+        for (int i = 0; i < 5; i++) {
+            
+            Message<Boolean> lastInitGame = globalListener.getLastInitGame();
+            if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
+                System.out.println("["+name+"] " + name + " initialized the game");
+                return lastInitGame.getContent();
+            }
+        
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return false;
+    }
+
+    //GetInitGame
+    public boolean getInitGame() {
+        Message<String> request_locale = request("GAME", "GET_INIT_GAME");
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        
+        for (int i = 0; i < 5; i++) {
+            
+            Message<Boolean> lastInitGame = globalListener.getLastInitGame();
+            if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
+                System.out.println("["+name+"] " + name + " got the init game");
+                return lastInitGame.getContent();
+            }
+        
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return false;
+    }
 
         
     /*
