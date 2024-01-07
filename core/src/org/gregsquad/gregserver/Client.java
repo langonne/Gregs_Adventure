@@ -1,3 +1,12 @@
+package org.gregsquad.gregserver;
+
+import org.gregsquad.gregsadventure.card.*;
+import org.gregsquad.gregsadventure.game.*;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
 /**
  * The Client class is responsible for managing the client-side logic of the game.
  * It connects to the server, sends and receives messages, and handles reconnections.
@@ -9,6 +18,7 @@ public class Client {
     private Socket echoSocket; // Socket for communication
     private ObjectOutputStream out; // Output stream
     private ObjectInputStream in; // Input stream
+    private GlobalListener globalListener; // Thread for listening to the server
 
     private static final int MAX_RECONNECT_ATTEMPTS = 5; // Maximum number of reconnection attempts
     private static final int RECONNECT_DELAY_MS = 5000; // Delay between reconnection attempts
@@ -23,8 +33,10 @@ public class Client {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.name = name;
+
+        globalListener = new GlobalListener();
     }
-}
+
     
     private void connect() throws IOException, InterruptedException {
         int attempts = 0;
@@ -66,13 +78,14 @@ public class Client {
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
-            Thread receiveThread = new Thread(new ReceiveThread());
-
             Thread debugSendThread = new Thread(new DebugSendThread());
             debugSendThread.start();
-            debugSendThread.join();
-            //receiveThread.start();
-            //receiveThread.join();
+            //debugSendThread.join();
+
+            Thread globalListenerThread = new Thread(globalListener);
+            globalListenerThread.start();
+            globalListenerThread.join();
+
 
             // Close the streams and the connection
             out.close();
@@ -97,97 +110,105 @@ public class Client {
         }
     }
 
-    // Thread for receiving messages
-    class ReceiveThread implements Runnable {
+    class GlobalListener implements Runnable {
+
+        private Message<Card> lastDonjonCard;
+        private Message<Card> lastTreasureCard;
+        private Message<LinkedList<Card>> lastDonjonDiscard;
+        private Message<LinkedList<Card>> lastTreasureDiscard;
+        private Message<Player> lastCurrentPlayer;
+        private Message<ArrayList<Player>> lastPlayerList;
+        private Message<Boolean> lastInitGame;
+        
+
         public void run() {
             try {
-                System.out.println("["+name+"] " + "Listening for messages");
-                Message<?> inputMessage;
-                while ((inputMessage = (Message<?>) in.readObject()) != null) {
-
-                    if (inputMessage.isOfType(String.class)) {
-                        Message<String> stringMessage = (Message<String>) inputMessage;
-                        // Manage the message of type String here
-                        System.out.println("["+name+"] " + "Received message: " + stringMessage.getType() + " " + stringMessage.getPurpose() + " " + stringMessage.getContent());
-                        // Check if the message is a connexion message
-                        if(stringMessage.getType().equals("CONNEXION")) {
-
-                            if(stringMessage.getPurpose().equals("NAME")) {
-                                
-                            }
-                        }
-
-                    } 
-                    else if (inputMessage.isOfType(Card.class)) {
-                        Message<Card> cardMessage = (Message<Card>) inputMessage;
-                        // Traitez le message de type Card ici    
-                    }
-            }
-            } catch (IOException e) {
-                System.err.println("IOException2: " + e.getMessage());
-            } catch (ClassNotFoundException e) {
-                System.err.println("ClassNotFoundException: " + e.getMessage());
-            }
-        }
-    }
-
-    // Thread for receiving answers
-    public class AnswerReceiver<T extends Serializable> implements Runnable {
-        private final UUID id;
-        private final String type;
-        private final String purpose;
-        private final Socket echoSocket;
-        private final ObjectInputStream in;
-        private final String name;
-        private Message<T> answer;
-    
-        public AnswerReceiver(UUID id, String type, String purpose, Socket echoSocket, ObjectInputStream in, String name) {
-            this.id = id;
-            this.type = type;
-            this.purpose = purpose;
-            this.echoSocket = echoSocket;
-            this.in = in;
-            this.name = name;
-        }
-    
-        @Override
-        public void run() {
-            try {   
-                echoSocket.setSoTimeout(5000);
                 Object inputObject;
                 while ((inputObject = in.readObject()) != null) {
                     if (inputObject instanceof Message) {
-                        Message<T> inputMessage = (Message<T>) inputObject;
-                        if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
-                            System.out.println("["+name+"] "+"Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
-                            answer = inputMessage;
-                            return;
+                        Message<?> inputMessage = (Message<?>) inputObject;
+                        System.out.println("["+name+"] " + "Received message: " + inputMessage.getType() + " " + inputMessage.getPurpose());
+                        switch (inputMessage.getType()) {
+                            case "CONNEXION":
+                                break;
+                            case "GAME":
+                                switch (inputMessage.getPurpose()) {
+                                    case "DRAW_DONJON_CARD":
+                                        lastDonjonCard = (Message<Card>) inputMessage;
+                                        break;
+                                    case "DRAW_TREASURE_CARD":
+                                        lastTreasureCard = (Message<Card>) inputMessage;
+                                        break;
+                                    case "GET_DONJON_DISCARD":
+                                        lastDonjonDiscard = (Message<LinkedList<Card>>) inputMessage;
+                                        break;
+                                    case "GET_TREASURE_DISCARD":
+                                        lastTreasureDiscard = (Message<LinkedList<Card>>) inputMessage;
+                                        break;
+                                    case "GET_CURRENT_PLAYER":
+                                        lastCurrentPlayer = (Message<Player>) inputMessage;
+                                        break;
+                                    case "GET_PLAYER_LIST":
+                                        lastPlayerList = (Message<ArrayList<Player>>) inputMessage;
+                                        break;
+                                    case "INIT_GAME":
+                                        lastInitGame = (Message<Boolean>) inputMessage;
+                                        break;
+                                    default:
+                                        System.err.println("Unknown message purpose: " + inputMessage.getPurpose());
+                                        break;
+                                }
+                                break;
+                            // Ajoutez d'autres cas ici pour gérer d'autres types de messages
+                            default:
+                                System.err.println("Unknown message type: " + inputMessage.getType());
+                                break;
                         }
                     }
                 }
             } catch (IOException e) {
-                System.err.println("IOException3: " + e.getMessage());
+                System.err.println("IOException in GlobalListener: " + e.getMessage());
             } catch (ClassNotFoundException e) {
-                System.err.println("ClassNotFoundException: " + e.getMessage());
+                System.err.println("ClassNotFoundException in GlobalListener: " + e.getMessage());
             }
-            System.out.println("["+name+"] "+"Error: no answer received");
-            //Send the same request again
-            System.out.println("["+name+"] =-=-=-=-=-=-=-=-=-=-=-==-=--==--==--=-=-==--==-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=----=-=-=-=-=--==-=-=-=--=-=-=");
-            sendRequest(new Message<T>(id, name, type, purpose, null, String.class));
         }
-    
-        public Message<T> getAnswer() {
-            return answer;
-        }
-    }
 
+        public Message<Card> getLastDonjonCard() {
+            return lastDonjonCard;
+        }
+
+        public Message<Card> getLastTreasureCard() {
+            return lastTreasureCard;
+        }
+
+        public Message<LinkedList<Card>> getLastDonjonDiscard() {
+            return lastDonjonDiscard;
+        }
+
+        public Message<LinkedList<Card>> getLastTreasureDiscard() {
+            return lastTreasureDiscard;
+        }
+
+        public Message<Player> getLastCurrentPlayer() {
+            return lastCurrentPlayer;
+        }
+
+        public Message<ArrayList<Player>> getLastPlayerList() {
+            return lastPlayerList;
+        }
+
+        public Message<Boolean> getLastInitGame() {
+            return lastInitGame;
+        }
+
+    }
 
     // Debug thread for sending requests every 5 seconds
     class DebugSendThread implements Runnable {
         public void run() {
             try {
                 while (true) {
-                    getPlayerList();
+                    //drawDonjonCard();
                     Thread.sleep(5000);
                 }
             } catch (InterruptedException e) {
@@ -207,67 +228,63 @@ public class Client {
             System.err.println("["+name+"] " + "Error sending message: " + e.getMessage());
         }
     }
-    // Generic method to receive an answer
-    public <T extends Serializable> Message<T> receiveAnswer(UUID id, String type, String purpose) {
-        try {   
-                echoSocket.setSoTimeout(5000);
-                Object inputObject;
-                while ((inputObject = in.readObject()) != null) {
-                    if (inputObject instanceof Message) {
-                        Message<T> inputMessage = (Message<T>) inputObject;
-                        if (inputMessage.getId().equals(id) && inputMessage.getType().equals(type) && inputMessage.getPurpose().equals(purpose)) {
-                            System.out.println("["+name+"] "+"Received answer: " + inputMessage.getType() + " " + inputMessage.getPurpose());
-                            return inputMessage;
-                        }
-                    }
-                }
-        } catch (IOException e) {
-            System.err.println("IOException3: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("ClassNotFoundException: " + e.getMessage());
-        }
-        System.out.println("["+name+"] "+"Error: no answer received");
-        return null;
-    }
 
-    // Generic method to send a request and receive an answer
-    public <T extends Serializable> Message<T> request(String type, String purpose) {
+    public Message<String> request(String type, String purpose) {
         Message<String> request_locale = new Message<String>(name, type, purpose,"",String.class);
         System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-
-        // Create an instance of AnswerReceiver with the necessary parameters
-        AnswerReceiver<T> answerReceiver = new AnswerReceiver<>(request_locale.getId(), type, purpose, echoSocket, in, name);  
-
-        // Create a new thread with the AnswerReceiver instance
-        Thread answerReceiverThread = new Thread(answerReceiver);
-
-        answerReceiverThread.start();
         sendRequest(request_locale);
-
-        try {
-            answerReceiverThread.join();
-        } catch (InterruptedException e) {
-            System.err.println("InterruptedException: " + e.getMessage());
-        }
-        Message<T> answer = answerReceiver.getAnswer();
-
-        System.out.println("["+name+"] " + "Received answer. Name: " + answer.getSender() + " Type: " + answer.getType() + " Purpose: " + answer.getPurpose());
-        return answer;
-    } 
-    // Generic method to send information
-    public <T extends Serializable> void sendInformation(String type, String purpose, T content) {
-        Message<T> information = new Message<T>(name, type, purpose, content, content.getClass());
-        System.out.println("["+name+"] " + "Sending information. Name: " + information.getSender() + " Type: " + information.getType() + " Purpose: " + information.getPurpose());
-        sendRequest(information);
+        return request_locale;
     }
 
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
-        Message<Card> answer = request("GAME", "DRAW_DONJON_CARD");
-        System.out.println("["+name+"] " + name + " drew a donjon card: " + answer.getContent().getName());
-        return answer.getContent();
+        Message<String> request_locale = request("GAME", "DRAW_DONJON_CARD");
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        
+        for (int i = 0; i < 5; i++) {
+        
+            Message<Card> lastDonjonCard = globalListener.getLastDonjonCard();
+            if (request_locale.getId().equals(lastDonjonCard.getId())) {
+                System.out.println("["+name+"] " + name + " drew a donjon card: " + lastDonjonCard.getContent().getName());
+                return lastDonjonCard.getContent();
+            }
+        
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return null;
     }
 
+    //getPlayerList
+    public ArrayList<Player> getPlayerList() {
+        Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        
+        for (int i = 0; i < 5; i++) {
+            
+            Message<ArrayList<Player>> lastPlayerList = globalListener.getLastPlayerList();
+            if (lastPlayerList != null && request_locale.getId().equals(lastPlayerList.getId())) {
+                System.out.println("["+name+"] " + name + " got the player list");
+                return lastPlayerList.getContent();
+            }
+        
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return null;
+    }
+
+
+        
+    /*
     public Card drawTreasureCard() {
         Message<Card> answer = request("GAME", "DRAW_TREASURE_CARD");
         System.out.println("["+name+"] " + name + " drew a treasure card: " + answer.getContent().getName());
@@ -310,4 +327,5 @@ public class Client {
         System.out.println("["+name+"] " + name + " pinged the server");
         return answer.getContent();
     }
+    */
 }
