@@ -2,7 +2,7 @@ package org.gregsquad.gregsadventure.gui.screens;
 
 import org.gregsquad.gregsadventure.GregsAdventure;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 import com.badlogic.gdx.assets.AssetManager;
@@ -198,6 +198,12 @@ public class StartScreen extends Screen{
                             
                             new Thread(() -> {
                                 System.out.println("Waiting for game to start...");
+                                //Wait 0.5s to let the server send the player list
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 System.out.println(client.getInitGame());
                                 while(!client.getInitGame()) {
                                     try {
@@ -257,8 +263,10 @@ public class StartScreen extends Screen{
 
     private void displayPlayers(Client client, Table table) {
         table.clear();
-        List<Player> players = client.getPlayerList();
-    
+        ArrayList<Player> players = client.getPlayerList();
+        
+        System.out.println("Players : " + players.size());
+
         table.add("Joueurs : " + players.size() + "/6");
         table.row();
         for (Player player : players) {
