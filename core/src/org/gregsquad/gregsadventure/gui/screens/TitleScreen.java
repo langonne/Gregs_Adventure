@@ -53,6 +53,13 @@ public class TitleScreen extends Screen {
             }
         });
 
+        optionsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                table.add("Pas de chance, on a pas eu le temps de faire le menu des options").fillX().uniformX();
+            }
+        });
+
         exitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
