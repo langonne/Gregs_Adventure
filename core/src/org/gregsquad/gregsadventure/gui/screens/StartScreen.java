@@ -201,6 +201,13 @@ public class StartScreen extends Screen{
                                 client.run();
                             }).start();
 
+                            //Wait 0.5s for the server to send the player list
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                             
                             new Thread(() -> {
                                 // Here was a wait
