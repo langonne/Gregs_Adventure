@@ -252,12 +252,6 @@ class ClientHandler implements Runnable {
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
                         }
 
-                        if(stringMessage.getPurpose().equals("GET_PLAYER")) {
-    
-                            System.out.println("[SERVER] " + this.getClientName() + " is getting the player.");
-                            Player player = Game.getInstance().getPlayer(Integer.parseInt(stringMessage.getContent()));
-                            sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER", player);
-                        }
                     }
 
                 } 
