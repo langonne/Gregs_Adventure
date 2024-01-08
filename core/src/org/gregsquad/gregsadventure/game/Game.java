@@ -379,6 +379,14 @@ public class Game {
      * @brief Sets the current player for the game.
      * @param currentPlayer The current player to set.
      */
+    public Player getPlayer(int index) {
+        return playerList.get(index);
+    }
+
+    /**
+     * @brief Sets the current player for the game.
+     * @param currentPlayer The current player to set.
+     */
     public boolean isGameStarted() {
         return isGameStarted;
     }
