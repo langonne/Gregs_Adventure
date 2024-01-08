@@ -110,12 +110,12 @@ public class StartScreen extends Screen{
                             confirmButton.addListener(new ChangeListener() {
                                 @Override
                                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                                    if (client.getPlayerList().size() < 3 || client.getPlayerList().size() > 6) {
+                                    if (client.getPlayerList().size() < 2 || client.getPlayerList().size() > 6) {
                                         table.add("Il faut entre 3 et 6 joueurs pour jouer.");
                                     }
                                     else {
                                         gameStarted = true;
-                                        //client.initGame();
+                                        client.initGame();
                                         gui.setScreen(new GameScreen(gui, assets, client, name.getText()));
                                     }
                                 }
@@ -207,7 +207,6 @@ public class StartScreen extends Screen{
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-
                             
                             new Thread(() -> {
                                 // Here was a wait
@@ -231,7 +230,7 @@ public class StartScreen extends Screen{
                                         }
                                     });
                                 }
-                                //gui.setScreen(new GameScreen(gui, assets, client));
+                                Gdx.app.postRunnable(() -> gui.setScreen(new GameScreen(gui, assets, client, name.getText())));
                             }).start();
                             /////////
                         }
