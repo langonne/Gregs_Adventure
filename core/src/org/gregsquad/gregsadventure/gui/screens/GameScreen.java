@@ -104,6 +104,10 @@ public class GameScreen extends Screen {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
         font.draw(batch, name + " - " + "Level - " + "Atk", 60, 1040);
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
+
+        System.out.println("[GAMESCREEN] [RENDER] " + Gdx.input.getX() + " " + Gdx.input.getY());
 
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();
