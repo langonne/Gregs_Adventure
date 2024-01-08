@@ -80,7 +80,7 @@ public class Server {
 
 
     /**
-     * Stops the server and disconnects all clients.
+     * Stops the server and disconnects ,all clients.
      * If an error occurs while stopping the server, it is caught and printed.
      */
     public void stop() {
