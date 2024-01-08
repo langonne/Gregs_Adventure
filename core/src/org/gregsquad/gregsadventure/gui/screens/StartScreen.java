@@ -4,7 +4,6 @@ import org.gregsquad.gregsadventure.GregsAdventure;
 
 import java.util.ArrayList;
 
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -12,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import com.badlogic.gdx.Gdx;
 
 import org.gregsquad.gregsadventure.game.Player;
 import org.gregsquad.gregserver.Client;
@@ -32,6 +33,7 @@ public class StartScreen extends Screen{
 
     private boolean wrongNameDisplayed = false; // global variable to avoid displaying the same error message multiple times
     private boolean gameStarted = false; // global variable for the lobby loop
+
     
     
     public StartScreen(GregsAdventure gui, AssetManager assets) {
@@ -136,10 +138,9 @@ public class StartScreen extends Screen{
                                     table.row();
                                     table.add(cancelButton).fillX().uniformX();
                                 }
-
-                                gui.setScreen(new GameScreen(gui, assets, client));
-
                             }).start();
+
+
                         } // fin else (=nom valide)
                     }
                 }); // fin confirmButton.addListener
@@ -197,13 +198,7 @@ public class StartScreen extends Screen{
 
                             
                             new Thread(() -> {
-                                System.out.println("Waiting for game to start...");
-                                //Wait 0.5s to let the server send the player list
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                                // Here was a wait
                                 System.out.println(client.getInitGame());
                                 while(!client.getInitGame()) {
                                     try {
@@ -223,8 +218,8 @@ public class StartScreen extends Screen{
                                             gui.setScreen(new StartScreen(gui, assets));
                                         }
                                     });
-
                                 }
+                                //gui.setScreen(new GameScreen(gui, assets, client));
                             }).start();
                             /////////
                         }
