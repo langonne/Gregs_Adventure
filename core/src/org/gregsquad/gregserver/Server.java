@@ -156,7 +156,8 @@ class ClientHandler implements Runnable {
             Message<?> inputMessage;
             while ((inputMessage = (Message<?>) in.readObject()) != null) {
 
-                out.reset();
+                out.reset(); // Reset the output stream to avoid sending the same object multiple times
+                             // !! Very important !!
 
                 if (inputMessage.isOfType(String.class)) {
                     Message<String> stringMessage = (Message<String>) inputMessage;
@@ -231,17 +232,7 @@ class ClientHandler implements Runnable {
                         if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
     
                             System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
-                            // Check if list of client is the same as the list of players
-                            if (Game.getInstance().getPlayerList().size() != server.clients.size()) {
-                                System.out.println("[SERVER] Number of clients and players is different.");
-                                // Update the list of player with the list of clients
-                                
-                            }
-                            
-                            ArrayList<Player> playerList = Game.getInstance().getPlayerList(); 
-                            System.out.println("[SERVER] -------------------------------------  "+playerList.size());
-                            System.out.println("[SERVER] -------------------------------------  "+server.clients.size());
-                            System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");      
+                            ArrayList<Player> playerList = Game.getInstance().getPlayerList();   
                             System.out.println(inputMessage.getContent());                     
                             sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
