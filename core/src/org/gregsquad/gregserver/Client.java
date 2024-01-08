@@ -151,11 +151,9 @@ public class Client {
                                         break;
                                     case "GET_PLAYER_LIST":
                                         lastPlayerList = (Message<ArrayList<Player>>) inputMessage;
-                                        System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().size());
-                                        // Print list of players
-                                        for (int i = 0; i < lastPlayerList.getContent().size(); i++) {
-                                            System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().get(i).getName());
-                                        }
+                                        break;
+                                    case "GET_PLAYER":
+                                        lastCurrentPlayer = (Message<Player>) inputMessage;
                                         break;
                                     case "INIT_GAME":
                                         lastInitGame = (Message<Boolean>) inputMessage;
@@ -173,7 +171,7 @@ public class Client {
                                 System.err.println("Unknown message type: " + inputMessage.getType());
                                 break;
                         }
-                        
+
                     }
                     inputObject = null;
                 }
@@ -219,8 +217,9 @@ public class Client {
         public void run() {
             try {
                 while (true) {
-                    //drawDonjonCard();
-                    Thread.sleep(5000);
+                    System.out.println("DEBUG THREAD");
+                    getPlayer(0);
+                    Thread.sleep(100);
                 }
             } catch (InterruptedException e) {
                 System.err.println("InterruptedException: " + e.getMessage());
@@ -246,26 +245,6 @@ public class Client {
         sendRequest(request_locale);
         return request_locale;
     }
-
-    /*
-    public <T> T Answer(Message<T> request_locale, GlobalListener globalListener) {
-        for (int i = 0; i < 5; i++) {
-            Message<T> lastAnswer = globalListener.getLastAnswer();
-            if (request_locale.getId().equals(lastAnswer.getId())) {
-                System.out.println("["+name+"] " + name + " got the answer");
-                return lastAnswer.getContent();
-            }
-        
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return null;
-    }
-    */
 
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
@@ -304,6 +283,32 @@ public class Client {
                 System.out.println("["+name+"] " + name + " got the player list");
                 return lastPlayerList.getContent();
             }
+        
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return globalListener.getLastPlayerList().getContent();
+    }
+
+    //Get player by index
+    public Player getPlayer(int index) {
+        Message<Integer> request_locale = new Message<Integer>(name, "GAME", "GET_PLAYER",index,Integer.class);
+        sendRequest(request_locale);
+
+        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
+        
+        for (int i = 0; i < 5; i++) {
+        
+            Message<Player> lastPlayer = globalListener.getLastCurrentPlayer();
+        
+            if (request_locale.getId().equals(lastPlayer.getId())) {
+                        System.out.println("["+name+"] " + name + " got the player: " + lastPlayer.getContent().getName());
+                        return lastPlayer.getContent();
+                    }
         
             try {
                 Thread.sleep(100);
