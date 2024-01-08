@@ -110,9 +110,14 @@ public class StartScreen extends Screen{
                             confirmButton.addListener(new ChangeListener() {
                                 @Override
                                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                                    gameStarted = true;
-                                    client.initGame();
-                                    gui.setScreen(new GameScreen(gui, assets, client));
+                                    if (client.getPlayerList().size() < 3 || client.getPlayerList().size() > 6) {
+                                        table.add("Il faut entre 3 et 6 joueurs pour jouer.");
+                                    }
+                                    else {
+                                        gameStarted = true;
+                                        //client.initGame();
+                                        gui.setScreen(new GameScreen(gui, assets, client, name.getText()));
+                                    }
                                 }
                             });
 

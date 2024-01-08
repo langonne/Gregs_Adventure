@@ -31,6 +31,8 @@ public class GameScreen extends Screen {
 
     private Client client;
 
+    private String name;
+
     private TooltipManager tooltipManager;
 
     private SpriteBatch batch;
@@ -39,10 +41,11 @@ public class GameScreen extends Screen {
     private TextButton inventory;
     private Table inventoryTable;
 
-    public GameScreen(GregsAdventure gui, AssetManager assets, Client client) {
+    public GameScreen(GregsAdventure gui, AssetManager assets, Client client, String name) {
         super(gui, assets);
 
         this.client = client;
+        this.name = name;
 
         // Settings of the tooltips
         tooltipManager = TooltipManager.getInstance();
@@ -57,7 +60,8 @@ public class GameScreen extends Screen {
     public void show() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.setColor(Color.WHITE);
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
 
         skin = assets.get("skin/uiskin.json", Skin.class);
 
@@ -99,7 +103,7 @@ public class GameScreen extends Screen {
         stage.act();
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        font.draw(batch, "Name - " + "Level - " + "Atk", 60, 1040);
+        font.draw(batch, name + " - " + "Level - " + "Atk", 60, 1040);
 
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();
