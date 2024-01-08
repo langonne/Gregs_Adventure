@@ -329,8 +329,6 @@ public class Client {
             Message<Boolean> lastInitGame = globalListener.getLastInitGame();
             if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
                 System.out.println("["+name+"] " + name + " initialized the game");
-                //print lastInitGame content type
-                System.out.println("--------------------------------------------------------["+name+"] " + "lastInitGame content type: " + lastInitGame.getContent().getClass());
                 return lastInitGame.getContent();
             }
         
