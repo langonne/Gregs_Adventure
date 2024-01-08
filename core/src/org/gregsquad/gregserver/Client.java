@@ -270,25 +270,8 @@ public class Client {
     }
 
     //initGame
-    public boolean initGame() {
+    public void initGame() {
         Message<String> request_locale = request("GAME", "INIT_GAME");
-        
-        for (int i = 0; i < 5; i++) {
-            
-            Message<Boolean> lastInitGame = globalListener.getLastInitGame();
-            if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
-                System.out.println("["+name+"] " + name + " initialized the game");
-                return lastInitGame.getContent();
-            }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return false;
     }
 
     //GetInitGame
@@ -299,7 +282,7 @@ public class Client {
             
             Message<Boolean> lastInitGame = globalListener.getLastInitGame();
             if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
-                System.out.println("["+name+"] " + name + " got the init game");
+                System.out.println("["+name+"] " + name + " got the init game " + lastInitGame.getContent());
                 return lastInitGame.getContent();
             }
         
