@@ -42,7 +42,6 @@ public class Curse extends Card implements Serializable{
      */
     public final void play() {
         System.out.println("Playing curse " + this.name);
-        //Ask player to choose a curse
         //Interface choix joueur
         Player playerSelected = null;
         //curse(playerSelected);
