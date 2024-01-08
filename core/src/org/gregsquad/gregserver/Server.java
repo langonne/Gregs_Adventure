@@ -156,6 +156,8 @@ class ClientHandler implements Runnable {
             Message<?> inputMessage;
             while ((inputMessage = (Message<?>) in.readObject()) != null) {
 
+                out.reset();
+
                 if (inputMessage.isOfType(String.class)) {
                     Message<String> stringMessage = (Message<String>) inputMessage;
                     // Manage the message of type String here
@@ -238,7 +240,9 @@ class ClientHandler implements Runnable {
                             
                             ArrayList<Player> playerList = Game.getInstance().getPlayerList(); 
                             System.out.println("[SERVER] -------------------------------------  "+playerList.size());
-                            System.out.println("[SERVER] -------------------------------------  "+server.clients.size());                           
+                            System.out.println("[SERVER] -------------------------------------  "+server.clients.size());
+                            System.out.println("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");      
+                            System.out.println(inputMessage.getContent());                     
                             sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
@@ -255,6 +259,13 @@ class ClientHandler implements Runnable {
                             boolean init = Game.getInstance().isGameStarted();
                             System.out.println("[SERVER] Game is initialized: " + init);
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
+                        }
+
+                        if(stringMessage.getPurpose().equals("GET_PLAYER")) {
+    
+                            System.out.println("[SERVER] " + this.getClientName() + " is getting the player.");
+                            Player player = Game.getInstance().getPlayer(Integer.parseInt(stringMessage.getContent()));
+                            sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER", player);
                         }
                     }
 
