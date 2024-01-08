@@ -78,10 +78,6 @@ public class Client {
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
-            Thread debugSendThread = new Thread(new DebugSendThread());
-            debugSendThread.start();
-            //debugSendThread.join();
-
             Thread globalListenerThread = new Thread(globalListener);
             globalListenerThread.start();
             globalListenerThread.join();
@@ -152,9 +148,6 @@ public class Client {
                                     case "GET_PLAYER_LIST":
                                         lastPlayerList = (Message<ArrayList<Player>>) inputMessage;
                                         break;
-                                    case "GET_PLAYER":
-                                        lastCurrentPlayer = (Message<Player>) inputMessage;
-                                        break;
                                     case "INIT_GAME":
                                         lastInitGame = (Message<Boolean>) inputMessage;
                                         break;
@@ -212,27 +205,13 @@ public class Client {
 
     }
 
-    // Debug thread for sending requests every 5 seconds
-    class DebugSendThread implements Runnable {
-        public void run() {
-            try {
-                while (true) {
-                    System.out.println("DEBUG THREAD");
-                    getPlayer(0);
-                    Thread.sleep(100);
-                }
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-    }
-
     // REQUESTS SECTION
 
     // Generic method to send a request
     public <T extends Serializable> void sendRequest(Message<T> request) {
         try {
             System.out.println("["+name+"] " + "Sending request: " + request.getType() + " " + request.getPurpose());
+            out.reset();
             out.writeObject(request);
         } catch (IOException e) {
             System.err.println("["+name+"] " + "Error sending message: " + e.getMessage());
@@ -249,7 +228,6 @@ public class Client {
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
         Message<String> request_locale = request("GAME", "DRAW_DONJON_CARD");
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
         
         for (int i = 0; i < 5; i++) {
         
@@ -272,11 +250,8 @@ public class Client {
     //getPlayerList
     public ArrayList<Player> getPlayerList() {
         Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
-
         
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-        
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             
             Message<ArrayList<Player>> lastPlayerList = globalListener.getLastPlayerList();
             if (lastPlayerList != null && request_locale.getId().equals(lastPlayerList.getId())) {
@@ -292,32 +267,6 @@ public class Client {
         }
         System.err.println("["+name+"] " + "Error: no answer received");
         return globalListener.getLastPlayerList().getContent();
-    }
-
-    //Get player by index
-    public Player getPlayer(int index) {
-        Message<Integer> request_locale = new Message<Integer>(name, "GAME", "GET_PLAYER",index,Integer.class);
-        sendRequest(request_locale);
-
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-        
-        for (int i = 0; i < 5; i++) {
-        
-            Message<Player> lastPlayer = globalListener.getLastCurrentPlayer();
-        
-            if (request_locale.getId().equals(lastPlayer.getId())) {
-                        System.out.println("["+name+"] " + name + " got the player: " + lastPlayer.getContent().getName());
-                        return lastPlayer.getContent();
-                    }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return null;
     }
 
     //initGame
@@ -345,11 +294,7 @@ public class Client {
     //GetInitGame
     public boolean getInitGame() {
         Message<String> request_locale = request("GAME", "GET_INIT_GAME");
-
-
-        
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-        
+                
         for (int i = 0; i < 5; i++) {
             
             Message<Boolean> lastInitGame = globalListener.getLastInitGame();
