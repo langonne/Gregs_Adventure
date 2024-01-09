@@ -59,14 +59,20 @@ public class Game {
         //Initialize of deck of all players
         for(Player playerList : playerList){
             for(int j = 0; j < INITIAL_DECK_SIZE/2; j++){
+                System.out.println("[GAME] [INIT] [DECK] [PLAYER] : " + playerList.getName()); // DEBUG
                 playerList.getDeck().addCard(treasureStack.draw());
                 playerList.getDeck().addCard(donjonStack.draw());
+                System.out.println("[GAME] [INIT] [DECK] [SIZE] : " + playerList.getDeck().getSize()); // DEBUG
             }
             for (Card card : playerList.getDeck().getCards()) {
                 System.out.println("BBBBB : Card " + card.getName() + " added");
             }
+            //Add 4 level to all players
+            playerList.addLevel(4);
+            
         }
-
+        
+        System.out.println("[GAME] [DECK] [SIZE] : " + playerList.get(0).getDeck().getSize() + " NAME : " + playerList.get(0).getName()); // DEBUG
     }
 
     /**
