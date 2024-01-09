@@ -25,17 +25,17 @@ public class ConfigLoader {
     }
 
     
-    public static int[] getIdTable() {
+    public static int[] getIdArray() {
         int size = getInt("numberOfCards");
-        int[] idTable = new int[size];
+        int[] id = new int[size];
         int j = 0;
         for(int i = 0; i < MAX_ID; i++){
             if(ConfigLoader.isValid("" + i)){
-                idTable[j] = i;
+                id[j] = i;
                 j++;
             }
         }
-        return idTable;
+        return id;
     }
 
     public static boolean isValid(String key) {

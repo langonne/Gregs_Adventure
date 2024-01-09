@@ -24,6 +24,7 @@ import org.gregsquad.gregsadventure.GregsAdventure;
 
 import org.gregsquad.gregserver.Client;
 import org.gregsquad.gregsadventure.game.Player;
+import org.gregsquad.gregsadventure.card.ConfigLoader;
 
 public class GameScreen extends Screen {
 
@@ -36,6 +37,8 @@ public class GameScreen extends Screen {
 
     private int id;
     private String name;
+
+    private Deck deck;
 
     private TooltipManager tooltipManager;
 
@@ -106,7 +109,16 @@ public class GameScreen extends Screen {
         
         table.add(startButton).fillX().uniformX();
 
-        
+
+        // Load all the card textures
+        System.out.println("ENORME CHIBREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe");
+        System.out.println(ConfigLoader.getInt("numberOfCards"));
+        int[] id = ConfigLoader.getIdArray();
+        for (int i = 0; i < ConfigLoader.getInt("numberOfCards"); i++) {
+            System.out.println(id[i] + "chargée");
+            assets.load("cards/" + id[i] + ".png", Texture.class);
+            assets.finishLoading();
+        }
 
         new Thread(() -> {
             while (client.getInitGame()) {
@@ -115,14 +127,16 @@ public class GameScreen extends Screen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //players = client.getPlayers();
-                //player = 
+                players = client.getPlayers();
+                player = players.get(id);
 
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+
             }
         }).start();
 
@@ -141,6 +155,7 @@ public class GameScreen extends Screen {
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();
             font.draw(batch, "X: " + Gdx.input.getX() + " Y: " + posY, 25, 50);
+
         }
 
         batch.end();
@@ -152,7 +167,5 @@ public class GameScreen extends Screen {
         // TODO implement dispose logic
     }
 
-    public void loadCardAssets() {
-
-    }
+    private 
 }
