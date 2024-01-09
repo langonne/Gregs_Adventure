@@ -41,6 +41,8 @@ public class Game {
             for(int i = 0; i < INITIAL_DECK_SIZE/2; i++){
                 playerList.getDeck().addCard(donjonStack.draw());
                 playerList.getDeck().addCard(treasureStack.draw());
+
+                System.out.println("GROS DEBUG SA MERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
             }
         }
 
