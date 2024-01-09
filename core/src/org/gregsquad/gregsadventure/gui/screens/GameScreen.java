@@ -106,6 +106,8 @@ public class GameScreen extends Screen {
         
         table.add(startButton).fillX().uniformX();
 
+        
+
         new Thread(() -> {
             while (client.getInitGame()) {
                 try {
@@ -151,6 +153,6 @@ public class GameScreen extends Screen {
     }
 
     public void loadCardAssets() {
-        
+
     }
 }
