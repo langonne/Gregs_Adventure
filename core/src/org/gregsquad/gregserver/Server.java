@@ -147,8 +147,6 @@ class ClientHandler implements Runnable {
      */
     public void run() {
 
-        int playerId = 0;
-
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
@@ -188,9 +186,10 @@ class ClientHandler implements Runnable {
                             } else {
                                 this.clientName = clientName;
                                 System.out.println("[SERVER] Creating player " + this.getClientName());
-                                sendToClient(stringMessage.getId(), "CONNEXION", "NAME", "OK");
+
+                                int playerId = server.getInstance().clients.size();
+                                sendToClient(stringMessage.getId(), "CONNEXION", "NAME", playerId);
                                 Player player = new Player(playerId, this.getClientName());
-                                playerId++;
                                 Game.getInstance().addPlayer(player);
                             }
                         }
