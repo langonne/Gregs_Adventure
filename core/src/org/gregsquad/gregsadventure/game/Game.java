@@ -36,16 +36,6 @@ public class Game {
         donjonDiscard = new Discard();
         treasureDiscard = new Discard();
         isGameStarted = false;
-
-        for (Player playerList : playerList) {
-            for(int i = 0; i < INITIAL_DECK_SIZE/2; i++){
-                playerList.getDeck().addCard(donjonStack.draw());
-                playerList.getDeck().addCard(treasureStack.draw());
-
-                System.out.println("GROS DEBUG SA MERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-            }
-        }
-
     }
 
     /**
@@ -66,6 +56,17 @@ public class Game {
     public void init(){
         int numberOfPlayer = this.playerList.size();
         isGameStarted = true;
+        //Initialize of deck of all players
+        for(Player playerList : playerList){
+            for(int j = 0; j < INITIAL_DECK_SIZE/2; j++){
+                playerList.getDeck().addCard(treasureStack.draw());
+                playerList.getDeck().addCard(donjonStack.draw());
+            }
+            for (Card card : playerList.getDeck().getCards()) {
+                System.out.println("BBBBB : Card " + card.getName() + " added");
+            }
+        }
+
     }
 
     /**
@@ -299,4 +300,14 @@ public class Game {
     public boolean isGameStarted() {
         return isGameStarted;
     }
+
+
+    public void treasureDraw(Player player){
+        player.getDeck().addCard(treasureStack.draw());
+    }
+
+    public void donjonDraw(Player player){
+        player.getDeck().addCard(donjonStack.draw());
+    }
+
 }

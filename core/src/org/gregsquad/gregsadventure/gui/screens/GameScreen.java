@@ -154,10 +154,9 @@ public class GameScreen extends Screen {
         int i = 0;
         Deck deck = player.getDeck();
 
-        //System.out.println("Card " + card.getName() + " added");
-
+        System.out.println("AAAAAAAAAAA " + deck.getSize());
         for (Card card : deck.getCards()) {
-
+            System.out.println("AAAAAAAAAAA : Card " + card.getName() + " added");
         }
 
 
