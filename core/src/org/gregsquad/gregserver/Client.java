@@ -348,6 +348,13 @@ public class Client {
     }
 
     /**
+     * Sends a request to initialize the game.
+     */
+    public void initGame() {
+        Message<String> request_locale = request("GAME", "INIT_GAME");
+    }
+
+    /**
      * Sends a request to draw a Donjon card and waits for the response.
      *
      * @return The drawn Donjon card, or null if no response was received.
@@ -359,6 +366,18 @@ public class Client {
     }
 
     /**
+     * Sends a request to draw a Treasure card and waits for the response.
+     *
+     * @return The drawn Treasure card, or null if no response was received.
+     */
+    public Card drawTreasureCard() {
+
+        Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_TREASURE_CARD", GlobalListener::getLastTreasureCard);
+        return message != null ? message.getContent() : null;
+
+    }
+
+    /**
      * Sends a request to get the list of players and waits for the response.
      *
      * @return The list of players, or null if no response was received.
@@ -367,13 +386,6 @@ public class Client {
 
         Message<ArrayList<Player>> message = requestAndAwaitResponse("GAME", "GET_PLAYER_LIST", GlobalListener::getLastPlayerList);
         return message != null ? message.getContent() : null;
-    }
-
-    /**
-     * Sends a request to initialize the game.
-     */
-    public void initGame() {
-        Message<String> request_locale = request("GAME", "INIT_GAME");
     }
 
     /**
@@ -423,15 +435,5 @@ public class Client {
 
     }
 
-    /**
-     * Sends a request to draw a Treasure card and waits for the response.
-     *
-     * @return The drawn Treasure card, or null if no response was received.
-     */
-    public Card drawTreasureCard() {
 
-        Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_TREASURE_CARD", GlobalListener::getLastTreasureCard);
-        return message != null ? message.getContent() : null;
-
-    }
 }
