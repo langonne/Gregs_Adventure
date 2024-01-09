@@ -67,8 +67,6 @@ public class Game {
         int randNumber = rand.nextInt(numberOfPlayer);
         currentPlayer = playerList.get(randNumber);
 
-    
-
     }
 
     /**
@@ -301,12 +299,35 @@ public class Game {
         return isGameStarted;
     }
 
+    /**
+     * Adds a card drawn from the treasure stack to the player's deck.
+     *
+     * @param player The player who will draw a card from the treasure stack.
+     */
     public void treasureDraw(Player player){
         player.getDeck().addCard(treasureStack.draw());
     }
 
+    /**
+     * Adds a card drawn from the donjon stack to the player's deck.
+     *
+     * @param player The player who will draw a card from the donjon stack.
+     */
     public void donjonDraw(Player player){
         player.getDeck().addCard(donjonStack.draw());
+    }
+
+    /**
+     * Advances the game to the next player in the player list.
+     * If the current player is the last in the list, the game advances to the first player.
+     */
+    public void nextPlayer(){
+        int index = playerList.indexOf(currentPlayer);
+        if(index == playerList.size() - 1){
+            currentPlayer = playerList.get(0);
+        } else {
+            currentPlayer = playerList.get(index + 1);
+        }
     }
 
 }
