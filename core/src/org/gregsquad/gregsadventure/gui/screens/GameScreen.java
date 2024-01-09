@@ -18,9 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.ArrayList;
+
 import org.gregsquad.gregsadventure.GregsAdventure;
 
 import org.gregsquad.gregserver.Client;
+import org.gregsquad.gregsadventure.game.Player;
 
 public class GameScreen extends Screen {
 
@@ -99,14 +102,14 @@ public class GameScreen extends Screen {
         table.add(startButton).fillX().uniformX();
 
         new Thread(() -> {
-            while (client.getInitGame) {
+            while (client.getInitGame()) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                players = client.getPlayers();
-                player = 
+                //players = client.getPlayers();
+                //player = 
 
                 try {
                     Thread.sleep(500);
@@ -124,7 +127,7 @@ public class GameScreen extends Screen {
         stage.act();
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        font.draw(batch, name + " - " + "Level : " + players.get() + " - " + "Atk : ", 60, 1040);
+        //font.draw(batch, name + " - " + "Level : " + players.get() + " - " + "Atk : ", 60, 1040);
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
 
