@@ -41,6 +41,9 @@ public class GameScreen extends Screen {
     private TextButton inventory;
     private Table inventoryTable;
 
+    private ArrayList<Player> players;
+    private Player player;
+
     public GameScreen(GregsAdventure gui, AssetManager assets, Client client, String name) {
         super(gui, assets);
 
@@ -95,6 +98,24 @@ public class GameScreen extends Screen {
         
         table.add(startButton).fillX().uniformX();
 
+        new Thread(() -> {
+            while (client.getInitGame) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                players = client.getPlayers();
+                player = 
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     @Override
@@ -103,7 +124,7 @@ public class GameScreen extends Screen {
         stage.act();
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        font.draw(batch, name + " - " + "Level - " + "Atk", 60, 1040);
+        font.draw(batch, name + " - " + "Level : " + players.get() + " - " + "Atk : ", 60, 1040);
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
 

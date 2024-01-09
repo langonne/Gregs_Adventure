@@ -146,6 +146,9 @@ class ClientHandler implements Runnable {
      * Continues to read messages until the client disconnects or an error occurs.
      */
     public void run() {
+
+        int playerId = 0;
+
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
@@ -186,7 +189,8 @@ class ClientHandler implements Runnable {
                                 this.clientName = clientName;
                                 System.out.println("[SERVER] Creating player " + this.getClientName());
                                 sendToClient(stringMessage.getId(), "CONNEXION", "NAME", "OK");
-                                Player player = new Player(this.getClientName());
+                                Player player = new Player(playerId, this.getClientName());
+                                playerId++;
                                 Game.getInstance().addPlayer(player);
                             }
                         }

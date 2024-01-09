@@ -14,7 +14,10 @@ import org.gregsquad.gregsadventure.card.Class;
  * @class Player
  * @brief Represents a player in the game with attributes such as name, level, and damage.
  */
-public class Player implements Serializable{
+public class Player implements Serializable {
+
+    private int id = 0;
+
     private String name;
     private int level = 0;
     private int damage = 0;
@@ -32,7 +35,8 @@ public class Player implements Serializable{
      * @brief Constructor for Player class.
      * @param name The name of the player.
      */
-    public Player(String name){
+    public Player(int id, String name){
+        this.id = id;
         this.name = name;
         this.level = 1;
         this.damage = 1;
@@ -171,5 +175,9 @@ public class Player implements Serializable{
      */
     public Stuff getStuff(){
         return this.stuff;
+    }
+
+    public int getId() {
+        return id;
     }
 }
