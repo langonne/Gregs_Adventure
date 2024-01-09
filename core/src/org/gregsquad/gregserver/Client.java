@@ -323,24 +323,27 @@ public class Client {
      * @return The response message, or null if no response was received after 5 attempts.
      */
     public <T> Message<T> requestAndAwaitResponse(String category, String action, Function<GlobalListener, Message<T>> messageRetriever) {
-        Message<String> request_locale = request(category, action);
+        
+        for (int j = 0; j < 5; j++) {
+            
+            Message<String> request_locale = request(category, action);
 
-        for (int i = 0; i < 5; i++) {
-            Message<T> lastMessage = messageRetriever.apply(globalListener);
+            for (int i = 0; i < 5; i++) {
+                Message<T> lastMessage = messageRetriever.apply(globalListener);
 
-            if (lastMessage != null && request_locale.getId().equals(lastMessage.getId())) {
-                System.out.println("["+name+"] " + name + " got the " + action + ": " + lastMessage.getContent());
-                return lastMessage;
-            }
+                if (lastMessage != null && request_locale.getId().equals(lastMessage.getId())) {
+                    System.out.println("["+name+"] " + name + " got the " + action + ": " + lastMessage.getContent());
+                    return lastMessage;
+                }
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    System.err.println("InterruptedException: " + e.getMessage());
+                }
             }
         }
-
-        System.err.println("["+name+"] " + "Error: no answer received");
+        System.out.println("["+name+"] " + name + " did not get the " + action);
         return null;
     }
 
