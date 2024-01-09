@@ -274,9 +274,9 @@ public class Client {
     }
 
     /**
-     * Récupère l'identifiant du client.
+     * Retrieves the client's identifier.
      *
-     * @return L'identifiant du client.
+     * @return The client's identifier.
      */
     public int getId() {
         return clientId;
@@ -284,7 +284,12 @@ public class Client {
 
     // REQUESTS SECTION
 
-    // Generic method to send a request
+    /**
+     * Sends a request to the server.
+     *
+     * @param <T> The type of content in the request message.
+     * @param request The request message to be sent.
+     */
     public <T extends Serializable> void sendRequest(Message<T> request) {
         try {
             System.out.println("["+name+"] " + "Sending request: " + request.getType() + " " + request.getPurpose());
@@ -295,6 +300,13 @@ public class Client {
         }
     }
 
+    /**
+     * Creates a new request of a specific type and purpose, sends it to the server, and returns it.
+     *
+     * @param type The type of the request.
+     * @param purpose The purpose of the request.
+     * @return The request that was sent.
+     */
     public Message<String> request(String type, String purpose) {
         Message<String> request_locale = new Message<String>(name, type, purpose,"",String.class);
         System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
@@ -302,6 +314,15 @@ public class Client {
         return request_locale;
     }
 
+    /**
+     * Sends a request of a specific category and action, and waits for a response.
+     *
+     * @param <T> The type of the content in the response message.
+     * @param category The category of the request.
+     * @param action The action of the request.
+     * @param messageRetriever A function that retrieves the last message of a specific type.
+     * @return The response message, or null if no response was received after 5 attempts.
+     */
     public <T> Message<T> requestAndAwaitResponse(String category, String action, Function<GlobalListener, Message<T>> messageRetriever) {
         Message<String> request_locale = request(category, action);
 
@@ -324,97 +345,51 @@ public class Client {
         return null;
     }
 
-    // Specific methods to send requests and receive answers
+    /**
+     * Sends a request to draw a Donjon card and waits for the response.
+     *
+     * @return The drawn Donjon card, or null if no response was received.
+     */
     public Card drawDonjonCard() {
 
         Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_DONJON_CARD", GlobalListener::getLastDonjonCard);
         return message != null ? message.getContent() : null;
-
-        /*
-        Message<String> request_locale = request("GAME", "DRAW_DONJON_CARD");
-        
-        for (int i = 0; i < 5; i++) {
-        
-            Message<Card> lastDonjonCard = globalListener.getLastDonjonCard();
-        
-            if (request_locale.getId().equals(lastDonjonCard.getId())) {
-                        System.out.println("["+name+"] " + name + " drew a donjon card: " + lastDonjonCard.getContent().getName());
-                        return lastDonjonCard.getContent();
-                    }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return null;
-        */
     }
-    //getPlayerList
+
+    /**
+     * Sends a request to get the list of players and waits for the response.
+     *
+     * @return The list of players, or null if no response was received.
+     */
     public ArrayList<Player> getPlayerList() {
 
         Message<ArrayList<Player>> message = requestAndAwaitResponse("GAME", "GET_PLAYER_LIST", GlobalListener::getLastPlayerList);
         return message != null ? message.getContent() : null;
-
-        /*
-        Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
-        
-        for (int i = 0; i < 15; i++) {
-            
-            Message<ArrayList<Player>> lastPlayerList = globalListener.getLastPlayerList();
-            if (lastPlayerList != null && request_locale.getId().equals(lastPlayerList.getId())) {
-                System.out.println("["+name+"] " + name + " got the player list");
-                return lastPlayerList.getContent();
-            }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return globalListener.getLastPlayerList().getContent();
-        */
     }
 
-    //initGame
+    /**
+     * Sends a request to initialize the game.
+     */
     public void initGame() {
         Message<String> request_locale = request("GAME", "INIT_GAME");
     }
 
-    //GetInitGame
+    /**
+     * Sends a request to get the game initialization status and waits for the response.
+     *
+     * @return The game initialization status, or false if no response was received.
+     */
     public boolean getInitGame() {
 
         Message<Boolean> message = requestAndAwaitResponse("GAME", "GET_INIT_GAME", GlobalListener::getLastInitGame);
         return message != null ? message.getContent() : false;
-
-        /*
-        Message<String> request_locale = request("GAME", "GET_INIT_GAME");
-                
-        for (int i = 0; i < 5; i++) {
-            
-            Message<Boolean> lastInitGame = globalListener.getLastInitGame();
-            if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
-                System.out.println("["+name+"] " + name + " got the init game " + lastInitGame.getContent());
-                return lastInitGame.getContent();
-            }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return false;
-        */
     }
 
-    //getCurrentPlayer
-
+    /**
+     * Sends a request to get the current player and waits for the response.
+     *
+     * @return The current player, or null if no response was received.
+     */
     public Player getCurrentPlayer() {
 
         Message<Player> message = requestAndAwaitResponse("GAME", "GET_CURRENT_PLAYER", GlobalListener::getLastCurrentPlayer);
@@ -422,7 +397,11 @@ public class Client {
 
     }
 
-    //getDonjonDiscard
+    /**
+     * Sends a request to get the Donjon discard pile and waits for the response.
+     *
+     * @return The Donjon discard pile, or null if no response was received.
+     */
     public LinkedList<Card> getDonjonDiscard() {
 
         Message<LinkedList<Card>> message = requestAndAwaitResponse("GAME", "GET_DONJON_DISCARD", GlobalListener::getLastDonjonDiscard);
@@ -430,7 +409,11 @@ public class Client {
 
     }
 
-    //getTreasureDiscard
+    /**
+     * Sends a request to get the Treasure discard pile and waits for the response.
+     *
+     * @return The Treasure discard pile, or null if no response was received.
+     */
     public LinkedList<Card> getTreasureDiscard() {
 
         Message<LinkedList<Card>> message = requestAndAwaitResponse("GAME", "GET_TREASURE_DISCARD", GlobalListener::getLastTreasureDiscard);
@@ -438,61 +421,15 @@ public class Client {
 
     }
 
-    //drawTreasureCard
+    /**
+     * Sends a request to draw a Treasure card and waits for the response.
+     *
+     * @return The drawn Treasure card, or null if no response was received.
+     */
     public Card drawTreasureCard() {
 
         Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_TREASURE_CARD", GlobalListener::getLastTreasureCard);
         return message != null ? message.getContent() : null;
 
     }
-
-    
-
-
-
-        
-    /*
-    public Card drawTreasureCard() {
-        Message<Card> answer = request("GAME", "DRAW_TREASURE_CARD");
-        System.out.println("["+name+"] " + name + " drew a treasure card: " + answer.getContent().getName());
-        return answer.getContent();
-    }
-
-    public LinkedList<Card> getDonjonDiscard() {
-        Message<LinkedList<Card>> answer = request("GAME", "GET_DONJON_DISCARD");
-        System.out.println("["+name+"] " + name + " got the donjon discard");
-        return answer.getContent();
-    }
-
-    public LinkedList<Card> getTreasureDiscard() {
-        Message<LinkedList<Card>> answer = request("GAME", "GET_TREASURE_DISCARD");
-        System.out.println("["+name+"] " + name + " got the treasure discard");
-        return answer.getContent();
-    }
-
-    public Player getCurrentPlayer() {
-        Message<Player> answer = request("GAME", "GET_CURRENT_PLAYER");
-        System.out.println("["+name+"] " + name + " got the current player");
-        return answer.getContent();
-    }
-
-    public ArrayList<Player> getPlayerList() {
-        Message<ArrayList<Player>> answer = request("GAME", "GET_PLAYER_LIST");
-        System.out.println("["+name+"] " + name + " got the player list");
-        System.out.println("-------------[CLIENT] " + answer.getContent().size());
-        return answer.getContent();
-    }
-
-    public boolean initGame() {
-        Message<Boolean> answer = request("GAME", "INIT_GAME");
-        System.out.println("["+name+"] " + name + " initialized the game");
-        return answer.getContent();
-    }
-
-    public String ping() {
-        Message<String> answer = request("PING", "");
-        System.out.println("["+name+"] " + name + " pinged the server");
-        return answer.getContent();
-    }
-    */
 }
