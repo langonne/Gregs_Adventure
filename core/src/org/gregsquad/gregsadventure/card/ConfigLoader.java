@@ -25,12 +25,12 @@ public class ConfigLoader {
     
     public static ArrayList<Integer> getIdTable() {
         ArrayList<Integer> idTable = new ArrayList<Integer>();
-        int i = 0;
-        while (ConfigLoader.isValid(Integer.toString(i) + "_name")) {
-            idTable.add(i);
-            i++;
+        for(int i = 0; i < getInt("numberOfCards"); i++){
+            if(ConfigLoader.isValid("" + i)){
+                idTable.add(i);
+            }
         }
-        return tableIds;
+        return idTable;
     }
 
     public static boolean isValid(String key) {
