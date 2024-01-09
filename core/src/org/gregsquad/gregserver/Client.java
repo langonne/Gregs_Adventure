@@ -354,7 +354,6 @@ public class Client {
         request("GAME", "INIT_GAME");
     }
 
-
     /**
      * Ends the current player's turn by sending an "END_TURN" request to the game.
      */
