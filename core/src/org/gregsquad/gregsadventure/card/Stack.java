@@ -1,5 +1,6 @@
 package org.gregsquad.gregsadventure.card;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.io.Serializable;
@@ -31,44 +32,42 @@ public class Stack extends CardList implements Serializable {
         return cards.remove(randomNumber);
     }
 
+
+
     public void init() {
-        int i = 1;
-        int id = 1;
-        while(i != 15){ 
+        for (int tableId : ConfigLoader.getIdTable()) {
             
-            String key = Integer.toString(i);
+            String key = Integer.toString(tableId);
+            System.out.println(key);
+
+
             for (int j = 0; j < ConfigLoader.getInt(key + "_number"); j++) {
                     // Use key and value to create a card
                     switch (ConfigLoader.getString(key)) {
                         case "Curse":
-                            cards.add(new Curse(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getString(key + "_type"), ConfigLoader.getInt(key + "_value")));
-                            
+                            cards.add(new Curse(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getString(key + "_type"), ConfigLoader.getInt(key + "_value")));
                             break;
                         case "Monster":
-                            cards.add(new Monster(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_level"), ConfigLoader.getInt(key + "_damage"), ConfigLoader.getInt(key + "_treasure"), ConfigLoader.getString(key + "_incident")));
-                            
+                            cards.add(new Monster(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_level"), ConfigLoader.getInt(key + "_damage"), ConfigLoader.getInt(key + "_treasure"), ConfigLoader.getString(key + "_incident")));
                             break;
                         case "Equipement":
                             if(ConfigLoader.isValid(key + "_conditionBonus") && ConfigLoader.isValid(key + "_combo")){
-                                cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize"), ConfigLoader.getString(key + "_conditionBonus"), ConfigLoader.getInt(key + "_combo")));
+                                cards.add(new Equipement(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize"), ConfigLoader.getString(key + "_conditionBonus"), ConfigLoader.getInt(key + "_combo")));
                             } else {
-                                cards.add(new Equipement(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize")));
+                                cards.add(new Equipement(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_position"), ConfigLoader.getInt(key + "_bonus"), ConfigLoader.getBoolean(key + "_equipementSize")));
                             }
-                            
                             break;
                         case "Race":
-                            cards.add(new Race(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_bonusDamage"), ConfigLoader.getInt(key + "_bonusDice")));
+                            cards.add(new Race(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description"), ConfigLoader.getInt(key + "_bonusDamage"), ConfigLoader.getInt(key + "_bonusDice")));
                             break;
                         case "Clas":
-                            cards.add(new Class(id, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description")));
+                            cards.add(new Class(tableId, ConfigLoader.getString(key + "_name"), ConfigLoader.getString(key + "_description")));
                             break;
                         default:
                             System.out.println("Error in config file");
                             break;
                     }
-                    id++;
             }
-            i++;
         }
 
 

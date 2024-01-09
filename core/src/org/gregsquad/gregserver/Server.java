@@ -187,7 +187,7 @@ class ClientHandler implements Runnable {
                                 this.clientName = clientName;
                                 System.out.println("[SERVER] Creating player " + this.getClientName());
 
-                                int playerId = server.getInstance().clients.size();
+                                int playerId = server.getInstance().clients.size() - 1;
                                 sendToClient(stringMessage.getId(), "CONNEXION", "NAME", playerId);
                                 Player player = new Player(playerId, this.getClientName());
                                 Game.getInstance().addPlayer(player);

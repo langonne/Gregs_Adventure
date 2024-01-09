@@ -273,13 +273,7 @@ public class Client {
 
     }
 
-
-    /**
-     * Gets the client's ID.
-     *
-     * @return the client's ID
-     */
-    public int getClientId() {
+    public int getId() {
         return clientId;
     }
 

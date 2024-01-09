@@ -6,6 +6,8 @@ import java.util.*;
  */
 public class ConfigLoader {
 
+
+    private static final int MAX_ID = 600;
     public static final ResourceBundle cardsList = ResourceBundle.getBundle("config");
     /**
      * Retrieves an integer value from the cards.properties file.
@@ -23,6 +25,19 @@ public class ConfigLoader {
     }
 
     
+    public static int[] getIdTable() {
+        int size = getInt("numberOfCards");
+        int[] idTable = new int[size];
+        int j = 0;
+        for(int i = 0; i < MAX_ID; i++){
+            if(ConfigLoader.isValid("" + i)){
+                idTable[j] = i;
+                j++;
+            }
+        }
+        return idTable;
+    }
+
     public static boolean isValid(String key) {
         try {
             return cardsList.containsKey(key);
