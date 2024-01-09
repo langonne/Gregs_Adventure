@@ -328,6 +328,5 @@ public class Game {
         } else {
             currentPlayer = playerList.get(index + 1);
         }
-    }
-
+    } 
 }
