@@ -143,7 +143,7 @@ public class GameScreen extends Screen {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, 28);
         font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, DEFAULT_HEIGHT - 40);
-        font.draw(batch, "Current player : ", DEFAULT_WIDTH / 2 - 250, DEFAULT_HEIGHT - 40);
+        font.draw(batch, "Current player : " + players.get(currentPlayerId).getName(), DEFAULT_WIDTH / 2 - 250, DEFAULT_HEIGHT - 40);
 
         batch.end();
         stage.draw();
