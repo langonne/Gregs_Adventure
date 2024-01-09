@@ -64,9 +64,6 @@ public class Game {
             }
         }         
     }
-        
-        System.out.println("[GAME] [DECK] [SIZE] : " + playerList.get(0).getDeck().getSize() + " NAME : " + playerList.get(0).getName()); // DEBUG
-    }
 
     /**
      * @brief Initiates a fight between the player and a monster.
