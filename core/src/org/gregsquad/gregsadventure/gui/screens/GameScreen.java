@@ -149,4 +149,8 @@ public class GameScreen extends Screen {
     public void dispose() {
         // TODO implement dispose logic
     }
+
+    public void loadCardAssets() {
+        
+    }
 }
