@@ -252,7 +252,13 @@ class ClientHandler implements Runnable {
                             boolean init = Game.getInstance().isGameStarted();
                             System.out.println("[SERVER] Game is initialized: " + init);
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
-                        }                        
+                        }   
+                        
+                        if(stringMessage.getPurpose().equals("END_TURN")) {
+    
+                            System.out.println("[SERVER] " + this.getClientName() + " is ending its turn.");
+                            Game.getInstance().nextPlayer();
+                        }
 
                     }
 
