@@ -62,6 +62,13 @@ public class Game {
                 playerList.getDeck().addCard(donjonStack.draw());
             }
         }         
+        //Make a random currrent player
+        Random rand = new Random();
+        int randNumber = rand.nextInt(numberOfPlayer);
+        currentPlayer = playerList.get(randNumber);
+
+    
+
     }
 
     /**
