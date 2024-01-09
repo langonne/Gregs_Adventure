@@ -6,6 +6,7 @@ import org.gregsquad.gregsadventure.game.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * The Client class is responsible for managing the client-side logic of the game.
@@ -38,7 +39,13 @@ public class Client {
         globalListener = new GlobalListener();
     }
 
-    
+    /**
+     * Tries to establish a connection to the server. If the connection attempt times out, 
+     * it will retry until the maximum number of reconnect attempts is reached.
+     *
+     * @throws IOException If the maximum number of reconnect attempts is reached, or if an error occurs while creating the input and output streams.
+     * @throws InterruptedException If the thread sleep is interrupted.
+     */
     private void connect() throws IOException, InterruptedException {
         int attempts = 0;
         while (true) {
@@ -66,7 +73,14 @@ public class Client {
         }
     }
 
-    // Method to start the client
+    /**
+     * The main execution method for the client. It attempts to connect to the server, sends the client's name,
+     * and starts a listener thread to handle incoming messages. If an error occurs during execution, it will be caught
+     * and printed to the error stream. After the listener thread finishes, it closes the streams and the connection.
+     *
+     * @throws IOException If an I/O error occurs during the execution, such as if the connection fails or the streams cannot be closed.
+     * @throws InterruptedException If the execution is interrupted, such as if the listener thread is interrupted.
+     */
     public void run() {
         try {
             connect();
@@ -85,9 +99,7 @@ public class Client {
 
 
             // Close the streams and the connection
-            out.close();
-            in.close();
-            echoSocket.close();
+            stop();
             
         } catch (IOException e) {
             System.err.println("IOException1: " + e.getMessage());
@@ -96,6 +108,12 @@ public class Client {
         }
     }
 
+    /**
+     * Closes the streams and the connection. If an I/O error occurs while closing the streams or the connection,
+     * an error message will be printed to the error stream.
+     *
+     * @throws IOException If an I/O error occurs while closing the streams or the connection.
+     */
     public void stop() {
         try {
             // Close the streams and the connection
@@ -117,6 +135,12 @@ public class Client {
         private Message<ArrayList<Player>> lastPlayerList;
         private Message<Boolean> lastInitGame;        
 
+        /**
+         * Closes the streams and the connection. If an I/O error occurs while closing the streams or the connection,
+         * an error message will be printed to the error stream.
+         *
+         * @throws IOException If an I/O error occurs while closing the streams or the connection.
+         */
         public void run() {
             try {
                 Object inputObject;
@@ -168,7 +192,7 @@ public class Client {
                                         break;
                                 }
                                 break;
-                            // Ajoutez d'autres cas ici pour gérer d'autres types de messages
+
                             default:
                                 System.err.println("Unknown message type: " + inputMessage.getType());
                                 break;
@@ -184,36 +208,77 @@ public class Client {
             }
         }
 
+        /**
+         * Returns the last Donjon card message.
+         *
+         * @return The last Donjon card message.
+         */
         public Message<Card> getLastDonjonCard() {
             return lastDonjonCard;
         }
 
+        /**
+         * Returns the last Treasure card message.
+         *
+         * @return The last Treasure card message.
+         */
         public Message<Card> getLastTreasureCard() {
             return lastTreasureCard;
         }
 
+        /**
+         * Returns the last Donjon discard message.
+         *
+         * @return The last Donjon discard message.
+         */
         public Message<LinkedList<Card>> getLastDonjonDiscard() {
             return lastDonjonDiscard;
         }
 
+        /**
+         * Returns the last Treasure discard message.
+         *
+         * @return The last Treasure discard message.
+         */
         public Message<LinkedList<Card>> getLastTreasureDiscard() {
             return lastTreasureDiscard;
         }
 
+        /**
+         * Returns the last current player message.
+         *
+         * @return The last current player message.
+         */
         public Message<Player> getLastCurrentPlayer() {
             return lastCurrentPlayer;
         }
 
+        /**
+         * Returns the last player list message.
+         *
+         * @return The last player list message.
+         */
         public Message<ArrayList<Player>> getLastPlayerList() {
             return lastPlayerList;
         }
 
+        /**
+         * Returns the last game initialization message.
+         *
+         * @return The last game initialization message.
+         */
         public Message<Boolean> getLastInitGame() {
             return lastInitGame;
         }
 
     }
 
+
+    /**
+     * Gets the client's ID.
+     *
+     * @return the client's ID
+     */
     public int getClientId() {
         return clientId;
     }
@@ -238,8 +303,35 @@ public class Client {
         return request_locale;
     }
 
+    public <T> Message<T> requestAndAwaitResponse(String category, String action, Function<GlobalListener, Message<T>> messageRetriever) {
+        Message<String> request_locale = request(category, action);
+
+        for (int i = 0; i < 5; i++) {
+            Message<T> lastMessage = messageRetriever.apply(globalListener);
+
+            if (lastMessage != null && request_locale.getId().equals(lastMessage.getId())) {
+                System.out.println("["+name+"] " + name + " got the " + action + ": " + lastMessage.getContent());
+                return lastMessage;
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                System.err.println("InterruptedException: " + e.getMessage());
+            }
+        }
+
+        System.err.println("["+name+"] " + "Error: no answer received");
+        return null;
+    }
+
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
+
+        Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_DONJON_CARD", GlobalListener::getLastDonjonCard);
+        return message != null ? message.getContent() : null;
+
+        /*
         Message<String> request_locale = request("GAME", "DRAW_DONJON_CARD");
         
         for (int i = 0; i < 5; i++) {
@@ -259,9 +351,15 @@ public class Client {
         }
         System.err.println("["+name+"] " + "Error: no answer received");
         return null;
+        */
     }
     //getPlayerList
     public ArrayList<Player> getPlayerList() {
+
+        Message<ArrayList<Player>> message = requestAndAwaitResponse("GAME", "GET_PLAYER_LIST", GlobalListener::getLastPlayerList);
+        return message != null ? message.getContent() : null;
+
+        /*
         Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
         
         for (int i = 0; i < 15; i++) {
@@ -280,6 +378,7 @@ public class Client {
         }
         System.err.println("["+name+"] " + "Error: no answer received");
         return globalListener.getLastPlayerList().getContent();
+        */
     }
 
     //initGame
@@ -289,6 +388,11 @@ public class Client {
 
     //GetInitGame
     public boolean getInitGame() {
+
+        Message<Boolean> message = requestAndAwaitResponse("GAME", "GET_INIT_GAME", GlobalListener::getLastInitGame);
+        return message != null ? message.getContent() : false;
+
+        /*
         Message<String> request_locale = request("GAME", "GET_INIT_GAME");
                 
         for (int i = 0; i < 5; i++) {
@@ -307,7 +411,45 @@ public class Client {
         }
         System.err.println("["+name+"] " + "Error: no answer received");
         return false;
+        */
     }
+
+    //getCurrentPlayer
+
+    public Player getCurrentPlayer() {
+
+        Message<Player> message = requestAndAwaitResponse("GAME", "GET_CURRENT_PLAYER", GlobalListener::getLastCurrentPlayer);
+        return message != null ? message.getContent() : null;
+
+    }
+
+    //getDonjonDiscard
+    public LinkedList<Card> getDonjonDiscard() {
+
+        Message<LinkedList<Card>> message = requestAndAwaitResponse("GAME", "GET_DONJON_DISCARD", GlobalListener::getLastDonjonDiscard);
+        return message != null ? message.getContent() : null;
+
+    }
+
+    //getTreasureDiscard
+    public LinkedList<Card> getTreasureDiscard() {
+
+        Message<LinkedList<Card>> message = requestAndAwaitResponse("GAME", "GET_TREASURE_DISCARD", GlobalListener::getLastTreasureDiscard);
+        return message != null ? message.getContent() : null;
+
+    }
+
+    //drawTreasureCard
+    public Card drawTreasureCard() {
+
+        Message<Card> message = requestAndAwaitResponse("GAME", "DRAW_TREASURE_CARD", GlobalListener::getLastTreasureCard);
+        return message != null ? message.getContent() : null;
+
+    }
+
+    
+
+
 
         
     /*
