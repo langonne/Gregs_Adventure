@@ -238,6 +238,11 @@ class ClientHandler implements Runnable {
                             ArrayList<Player> playerList = Game.getInstance().getPlayerList();   
                             System.out.println(inputMessage.getContent());                     
                             sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
+
+                            System.out.println("[SERVER] [DECK] [SIZE] : " + playerList.get(0).getDeck().getSize());
+                            for (Card card : playerList.get(0).getDeck().getCards()) {
+                                System.out.println(" : Card " + card.getName() + " added");
+                            }
                         }
 
                         if(stringMessage.getPurpose().equals("INIT_GAME")) {
@@ -252,7 +257,7 @@ class ClientHandler implements Runnable {
                             boolean init = Game.getInstance().isGameStarted();
                             System.out.println("[SERVER] Game is initialized: " + init);
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
-                        }
+                        }                        
 
                     }
 
