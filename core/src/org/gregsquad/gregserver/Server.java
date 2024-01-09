@@ -146,6 +146,7 @@ class ClientHandler implements Runnable {
      * Continues to read messages until the client disconnects or an error occurs.
      */
     public void run() {
+
         try {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
@@ -155,6 +156,9 @@ class ClientHandler implements Runnable {
             // It makes actions based on the messages received from the client
             Message<?> inputMessage;
             while ((inputMessage = (Message<?>) in.readObject()) != null) {
+
+                out.reset(); // Reset the output stream to avoid sending the same object multiple times
+                             // !! Very important !!
 
                 if (inputMessage.isOfType(String.class)) {
                     Message<String> stringMessage = (Message<String>) inputMessage;
@@ -182,8 +186,10 @@ class ClientHandler implements Runnable {
                             } else {
                                 this.clientName = clientName;
                                 System.out.println("[SERVER] Creating player " + this.getClientName());
-                                sendToClient(stringMessage.getId(), "CONNEXION", "NAME", "OK");
-                                Player player = new Player(this.getClientName());
+
+                                int playerId = server.getInstance().clients.size() - 1;
+                                sendToClient(stringMessage.getId(), "CONNEXION", "NAME", playerId);
+                                Player player = new Player(playerId, this.getClientName());
                                 Game.getInstance().addPlayer(player);
                             }
                         }
@@ -229,16 +235,8 @@ class ClientHandler implements Runnable {
                         if(stringMessage.getPurpose().equals("GET_PLAYER_LIST")) {
     
                             System.out.println("[SERVER] " + this.getClientName() + " is getting the player list.");
-                            // Check if list of client is the same as the list of players
-                            if (Game.getInstance().getPlayerList().size() != server.clients.size()) {
-                                System.out.println("[SERVER] Number of clients and players is different.");
-                                // Update the list of player with the list of clients
-                                
-                            }
-                            
-                            ArrayList<Player> playerList = Game.getInstance().getPlayerList(); 
-                            System.out.println("[SERVER] -------------------------------------  "+playerList.size());
-                            System.out.println("[SERVER] -------------------------------------  "+server.clients.size());                           
+                            ArrayList<Player> playerList = Game.getInstance().getPlayerList();   
+                            System.out.println(inputMessage.getContent());                     
                             sendToClient(stringMessage.getId(), "GAME", "GET_PLAYER_LIST", playerList);
                         }
 
@@ -246,7 +244,6 @@ class ClientHandler implements Runnable {
     
                             System.out.println("[SERVER] " + this.getClientName() + " is initializing the game.");
                             Game.getInstance().init();
-                            sendToClient(stringMessage.getId(), "GAME", "INIT_GAME", "OK");
                         }
 
                         if(stringMessage.getPurpose().equals("GET_INIT_GAME")) {
@@ -256,6 +253,7 @@ class ClientHandler implements Runnable {
                             System.out.println("[SERVER] Game is initialized: " + init);
                             sendToClient(stringMessage.getId(), "GAME", "GET_INIT_GAME", init);
                         }
+
                     }
 
                 } 

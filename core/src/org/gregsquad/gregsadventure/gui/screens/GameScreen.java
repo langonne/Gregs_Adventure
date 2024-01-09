@@ -18,9 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.ArrayList;
+
 import org.gregsquad.gregsadventure.GregsAdventure;
 
 import org.gregsquad.gregserver.Client;
+import org.gregsquad.gregsadventure.game.Player;
 
 public class GameScreen extends Screen {
 
@@ -31,6 +34,9 @@ public class GameScreen extends Screen {
 
     private Client client;
 
+    private int id;
+    private String name;
+
     private TooltipManager tooltipManager;
 
     private SpriteBatch batch;
@@ -39,10 +45,18 @@ public class GameScreen extends Screen {
     private TextButton inventory;
     private Table inventoryTable;
 
-    public GameScreen(GregsAdventure gui, AssetManager assets, Client client) {
+    private ArrayList<Player> players;
+    private Player player;
+
+    public GameScreen(GregsAdventure gui, AssetManager assets, Client client, int id) {
         super(gui, assets);
 
         this.client = client;
+        this.id = id;
+
+        players = client.getPlayerList();
+        player = players.get(id);
+        this.name = player.getName();
 
         // Settings of the tooltips
         tooltipManager = TooltipManager.getInstance();
@@ -57,7 +71,8 @@ public class GameScreen extends Screen {
     public void show() {
         batch = new SpriteBatch();
         font = new BitmapFont();
-        font.setColor(Color.WHITE);
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
 
         skin = assets.get("skin/uiskin.json", Skin.class);
 
@@ -91,6 +106,24 @@ public class GameScreen extends Screen {
         
         table.add(startButton).fillX().uniformX();
 
+        new Thread(() -> {
+            while (client.getInitGame()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //players = client.getPlayers();
+                //player = 
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     @Override
@@ -99,7 +132,9 @@ public class GameScreen extends Screen {
         stage.act();
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        font.draw(batch, "Name - " + "Level - " + "Atk", 60, 1040);
+        font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, 1040);
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
 
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();

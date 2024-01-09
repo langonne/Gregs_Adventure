@@ -15,6 +15,7 @@ public class Client {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
     private String name; // Client name
+    private int clientId; // Client ID
     private Socket echoSocket; // Socket for communication
     private ObjectOutputStream out; // Output stream
     private ObjectInputStream in; // Input stream
@@ -78,10 +79,6 @@ public class Client {
             System.out.println("["+name+"] " + name + " is correctly connected");
             System.out.println("");
 
-            Thread debugSendThread = new Thread(new DebugSendThread());
-            debugSendThread.start();
-            //debugSendThread.join();
-
             Thread globalListenerThread = new Thread(globalListener);
             globalListenerThread.start();
             globalListenerThread.join();
@@ -118,8 +115,7 @@ public class Client {
         private Message<LinkedList<Card>> lastTreasureDiscard;
         private Message<Player> lastCurrentPlayer;
         private Message<ArrayList<Player>> lastPlayerList;
-        private Message<Boolean> lastInitGame;
-        
+        private Message<Boolean> lastInitGame;        
 
         public void run() {
             try {
@@ -131,6 +127,15 @@ public class Client {
                         System.out.println("["+name+"] " + "Received message: " + inputMessage.getType() + " " + inputMessage.getPurpose());
                         switch (inputMessage.getType()) {
                             case "CONNEXION":
+                                switch (inputMessage.getPurpose()) {
+                                    case "NAME":
+                                        System.out.println("["+name+"] " + "Received id: " + inputMessage.getContent());
+                                        clientId = (int) inputMessage.getContent();
+                                        break;
+                                    default:
+                                        System.err.println("Unknown message purpose: " + inputMessage.getPurpose());
+                                        break;
+                                }
                                 break;
                             case "GAME":
                                 switch (inputMessage.getPurpose()) {
@@ -151,11 +156,6 @@ public class Client {
                                         break;
                                     case "GET_PLAYER_LIST":
                                         lastPlayerList = (Message<ArrayList<Player>>) inputMessage;
-                                        System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().size());
-                                        // Print list of players
-                                        for (int i = 0; i < lastPlayerList.getContent().size(); i++) {
-                                            System.out.println("--------------------------------[CLIENT] " + lastPlayerList.getContent().get(i).getName());
-                                        }
                                         break;
                                     case "INIT_GAME":
                                         lastInitGame = (Message<Boolean>) inputMessage;
@@ -173,7 +173,7 @@ public class Client {
                                 System.err.println("Unknown message type: " + inputMessage.getType());
                                 break;
                         }
-                        
+
                     }
                     inputObject = null;
                 }
@@ -214,18 +214,8 @@ public class Client {
 
     }
 
-    // Debug thread for sending requests every 5 seconds
-    class DebugSendThread implements Runnable {
-        public void run() {
-            try {
-                while (true) {
-                    //drawDonjonCard();
-                    Thread.sleep(5000);
-                }
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
+    public int getId() {
+        return clientId;
     }
 
     // REQUESTS SECTION
@@ -234,6 +224,7 @@ public class Client {
     public <T extends Serializable> void sendRequest(Message<T> request) {
         try {
             System.out.println("["+name+"] " + "Sending request: " + request.getType() + " " + request.getPurpose());
+            out.reset();
             out.writeObject(request);
         } catch (IOException e) {
             System.err.println("["+name+"] " + "Error sending message: " + e.getMessage());
@@ -247,30 +238,9 @@ public class Client {
         return request_locale;
     }
 
-    /*
-    public <T> T Answer(Message<T> request_locale, GlobalListener globalListener) {
-        for (int i = 0; i < 5; i++) {
-            Message<T> lastAnswer = globalListener.getLastAnswer();
-            if (request_locale.getId().equals(lastAnswer.getId())) {
-                System.out.println("["+name+"] " + name + " got the answer");
-                return lastAnswer.getContent();
-            }
-        
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return null;
-    }
-    */
-
     // Specific methods to send requests and receive answers
     public Card drawDonjonCard() {
         Message<String> request_locale = request("GAME", "DRAW_DONJON_CARD");
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
         
         for (int i = 0; i < 5; i++) {
         
@@ -293,11 +263,8 @@ public class Client {
     //getPlayerList
     public ArrayList<Player> getPlayerList() {
         Message<String> request_locale = request("GAME", "GET_PLAYER_LIST");
-
         
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-        
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             
             Message<ArrayList<Player>> lastPlayerList = globalListener.getLastPlayerList();
             if (lastPlayerList != null && request_locale.getId().equals(lastPlayerList.getId())) {
@@ -312,46 +279,23 @@ public class Client {
             }
         }
         System.err.println("["+name+"] " + "Error: no answer received");
-        return null;
+        return globalListener.getLastPlayerList().getContent();
     }
 
     //initGame
-    public boolean initGame() {
+    public void initGame() {
         Message<String> request_locale = request("GAME", "INIT_GAME");
-        
-        for (int i = 0; i < 5; i++) {
-            
-            Message<Boolean> lastInitGame = globalListener.getLastInitGame();
-            if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
-                System.out.println("["+name+"] " + name + " initialized the game");
-                //print lastInitGame content type
-                System.out.println("--------------------------------------------------------["+name+"] " + "lastInitGame content type: " + lastInitGame.getContent().getClass());
-                return lastInitGame.getContent();
-            }
-        
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println("InterruptedException: " + e.getMessage());
-            }
-        }
-        System.err.println("["+name+"] " + "Error: no answer received");
-        return false;
     }
 
     //GetInitGame
     public boolean getInitGame() {
         Message<String> request_locale = request("GAME", "GET_INIT_GAME");
-
-
-        
-        System.out.println("["+name+"] " + "Sending request. Name: " + request_locale.getSender() + " Type: " + request_locale.getType() + " Purpose: " + request_locale.getPurpose());
-        
+                
         for (int i = 0; i < 5; i++) {
             
             Message<Boolean> lastInitGame = globalListener.getLastInitGame();
             if (lastInitGame != null && request_locale.getId().equals(lastInitGame.getId())) {
-                System.out.println("["+name+"] " + name + " got the init game");
+                System.out.println("["+name+"] " + name + " got the init game " + lastInitGame.getContent());
                 return lastInitGame.getContent();
             }
         
