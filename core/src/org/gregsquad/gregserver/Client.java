@@ -273,6 +273,11 @@ public class Client {
 
     }
 
+    /**
+     * Récupère l'identifiant du client.
+     *
+     * @return L'identifiant du client.
+     */
     public int getId() {
         return clientId;
     }
