@@ -104,8 +104,6 @@ public class GameScreen extends Screen {
 
 
         // Load all the card textures
-        System.out.println("ENORME CHIBREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe");
-        System.out.println(ConfigLoader.getInt("numberOfCards"));
         int[] cardsId = ConfigLoader.getIdArray();
         for (int i = 0; i < ConfigLoader.getInt("numberOfCards"); i++) {
             System.out.println(cardsId[i] + "chargée");
@@ -116,8 +114,6 @@ public class GameScreen extends Screen {
         new Thread(() -> {
             while (client.getInitGame()) {
                 wait(500);
-                players = client.getPlayerList();
-                player = players.get(id);
                 wait(500);
             }
         }).start();
@@ -154,22 +150,22 @@ public class GameScreen extends Screen {
         int i = 0;
         Deck deck = player.getDeck();
 
-        System.out.println("AAAAAAAAAAA " + deck.getSize());
+        /*System.out.println("[GAMESCREEN] [DECKSIZE]" + deck.getSize());
         for (Card card : deck.getCards()) {
-            System.out.println("AAAAAAAAAAA : Card " + card.getName() + " added");
+            System.out.println(" : Card " + card.getName() + " added");
         }
+        */
 
-
-        /*for (Card card : player.getDeck().getCards()) {
+        for (Card card : player.getDeck().getCards()) {
             Image img = new Image(assets.get("cards/" + card.getId() + ".png", Texture.class));
             img.setPosition(100 + i * 100, 100);
             img.addListener(new TextTooltip(card.getName(), skin));
             img.setSize(100, 150);
-            //stage.addActor(img);
+            stage.addActor(img);
             System.out.println("Card " + card.getName() + " added");
             i++;
         }
-    */
+    
     }
 
     private void wait(int ms) {
