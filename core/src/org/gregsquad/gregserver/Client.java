@@ -15,6 +15,7 @@ public class Client {
     private String serverIp; // Server IP address
     private int serverPort; // Server port number
     private String name; // Client name
+    private int clientId; // Client ID
     private Socket echoSocket; // Socket for communication
     private ObjectOutputStream out; // Output stream
     private ObjectInputStream in; // Input stream
@@ -114,8 +115,7 @@ public class Client {
         private Message<LinkedList<Card>> lastTreasureDiscard;
         private Message<Player> lastCurrentPlayer;
         private Message<ArrayList<Player>> lastPlayerList;
-        private Message<Boolean> lastInitGame;
-        
+        private Message<Boolean> lastInitGame;        
 
         public void run() {
             try {
@@ -127,6 +127,15 @@ public class Client {
                         System.out.println("["+name+"] " + "Received message: " + inputMessage.getType() + " " + inputMessage.getPurpose());
                         switch (inputMessage.getType()) {
                             case "CONNEXION":
+                                switch (inputMessage.getPurpose()) {
+                                    case "NAME":
+                                        System.out.println("["+name+"] " + "Received id: " + inputMessage.getContent());
+                                        clientId = (int) inputMessage.getContent();
+                                        break;
+                                    default:
+                                        System.err.println("Unknown message purpose: " + inputMessage.getPurpose());
+                                        break;
+                                }
                                 break;
                             case "GAME":
                                 switch (inputMessage.getPurpose()) {
@@ -203,6 +212,10 @@ public class Client {
             return lastInitGame;
         }
 
+    }
+
+    public int getClientId() {
+        return clientId;
     }
 
     // REQUESTS SECTION
