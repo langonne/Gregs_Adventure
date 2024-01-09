@@ -133,7 +133,7 @@ public class Client {
         private Message<LinkedList<Card>> lastTreasureDiscard;
         private Message<Player> lastCurrentPlayer;
         private Message<ArrayList<Player>> lastPlayerList;
-        private Message<Boolean> lastInitGame;        
+        private Message<Boolean> lastInitGame;       
 
         /**
          * Closes the streams and the connection. If an I/O error occurs while closing the streams or the connection,
@@ -270,7 +270,6 @@ public class Client {
         public Message<Boolean> getLastInitGame() {
             return lastInitGame;
         }
-
     }
 
     /**
