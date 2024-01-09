@@ -24,6 +24,7 @@ import org.gregsquad.gregsadventure.GregsAdventure;
 
 import org.gregsquad.gregserver.Client;
 import org.gregsquad.gregsadventure.game.Player;
+import org.gregsquad.gregsadventure.card.Card;
 import org.gregsquad.gregsadventure.card.ConfigLoader;
 
 public class GameScreen extends Screen {
@@ -122,21 +123,10 @@ public class GameScreen extends Screen {
 
         new Thread(() -> {
             while (client.getInitGame()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                wait(500);
                 players = client.getPlayers();
                 player = players.get(id);
-
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
+                wait(500);
             }
         }).start();
 
@@ -158,6 +148,7 @@ public class GameScreen extends Screen {
 
         }
 
+
         batch.end();
         stage.draw();
     }
@@ -167,5 +158,24 @@ public class GameScreen extends Screen {
         // TODO implement dispose logic
     }
 
-    private 
+    private void displayCards() {
+        int i = 0;
+        for (Card card : player.getDeck.getCards()) {
+            Image img = new Image(assets.get("cards/" + card.getId() + ".png", Texture.class));
+            img.setPosition(100 + i * 100, 100);
+            img.addListener(new TextTooltip(card.getName(), skin));
+            img.setSize(100, 150);
+            stage.addActor(img);
+            i++;
+        }
+    
+    }
+
+    private void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
