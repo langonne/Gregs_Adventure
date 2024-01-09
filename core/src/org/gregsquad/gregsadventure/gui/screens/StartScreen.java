@@ -116,7 +116,7 @@ public class StartScreen extends Screen{
                                     else {
                                         gameStarted = true;
                                         client.initGame();
-                                        gui.setScreen(new GameScreen(gui, assets, client, name.getText()));
+                                        gui.setScreen(new GameScreen(gui, assets, client, client.getId()));
                                     }
                                 }
                             });
@@ -230,7 +230,7 @@ public class StartScreen extends Screen{
                                         }
                                     });
                                 }
-                                Gdx.app.postRunnable(() -> gui.setScreen(new GameScreen(gui, assets, client, name.getText())));
+                                Gdx.app.postRunnable(() -> gui.setScreen(new GameScreen(gui, assets, client, client.getId())));
                             }).start();
                             /////////
                         }
@@ -270,8 +270,6 @@ public class StartScreen extends Screen{
     private void displayPlayers(Client client, Table table) {
         table.clear();
         ArrayList<Player> players = client.getPlayerList();
-        
-        System.out.println("Players : " + players.size());
 
         table.add("Joueurs : " + players.size() + "/6");
         table.row();

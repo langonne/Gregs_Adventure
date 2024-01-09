@@ -34,6 +34,7 @@ public class GameScreen extends Screen {
 
     private Client client;
 
+    private int id;
     private String name;
 
     private TooltipManager tooltipManager;
@@ -47,11 +48,15 @@ public class GameScreen extends Screen {
     private ArrayList<Player> players;
     private Player player;
 
-    public GameScreen(GregsAdventure gui, AssetManager assets, Client client, String name) {
+    public GameScreen(GregsAdventure gui, AssetManager assets, Client client, int id) {
         super(gui, assets);
 
         this.client = client;
-        this.name = name;
+        this.id = id;
+
+        players = client.getPlayerList();
+        player = players.get(id);
+        this.name = player.getName();
 
         // Settings of the tooltips
         tooltipManager = TooltipManager.getInstance();
@@ -127,11 +132,9 @@ public class GameScreen extends Screen {
         stage.act();
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        //font.draw(batch, name + " - " + "Level : " + players.get() + " - " + "Atk : ", 60, 1040);
+        font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, 1040);
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
-
-        System.out.println("[GAMESCREEN] [RENDER] " + Gdx.input.getX() + " " + Gdx.input.getY());
 
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();

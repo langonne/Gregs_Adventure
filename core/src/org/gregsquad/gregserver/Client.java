@@ -214,7 +214,7 @@ public class Client {
 
     }
 
-    public int getClientId() {
+    public int getId() {
         return clientId;
     }
 
