@@ -1,24 +1,22 @@
 package org.gregsquad.gregsadventure.card;
 
 import java.util.LinkedList;
+import java.io.Serializable;
 
-public abstract class CardList {
-    protected int size;
+public abstract class CardList implements Serializable {
     protected LinkedList<Card> cards;
 
     public CardList() {
-        this.size = 0;
         this.cards = new LinkedList<Card>();
     }
 
     public CardList(LinkedList<Card> cards) {
-        this.size = cards.size();
         this.cards = cards;        
     }
 
     // Getters
     public int getSize() {
-        return size;
+        return cards.size();
     }
     public LinkedList<Card> getCards() {
         return cards;
@@ -38,5 +36,4 @@ public abstract class CardList {
     public void addCard(Card card) {
         cards.add(card);
     }
-
 }
