@@ -23,11 +23,11 @@ public class ConfigLoader {
     }
 
     
-    public static ArrayList<Integer> getTableIds() {
-        ArrayList<Integer> tableIds = new ArrayList<Integer>();
+    public static ArrayList<Integer> getIdTable() {
+        ArrayList<Integer> idTable = new ArrayList<Integer>();
         int i = 0;
         while (ConfigLoader.isValid(Integer.toString(i) + "_name")) {
-            tableIds.add(i);
+            idTable.add(i);
             i++;
         }
         return tableIds;
