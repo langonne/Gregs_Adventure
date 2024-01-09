@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable; 
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class GameScreen extends Screen {
     private BitmapFont font;
 
     private TextButton inventory;
+    private TextButton endTurn;
     private TextButton donjonStack;
     private TextButton treasureStack;
 
@@ -95,15 +97,40 @@ public class GameScreen extends Screen {
 
         stage.addActor(cardTable);
 
-        inventory = new TextButton("Inventory", skin);
+        inventory = new TextButton("Inventaire", skin);
         inventory.setSize(BUTTON_SIZE, BUTTON_SIZE);
         inventory.setPosition(DEFAULT_WIDTH - BUTTON_SIZE - PADDING, PADDING);
-        inventory.addListener(new TextTooltip("Inventory", skin));
+        inventory.addListener(new TextTooltip("Cliquez ici pour afficher votre inventaire.", skin));
+
+        endTurn = new TextButton("Fin du tour", skin);
+        endTurn.setSize(BUTTON_SIZE, BUTTON_SIZE);
+        endTurn.setPosition(DEFAULT_WIDTH - BUTTON_SIZE - PADDING, BUTTON_SIZE + PADDING);
+        endTurn.addListener(new TextTooltip("Cliquez ici pour terminer votre tour.", skin));
+        endTurn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                if (currentPlayerId == id) {
+                    client.endTurn();
+                }
+            }
+        });
 
         donjonStack = new TextButton("Donjon", skin);
         donjonStack.setSize(BUTTON_SIZE, BUTTON_SIZE);
         donjonStack.setPosition(DEFAULT_WIDTH / 2 - BUTTON_SIZE - PADDING / 2, DEFAULT_HEIGHT / 2);
-        donjonStack.addListener(new TextTooltip("Donjon \n\n Cliquez pour commencer votre tour.", skin));
+        donjonStack.addListener(new TextTooltip("Donjon \n\n Cliquez ici pour commencer votre tour.", skin));
+        donjonStack.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                if (currentPlayerId == id) {
+                    Card card = client.drawDonjonCard();
+                    if (card != null) {
+                        player.getDeck().addCard(card);
+                        displayDeck();
+                    }
+                }
+            }
+        });
 
         treasureStack = new TextButton("Trésor", skin);
         treasureStack.setSize(BUTTON_SIZE, BUTTON_SIZE);
@@ -111,6 +138,7 @@ public class GameScreen extends Screen {
         treasureStack.addListener(new TextTooltip("Trésor", skin));
         
         stage.addActor(inventory);
+        stage.addActor(endTurn);
         stage.addActor(donjonStack);
         stage.addActor(treasureStack);
 

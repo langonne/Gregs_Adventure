@@ -245,7 +245,6 @@ public class StartScreen extends Screen {
                         gui.setScreen(new StartScreen(gui, assets));
                     }
                 });
-
             }
         });
 
