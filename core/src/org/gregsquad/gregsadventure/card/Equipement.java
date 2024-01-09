@@ -5,7 +5,7 @@ import java.io.Serializable;
  * @class Equipement
  * @brief Represents an equipment card in the game with attributes such as position, bonus, and size.
  */
-public class Equipement extends Card implements Serializable{
+public class Equipement extends Card implements Serializable {
     private int position; //Ex : 0 = head, 1 = body, 2 = legs, 3 = feet, 4 = hand
     private int bonus;
     private boolean equipementSize; // 0 = small, 1 = big. (small = 1 hand, big = 2 hands)

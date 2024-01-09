@@ -44,4 +44,9 @@ public abstract class Screen implements com.badlogic.gdx.Screen {
     public void hide() {
         // TODO: Implement hide logic
     }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+    }
 }

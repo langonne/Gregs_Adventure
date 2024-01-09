@@ -131,8 +131,7 @@ public class Player implements Serializable {
         this.damage += damage;
     }
 
- 
-
+    
     /**
      * @brief Gets the player's class.
      * @return The player's class.

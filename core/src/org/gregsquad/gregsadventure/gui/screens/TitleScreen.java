@@ -78,7 +78,6 @@ public class TitleScreen extends Screen {
 
     @Override
     public void dispose() {
-        assets.unload("skin/uiskin.json");
-        stage.dispose();
+        super.dispose();
     }
 }

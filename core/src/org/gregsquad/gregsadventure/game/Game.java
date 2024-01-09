@@ -49,7 +49,6 @@ public class Game {
         return instance;
     }
 
-
     /**
      * @brief Initializes the game.
      */
@@ -93,7 +92,7 @@ public class Game {
             System.out.println("Run success with " + diceResult); // DEBUG
             return true;
         } else {
-            System.out.println("Run failled with " + diceResult); // DEBUG
+            System.out.println("Run failed with " + diceResult); // DEBUG
             incident(currentPlayer);
             if(playerHelp != null){
                 incident(playerHelp);
@@ -143,8 +142,6 @@ public class Game {
      * @return True if the player provided help, false otherwise.
      */
     public boolean help(int numberOfTreasure){ // true == helped
-
-        
 
         //Interface to other players (return playerList)
 
@@ -296,7 +293,6 @@ public class Game {
     public boolean isGameStarted() {
         return isGameStarted;
     }
-
 
     public void treasureDraw(Player player){
         player.getDeck().addCard(treasureStack.draw());

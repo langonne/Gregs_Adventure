@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @class Curse
  * @brief Represents a curse card in the game with attributes such as type and value.
  */
-public class Curse extends Card implements Serializable{
+public class Curse extends Card implements Serializable {
     private String type;
     private int value;
     /**

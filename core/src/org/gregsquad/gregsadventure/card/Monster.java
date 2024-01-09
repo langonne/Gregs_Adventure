@@ -5,7 +5,7 @@ import java.io.Serializable;
  * @class Monster
  * @brief Represents a monster card in the game, derived from Card.
  */
-public class Monster extends Card implements Serializable{
+public class Monster extends Card implements Serializable {
     private int level;
     private int damage;
     private int treasure;

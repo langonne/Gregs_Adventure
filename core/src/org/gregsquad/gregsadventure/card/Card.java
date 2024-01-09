@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.gregsquad.gregsadventure.game.Player;
 
-public abstract class Card implements Serializable{
+public abstract class Card implements Serializable {
     
     protected int id;
     protected String name;

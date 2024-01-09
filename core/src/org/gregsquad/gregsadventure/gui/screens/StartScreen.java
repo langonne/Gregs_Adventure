@@ -19,7 +19,7 @@ import org.gregsquad.gregserver.Client;
 import org.gregsquad.gregserver.Server;
 
 
-public class StartScreen extends Screen{
+public class StartScreen extends Screen {
 
     private static final int MIN_PLAYERS = 1;
     private static final int MAX_PLAYERS = 6;
@@ -266,7 +266,7 @@ public class StartScreen extends Screen{
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
+        super.dispose();
     }
 
     private void displayPlayers(Client client, Table table) {

@@ -9,13 +9,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable; 
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ public class GameScreen extends Screen {
     public static final int BUTTON_SIZE = 100;
     public static final int PADDING = 10;
 
+    public static final int WAITING_TIME = 500;
+
     private Client client;
 
     private int id;
@@ -46,10 +51,17 @@ public class GameScreen extends Screen {
     private BitmapFont font;
 
     private TextButton inventory;
+    private TextButton donjonStack;
+    private TextButton treasureStack;
+
     private Table inventoryTable;
+    private Table cardTable;
+
 
     private ArrayList<Player> players;
     private Player player;
+
+    private int currentPlayerId;
 
     public GameScreen(GregsAdventure gui, AssetManager assets, Client client, int id) {
         super(gui, assets);
@@ -68,7 +80,6 @@ public class GameScreen extends Screen {
         tooltipManager.subsequentTime = TOOLTIP_DELAY;
         tooltipManager.hideAll();
     }
-
     
     @Override
     public void show() {
@@ -79,29 +90,29 @@ public class GameScreen extends Screen {
 
         skin = assets.get("skin/uiskin.json", Skin.class);
 
+        cardTable = new Table();
+        cardTable.setPosition(960, 170);
 
-        Table table = new Table(); // Create a table that fills the screen. Everything else will go inside this table.
-
-        table.setFillParent(true);
-        stage.addActor(table); // Add the table to the stage
+        stage.addActor(cardTable);
 
         inventory = new TextButton("Inventory", skin);
         inventory.setSize(BUTTON_SIZE, BUTTON_SIZE);
         inventory.setPosition(DEFAULT_WIDTH - BUTTON_SIZE - PADDING, PADDING);
         inventory.addListener(new TextTooltip("Inventory", skin));
 
+        donjonStack = new TextButton("Donjon", skin);
+        donjonStack.setSize(BUTTON_SIZE, BUTTON_SIZE);
+        donjonStack.setPosition(DEFAULT_WIDTH / 2 - BUTTON_SIZE - PADDING / 2, DEFAULT_HEIGHT / 2);
+        donjonStack.addListener(new TextTooltip("Donjon \n\n Cliquez pour commencer votre tour.", skin));
 
-
-        stage.addActor(inventory);
-
-        TextButton startButton = new TextButton("Start", skin);
-                
-
-        TextTooltip txt = new TextTooltip("G une enorme bite", skin);
-        startButton.addListener(txt);
+        treasureStack = new TextButton("Trésor", skin);
+        treasureStack.setSize(BUTTON_SIZE, BUTTON_SIZE);
+        treasureStack.setPosition(DEFAULT_WIDTH / 2 + PADDING / 2, DEFAULT_HEIGHT / 2);
+        treasureStack.addListener(new TextTooltip("Trésor", skin));
         
-        table.add(startButton).fillX().uniformX();
-
+        stage.addActor(inventory);
+        stage.addActor(donjonStack);
+        stage.addActor(treasureStack);
 
         // Load all the card textures
         int[] cardsId = ConfigLoader.getIdArray();
@@ -111,10 +122,15 @@ public class GameScreen extends Screen {
             assets.finishLoading();
         }
 
+        displayDeck();
+
         new Thread(() -> {
             while (client.getInitGame()) {
-                wait(500);
-                wait(500);
+                wait(WAITING_TIME);
+                players = client.getPlayerList();
+                wait(WAITING_TIME);
+                currentPlayerId = client.getCurrentPlayer().getId();
+                wait(WAITING_TIME);
             }
         }).start();
 
@@ -125,17 +141,9 @@ public class GameScreen extends Screen {
         ScreenUtils.clear(135 / 255f, 206 / 255f, 250 / 255f, 1);
         stage.act();
         batch.begin();
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 25, 25);
-        font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, 1040);
-
-
-        if (Gdx.input.isTouched()) {
-            int posY = (int) stage.getHeight() - Gdx.input.getY();
-            font.draw(batch, "X: " + Gdx.input.getX() + " Y: " + posY, 25, 50);
-
-        }
-        
-        displayDeck();
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, 28);
+        font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, DEFAULT_HEIGHT - 40);
+        font.draw(batch, "Current player : ", DEFAULT_WIDTH / 2 - 250, DEFAULT_HEIGHT - 40);
 
         batch.end();
         stage.draw();
@@ -143,29 +151,24 @@ public class GameScreen extends Screen {
 
     @Override
     public void dispose() {
-        // TODO implement dispose logic
+        super.dispose();
     }
 
     private void displayDeck() {
         int i = 0;
         Deck deck = player.getDeck();
-
-        /*System.out.println("[GAMESCREEN] [DECKSIZE]" + deck.getSize());
-        for (Card card : deck.getCards()) {
-            System.out.println(" : Card " + card.getName() + " added");
-        }
-        */
+        cardTable.clear();
 
         for (Card card : player.getDeck().getCards()) {
-            Image img = new Image(assets.get("cards/" + card.getId() + ".png", Texture.class));
-            img.setPosition(100 + i * 100, 100);
-            img.addListener(new TextTooltip(card.getName(), skin));
-            img.setSize(100, 150);
-            stage.addActor(img);
+            ImageButton img = new ImageButton(new TextureRegionDrawable(new TextureRegion(assets.get("cards/" + card.getId() + ".png", Texture.class))));
+            cardTable.add(img).size(220, 300);
+            img.addListener(new TextTooltip(card.getName() + "\n\n" + card.getDescription(), skin));
+            // small padding between cards
+            cardTable.add().pad(PADDING / 2);
+            
             System.out.println("Card " + card.getName() + " added");
             i++;
         }
-    
     }
 
     private void wait(int ms) {
