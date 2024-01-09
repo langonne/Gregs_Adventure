@@ -74,7 +74,6 @@ public class Game {
      * @param monster The monster to fight.
      */
     public void fight(Monster monster) { //button fight  // GARDER PARAMETRE UTILE ?
-        System.out.println("Fight between player (" + currentPlayer.getDamage() + ") and " + monster.getName() + " (" + monster.getDamage() + ")"); // DEBUG
         if(currentPlayer.getDamage() > monster.getDamage()){
 
             System.out.println("Player win"); // DEBUG
@@ -94,10 +93,8 @@ public class Game {
         Random rand = new Random();
         int diceResult = rand.nextInt(6) + 1 + currentPlayer.getDiceBuff();
         if(diceResult >= DICE_NEED_TO_RUN){
-            System.out.println("Run success with " + diceResult); // DEBUG
             return true;
         } else {
-            System.out.println("Run failed with " + diceResult); // DEBUG
             incident(currentPlayer);
             if(playerHelp != null){
                 incident(playerHelp);
@@ -113,17 +110,14 @@ public class Game {
      */
     protected void incident(Player player){
         if(player == null){
-            System.out.println("Error : No player"); // DEBUG
             return;
         }
         switch (monster.getTypeIncident()) {
             case "death":
-                System.out.println("Death of player "); // DEBUG
                 player.getStuff().clearStuff();
                 break;
         
             case "loseObject":
-                System.out.println("Remove random object "); // DEBUG
                 Random rand = new Random();
                 int randNumber = rand.nextInt(player.getStuff().getSize());
                 player.getStuff().removeEquipement(randNumber);
@@ -131,7 +125,6 @@ public class Game {
 
             case "loseLevel":
                 if(player.getLevel() != 1){
-                    System.out.println("Remove 1 level "); // DEBUG
                     player.addLevel(-1);
                     break;
                 }

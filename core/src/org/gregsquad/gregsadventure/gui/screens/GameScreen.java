@@ -110,7 +110,7 @@ public class GameScreen extends Screen {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                 if (currentPlayerId == id) {
-                    client.endTurn();
+                    client.endTurn();   
                 }
             }
         });
@@ -171,7 +171,7 @@ public class GameScreen extends Screen {
         batch.begin();
         font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 5, 28);
         font.draw(batch, name + " - " + "Level : " + player.getLevel() + " - " + "Atk : " + player.getDamage(), 60, DEFAULT_HEIGHT - 40);
-        font.draw(batch, "Current player : " + players.get(currentPlayerId).getName(), DEFAULT_WIDTH / 2 - 250, DEFAULT_HEIGHT - 40);
+        font.draw(batch, "C'est le tour de " + players.get(currentPlayerId).getName() + ".", DEFAULT_WIDTH / 2 - 180, DEFAULT_HEIGHT - 40);
 
         batch.end();
         stage.draw();

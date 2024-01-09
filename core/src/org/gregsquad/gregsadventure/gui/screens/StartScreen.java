@@ -21,7 +21,7 @@ import org.gregsquad.gregserver.Server;
 
 public class StartScreen extends Screen {
 
-    private static final int MIN_PLAYERS = 1;
+    private static final int MIN_PLAYERS = 3;
     private static final int MAX_PLAYERS = 6;
     private static final int NAME_MAX_LENGTH = 20;
 
