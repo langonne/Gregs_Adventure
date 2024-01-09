@@ -21,6 +21,8 @@ import org.gregsquad.gregserver.Server;
 
 public class StartScreen extends Screen{
 
+    private static final int MIN_PLAYERS = 1;
+    private static final int MAX_PLAYERS = 6;
     private static final int NAME_MAX_LENGTH = 20;
 
     private Client client;
@@ -110,7 +112,7 @@ public class StartScreen extends Screen{
                             confirmButton.addListener(new ChangeListener() {
                                 @Override
                                 public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                                    if (client.getPlayerList().size() < 2 || client.getPlayerList().size() > 6) {
+                                    if (client.getPlayerList().size() < MIN_PLAYERS || client.getPlayerList().size() > MAX_PLAYERS) {
                                         table.add("Il faut entre 3 et 6 joueurs pour jouer.");
                                     }
                                     else {

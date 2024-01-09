@@ -24,6 +24,8 @@ import org.gregsquad.gregsadventure.GregsAdventure;
 
 import org.gregsquad.gregserver.Client;
 import org.gregsquad.gregsadventure.game.Player;
+import org.gregsquad.gregsadventure.card.Card;
+import org.gregsquad.gregsadventure.card.ConfigLoader;
 
 public class GameScreen extends Screen {
 
@@ -36,6 +38,8 @@ public class GameScreen extends Screen {
 
     private int id;
     private String name;
+
+    private Deck deck;
 
     private TooltipManager tooltipManager;
 
@@ -106,23 +110,23 @@ public class GameScreen extends Screen {
         
         table.add(startButton).fillX().uniformX();
 
-        
+
+        // Load all the card textures
+        System.out.println("ENORME CHIBREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe");
+        System.out.println(ConfigLoader.getInt("numberOfCards"));
+        int[] id = ConfigLoader.getIdArray();
+        for (int i = 0; i < ConfigLoader.getInt("numberOfCards"); i++) {
+            System.out.println(id[i] + "chargée");
+            assets.load("cards/" + id[i] + ".png", Texture.class);
+            assets.finishLoading();
+        }
 
         new Thread(() -> {
             while (client.getInitGame()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                //players = client.getPlayers();
-                //player = 
-
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                wait(500);
+                players = client.getPlayers();
+                player = players.get(id);
+                wait(500);
             }
         }).start();
 
@@ -141,7 +145,9 @@ public class GameScreen extends Screen {
         if (Gdx.input.isTouched()) {
             int posY = (int) stage.getHeight() - Gdx.input.getY();
             font.draw(batch, "X: " + Gdx.input.getX() + " Y: " + posY, 25, 50);
+
         }
+
 
         batch.end();
         stage.draw();
@@ -152,7 +158,24 @@ public class GameScreen extends Screen {
         // TODO implement dispose logic
     }
 
-    public void loadCardAssets() {
+    private void displayCards() {
+        int i = 0;
+        for (Card card : player.getDeck.getCards()) {
+            Image img = new Image(assets.get("cards/" + card.getId() + ".png", Texture.class));
+            img.setPosition(100 + i * 100, 100);
+            img.addListener(new TextTooltip(card.getName(), skin));
+            img.setSize(100, 150);
+            stage.addActor(img);
+            i++;
+        }
+    
+    }
 
+    private void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table.Debug;
 public class Game {
     private static Game instance;
     static final int DICE_NEED_TO_RUN = 5;
+    static final int INITIAL_DECK_SIZE = 4;
     private ArrayList<Player> playerList;
     private Stack donjonStack;
     private Stack treasureStack;
@@ -35,6 +36,14 @@ public class Game {
         donjonDiscard = new Discard();
         treasureDiscard = new Discard();
         isGameStarted = false;
+
+        for (Player playerList : playerList) {
+            for(int i = 0; i < INITIAL_DECK_SIZE/2; i++){
+                playerList.getDeck().addCard(donjonStack.draw());
+                playerList.getDeck().addCard(treasureStack.draw());
+            }
+        }
+
     }
 
     /**

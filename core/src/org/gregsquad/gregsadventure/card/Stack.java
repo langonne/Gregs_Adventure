@@ -35,10 +35,10 @@ public class Stack extends CardList implements Serializable {
 
 
     public void init() {
-        for (int tableId : ConfigLoader.getIdTable()) {
+        for (int tableId : ConfigLoader.getIdArray()) {
             
             String key = Integer.toString(tableId);
-            System.out.println(key);
+            //System.out.println(key);
 
 
             for (int j = 0; j < ConfigLoader.getInt(key + "_number"); j++) {
