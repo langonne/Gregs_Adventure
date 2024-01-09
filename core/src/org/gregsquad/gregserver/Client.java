@@ -351,7 +351,15 @@ public class Client {
      * Sends a request to initialize the game.
      */
     public void initGame() {
-        Message<String> request_locale = request("GAME", "INIT_GAME");
+        request("GAME", "INIT_GAME");
+    }
+
+
+    /**
+     * Ends the current player's turn by sending an "END_TURN" request to the game.
+     */
+    public void endTurn() {
+        request("GAME", "END_TURN");
     }
 
     /**
