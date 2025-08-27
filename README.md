@@ -15,7 +15,7 @@ gradle desktop:run
 ```
 
 ## Authors
-- [Léo Angonnet](https://github.com/ZenT0x)  
+- [Léo Angonnet](https://github.com/langonne)  
 - [Quentin Balezeau](https://github.com/balezeauquentin)  
 - [Nicolas Roelandt](https://github.com/Nico-Roelandt)  
 - [Eliott Speyser](https://github.com/Ettotsu)  
